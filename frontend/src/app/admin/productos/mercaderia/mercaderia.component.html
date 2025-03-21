@@ -1,0 +1,50 @@
+<div class="container mt-5">
+
+  <ng-container *ngIf="!loading">
+    <div class="row">
+      <div class="col-lg-9">
+        <h1>
+          Mercadería de {{ producto.nombre }}
+        </h1>
+      </div>
+      <div class="col-lg">
+        <div class="d-grid gap-2">
+          <button id="ingresoMercaderia" class="btn btn-primary btn-sm" (click)="nuevaMercaderia()">Ingreso Mercaderia</button>
+        </div>
+      </div>
+      <div class="col-lg">
+        <div class="d-grid gap-2">
+          <button class="btn btn-secondary btn-sm" (click)="atras()">Atrás</button>
+        </div>
+      </div>
+    </div>
+    <hr>
+
+    <table class="table mt-3">
+      <thead class="table-dark">
+        <tr>
+          <th>Correlativo</th>
+          <th>Cantidad</th>
+          <th>Egreso</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let ingreso of ingresos">
+          <th>{{ingreso.correlativo}}</th>
+          <td>{{ingreso.cantidad}}</td>
+          <td>{{ingreso.monto | currency: 'Q'}}</td>
+          <td>{{ingreso.fecha_registro | date}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div id="noIngresos" class="alert alert-warning" *ngIf="ingresos.length === 0">
+      No hay ingresos de mercaderia registrados.
+    </div>
+
+  </ng-container>
+
+  <app-loading *ngIf="loading"></app-loading>
+
+</div>

@@ -1,0 +1,50 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-lg-9">
+      <h1>Ofertas</h1>
+    </div>
+    <div class="col-lg">
+      <div class="d-grid gap-2">
+        <button class="btn btn-sm btn-primary" (click)="crearOferta()">Nueva Oferta</button>
+      </div>
+    </div>
+    <div class="col-lg">
+      <div class="d-grid gap-2">
+        <button class="btn btn-sm btn-secondary" (click)="atras()">Atras</button>
+      </div>
+    </div>
+  </div>
+  <hr>
+
+  <app-loading *ngIf="loading"></app-loading>
+
+  <table class="table mt-3" *ngIf="!loading">
+    <thead class="table-dark">
+      <tr>
+        <th>Producto</th>
+        <th>Rebaja</th>
+        <th>Descripcion</th>
+        <th>Fecha de Expiración</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let oferta of ofertas">
+        <td>{{oferta.producto}}</td>
+        <td>{{oferta.monto | currency: 'Q'}}</td>
+        <td>{{oferta.descripcion}}</td>
+        <td>{{oferta.fecha}}</td>
+        <td>
+          <span class="badge text-bg-success" *ngIf="oferta.estado_oferta === 'VIGENTE'">{{oferta.estado_oferta}}</span>
+          <span class="badge text-bg-danger" *ngIf="oferta.estado_oferta === 'EXPIRADA'">{{oferta.estado_oferta}}</span>
+        </td>
+        <td>
+          <button class="btn btn-sm btn-danger" ngbTooltip="Cancelar Oferta" (click)="cancelarOferta(oferta)" *ngIf="oferta.estado_oferta === 'VIGENTE'">
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

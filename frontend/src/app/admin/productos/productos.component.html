@@ -1,0 +1,60 @@
+<div class="container">
+  <div class="row mt-5">
+    <div class="col-lg-8">
+      <h1>Productos</h1>
+    </div>
+    <div class="col-lg">
+      <div class="d-grid gap-2">
+        <button class="btn btn-sm btn-dark" (click)="verOfertas()">Ofertas</button>
+      </div>
+    </div>
+    <div class="col-lg">
+      <div class="d-grid gap-2">
+        <button class="btn btn-sm btn-info" (click)="verProveedores()">Proveedores</button>
+      </div>
+    </div>
+    <div class="col-lg">
+      <div class="d-grid gap-2">
+        <button id="nuevoProducto" class="btn btn-sm btn-primary" (click)="nuevoProducto()">Nuevo Producto</button>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <app-loading *ngIf="loading"></app-loading>
+  <table class="table" *ngIf="!loading">
+    <thead class="table-dark">
+      <tr>
+        <th></th>
+        <th>Nombre</th>
+        <th>Categoria</th>
+        <th>Proveedor</th>
+        <th>Precio</th>
+        <th>Costo</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let producto of productos">
+        <td>
+          <img [src]="producto.portada" class="rounded float-start fotografia" alt="portada">
+        </td>
+        <td>{{producto.nombre}}</td>
+        <td>{{producto.categoria_producto}}</td>
+        <td>{{producto.proveedor}}</td>
+        <td>{{producto.precio | currency: 'Q'}}</td>
+        <td>{{producto.costo | currency: 'Q'}}</td>
+        <td>
+          <button [id]="producto.nombre" class="btn btn-sm btn-primary" ngbTooltip="Editar" (click)="editarProducto(producto.id)">
+            <i class="bi bi-pencil-square"></i>
+          </button>
+          <button [id]="producto.nombre + 'eliminar'" class="btn btn-sm btn-danger mx-3" ngbTooltip="Eliminar" (click)="eliminarProducto(producto.id)">
+            <i class="bi bi-trash"></i>
+          </button>
+          <button [id]="producto.nombre + 'merca'" class="btn btn-sm btn-warning" ngbTooltip="Crear Pedido" (click)="verMercaderia(producto.id)">
+            <i class="bi bi-journal-arrow-down"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

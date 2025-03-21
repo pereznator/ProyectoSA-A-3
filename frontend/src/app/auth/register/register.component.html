@@ -1,0 +1,183 @@
+<div class="container h-100 mt-5">
+
+  <div class="row">
+    <div class="col-md-2"></div>
+    <div class="col-md-8 rounded-3 bg-light">
+      <div class="p-3" *ngIf="!loading">
+        <ng-container *ngIf="vistaActual == 'formulario-registro'">
+          <h3>Registrate</h3>
+          <form [formGroup]="registerForm">
+            <div class="d-flex justify-content-between">
+              <div class="card" style="width: 18rem;">
+                <img [src]="imagenPerfil ? imagenPerfil : '../../../assets/img/register-img-placeholder.png'" class="card-img-top img-perfil" alt="...">
+                <div class="card-body">
+                  <h5 class="card-content">Imagen de Perfil</h5>
+                  <input type="file" id="image" (change)="cargarImagen($event)" class="form-control mb-2" formControlName="img">
+                </div>
+              </div>
+              <div class="p-2">
+                <div class="row mt-2">
+                  <div class="col-lg">
+                    <label class="form-label">Nombre(s)</label>
+                    <input type="text" id="nombre" class="form-control" [ngClass]="{'is-invalid': notValidNombre}" formControlName="nombre">
+                    <div class="invalid-feedback">
+                      Nombre es requerido
+                    </div>   
+                  </div>
+                  <div class="col-lg">
+                    <label class="form-label">Apellido(s)</label>
+                    <input id="apellido" type="text" class="form-control" [ngClass]="{'is-invalid': notValidApellido}" formControlName="apellido">
+                    <div class="invalid-feedback">
+                      Apellido es requerido
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <div class="col-lg">
+                    <label class="form-label">Telefono</label>
+                    <input id="telefono" type="text" class="form-control" [ngClass]="{'is-invalid': notValidTelefono}" formControlName="telefono">
+                    <div class="invalid-feedback">
+                      Telefono es requerido
+                    </div>
+                  </div>
+
+                  <div class="col-lg">
+                    <label class="form-label">Correo Electrónico</label>
+                    <input id="correo" type="email" class="form-control" [ngClass]="{'is-invalid': notValidCorreo}" formControlName="correo">
+                    <div class="invalid-feedback">
+                      Correo válido es requerido
+                    </div>
+                  </div>
+                  
+                </div>
+                <div class="row mt-2">
+                  <div class="col-lg">
+                    <label class="form-label">Nombre de Usuario</label>
+                    <input id="username" type="text" class="form-control" [ngClass]="{'is-invalid': notValidUsername}" formControlName="username">
+                    <div class="invalid-feedback">
+                      Username es requerido.
+                    </div>
+                  </div>
+                  <div class="col-lg">
+                    <label class="form-label">Dirección</label>
+                    <input id="direccion" type="text" class="form-control" [ngClass]="{'is-invalid': notValidDireccion}" formControlName="direccion">
+                    <div class="invalid-feedback">
+                      Dirección es requerida.
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <div class="col-lg">
+                    <label class="form-label">Contraseña</label>
+                    <input id="password" type="password" class="form-control" [ngClass]="{'is-invalid': notValidPassword}" formControlName="password">
+                    <div class="invalid-feedback">
+                      Debe tener mínimo 8 caracteres, 1 especial, 1 mayúscula, 1 minúscula
+                    </div>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <div class="col-lg">
+                    <label class="form-label">Repetir Contraseña</label>
+                    <input id="passwordRepeat" type="password" class="form-control" [ngClass]="{'is-invalid': notValidPasswordRepeat}" formControlName="passwordRepeat">
+                    <div class="invalid-feedback">
+                      Debe ser exactamente igual
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="alert alert-danger mt-2" *ngIf="showAlert">
+              {{ alertMessage }}
+            </div>
+            <div class="d-flex justify-content-between mt-3">
+              <a class="text-primary" [routerLink]="['/auth/login']">Ya tienes cuenta?</a>
+              <button id="btnRegistro" type="button" class="btn btn-primary" [disabled]="registerForm.invalid" (click)="cambiarVista()">Continuar</button>
+            </div>
+          </form>
+        </ng-container>
+        <ng-container *ngIf="vistaActual === 'elegir-opcion'">
+          <div class="p-5 d-flex flex-column ">
+            <div class="d-flex flex-row justify-content-center">
+              <h1>¿Deseas agregar método de pago?</h1>
+            </div>
+            <div class="d-flex flex-row justify-content-between mt-5">
+              <button id="enOtroMomento" class="btn btn-secondary" (click)="register()">En otro momento</button>
+              <button class="btn btn-primary" (click)="cambiarVista()">Agregar método de pago</button>
+            </div>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="vistaActual === 'metodo-pago'">
+          <h3>Agregar Método de Pago</h3>
+          <ul class="nav nav-tabs mt-2">
+            <li class="nav-item">
+              <a class="nav-link active" role="button" [ngClass]="{'active': metodoPagoSeleccionado === 'tarjeta'}" (click)="metodoPagoSeleccionado = 'tarjeta'">Tarjeta</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" role="button" [ngClass]="{'active': metodoPagoSeleccionado === 'efectivo'}" (click)="metodoPagoSeleccionado = 'efectivo'">Efectivo</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" role="button" [ngClass]="{'active': metodoPagoSeleccionado === 'transferencia'}" (click)="metodoPagoSeleccionado = 'transferencia'">Transferencia</a>
+            </li>
+          </ul>
+
+          <div class="w-full p-4">
+            <ng-container *ngIf="metodoPagoSeleccionado === 'tarjeta'">
+              <h5 class>Agregar Tarjeta</h5>
+              <div class="row">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8">
+                  <form [formGroup]="tarjetaForm">
+                    <div class="row">
+                      <div class="col-12">
+                        <label for="form-label">Numero de Tarjeta</label>
+                        <input type="text" class="form-control" [ngClass]="{'is-invalid': notValidNumeroTarjeta}" formControlName="numero" placeholder="xxxx-xxxx-xxxx-xxxx">
+                        <div class="invalid-feedback">
+                          La tarjeta debe tener un minimo de 16 caracteres.
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row mt-3">
+                      <div class="col-lg-4">
+                        <label for="form-label">Mes de Expiracion</label>
+                        <input type="number" class="form-control" [ngClass]="{'is-invalid': notValidMesExpTarjeta}" formControlName="mesExp" placeholder="##">
+                        <div class="invalid-feedback">
+                          Mes de Expiracion es requerida.
+                        </div>
+                      </div>
+                      <div class="col-lg-4">
+                        <label for="form-label">Año de Expiracion</label>
+                        <input type="number" class="form-control" [ngClass]="{'is-invalid': notValidYearExpTarjeta}" formControlName="yearExp" placeholder="####">
+                        <div class="invalid-feedback">
+                          Año de Expiracion es requerida.
+                        </div>
+                      </div>
+                      <div class="col-lg-4">
+                        <label for="form-label">CVV</label>
+                        <input type="text" class="form-control" [ngClass]="{'is-invalid': notValidCVVTarjeta}" formControlName="cvv" placeholder="CVV">
+                        <div class="invalid-feedback">
+                          CVV es requerido.
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="col-lg-2"></div>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="metodoPagoSeleccionado !== 'tarjeta'">
+              <div class="d-flex justify-content-center">
+                <h6 class="h6">Método de pago '{{metodoPagoSeleccionado}}' seleccionado.</h6>
+              </div>
+            </ng-container>
+            <div class="d-flex justify-content-between">
+              <button class="btn btn-secondary" (click)="vistaActual = 'elegir-opcion'">Regresar</button>
+              <button class="btn btn-primary" (click)="onAgregarMetodoPago()">Agregar</button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+    <div class="col-md-2"></div>
+  </div>
+
+</div>

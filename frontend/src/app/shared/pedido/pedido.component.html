@@ -1,0 +1,57 @@
+<app-loading *ngIf="loading"></app-loading>
+<div class="container" *ngIf="!loading">
+  <div class="row mt-5">
+    <div class="col-lg-10">
+      <h1>
+        {{pedido.correlativo}}
+        <small>
+          <span class="badge text-bg-warning" *ngIf="pedido.estado_pedido_id === 1">PENDIENTE</span>
+          <span class="badge text-bg-primary" *ngIf="pedido.estado_pedido_id === 2">EN RUTA</span>
+          <span class="badge text-bg-danger" *ngIf="pedido.estado_pedido_id === 3">RECHAZADO</span>
+          <span class="badge text-bg-success" *ngIf="pedido.estado_pedido_id === 4">ENTREGADO</span>
+        </small>
+    </h1>
+    
+    </div>
+    <div class="col-lg">
+      <div class="d-grid gap-2">
+        <button class="btn btn-sm btn-secondary" (click)="atras()">Atras</button>
+      </div>
+    </div>
+  </div>
+  <hr>
+
+  <div class="row">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-8">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario</th>
+            <th>Valor Agregado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let prod of pedido.detalles; let i = index;">
+            <th>{{i + 1}}</th>
+            <td>{{prod.nombre}}</td>
+            <td>{{prod.cantidad}}</td>
+            <td>{{prod.precio | currency: 'Q'}}</td>
+            <td>{{(prod.precio * prod.cantidad) | currency: 'Q'}}</td>
+          </tr>
+          <tr>
+            <th>Total</th>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>{{total | currency: 'Q'}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-lg-2"></div>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+<div style="width: 100%;" class="p-4">
+  <div class="row">
+      <div class="col-md-10">
+          <h3 class="fs-4">CV</h3>
+      </div>
+  </div>
+  <hr>
+  <div class="row">
+    <embed [src]="pdfLink" class="pdf-content" type="application/pdf"/>
+    
+  </div>
+  
+  <div class="d-flex justify-content-end mt-3">
+      <button class="btn btn-secondary" (click)="modal.close()">Cerrar</button>
+  </div>
+
+</div>

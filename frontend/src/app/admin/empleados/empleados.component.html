@@ -1,0 +1,71 @@
+<div class="container">
+  <div class="row mt-5">
+    <div class="col-lg-10">
+      <h1>Empleados</h1>
+    </div>
+    <div class="col-lg">
+      <div class="d-grid gap-2">
+        <button class="btn btn-primary btn-sm" (click)="crearEmpleado()">Nuevo Emleado</button>
+      </div>
+    </div>
+  </div>
+  <hr>
+
+  <app-loading *ngIf="loading"></app-loading>
+
+  <table class="table mt-3" *ngIf="!loading">
+    <thead class="table-dark">
+      <tr>
+        <th></th>
+        <th>Nombre</th>
+        <th>DPI</th>
+        <th>Telefono</th>
+        <th>Genero</th>
+        <th>Edad</th>
+        <th>Seguro Social</th>
+        <th>Estado Civil</th>
+        <th>Fecha de Registro</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let empleado of empleados">
+        <td>
+          <img [src]="empleado.fotografia" class="rounded float-start fotografia" alt="fotografia">
+        </td>
+        <td>
+          {{empleado.nombre_completo}}
+        </td>
+        <td>
+          {{empleado.dpi}}
+        </td>
+        <td>
+          {{empleado.telefono}}
+        </td>
+        <td>
+          {{empleado.genero === 'F' ? 'Mujer' : 'Hombre'}}
+        </td>
+        <td>
+          {{empleado.edad}}
+        </td>
+        <td>
+          {{empleado.seguro_social}}
+        </td>
+        <td>
+          {{empleado.estado_civil}}
+        </td>
+        <td>{{empleado.fecha | date: 'short'}}</td>
+        <td>
+          <span class="badge" [ngClass]="{'text-bg-success': empleado.estado_usuario === 'ACTIVO', 'text-bg-danger': empleado.estado_usuario !== 'ACTIVO'}">
+            {{empleado.estado_usuario}}
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-secondary mx-3" ngbTooltip="Editar" (click)="editarEmpleado(empleado.id)"><i class="bi bi-pencil-square"></i></button>
+          <button class="btn btn-warning" ngbTooltip="Reestablecer Contraseña" (click)="reestablecerPassword(empleado)"><i class="bi bi-arrow-clockwise"></i></button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

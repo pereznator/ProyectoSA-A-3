@@ -1,0 +1,64 @@
+<div class="container">
+  <div class="row mt-5">
+    <div class="col-lg-10">
+      <h1>Mi Carrito</h1>
+    </div>
+    <div class="col-lg">
+      <div class="d-grid gap-2">
+        <button id="crearOrden" class="btn btn-success btn-sm" (click)="crearOrden()">Crear Orden</button>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <app-loading *ngIf="loading"></app-loading>
+
+  <ng-container *ngIf="!loading">
+    <table class="table" *ngIf="carrito">
+      <thead class="table-dark">
+        <tr>
+          <th>Nombre Producto</th>
+          <th>Precio Unidad</th>
+          <th>Cantidad</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="carrito.carrito.productos.length > 0">
+        <tr *ngFor="let producto of carrito.carrito.productos; let i = index;">
+          <td>{{producto.nombre_producto}}</td>
+          <td>{{producto.precio_unidad| currency: 'Q'}}</td>
+          <td>
+            <input type="number" class="form-control form-control-sm" [(ngModel)]="producto.cantidad" style="width: 5vw;">
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-danger" ngbTooltip="Eliminar del Carrito" (click)="eliminarProducto(i)">
+              <i class="bi bi-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <th></th>
+          <th></th>
+          <th>Total</th>
+          <th></th>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td>{{total | currency: 'Q'}}</td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-container *ngIf="carrito">
+      <div class="alert alert-warning" *ngIf="carrito.carrito.productos.length === 0">
+        No hay productos en el carrito por el momento.
+      </div>
+      <div class="d-flex justify-content-end" *ngIf="carrito.carrito.productos.length > 0">
+        <button class="btn btn-primary" (click)="actualizar()">Actualizar Carrito</button>
+      </div>
+    </ng-container>
+    <div class="alert alert-warning" *ngIf="!carrito">
+      No hay productos en el carrito por el momento.
+    </div>
+  </ng-container>
+</div>

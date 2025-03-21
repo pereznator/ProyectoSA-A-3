@@ -1,0 +1,75 @@
+<div class="container">
+  <div class="row mt-5">
+    <div class="col-lg-10">
+      <h1>Crear Pedido</h1>
+    </div>
+    <div class="col-lg">
+      <div class="d-grid gap-2">
+        <button class="btn btn-sm btn-secondary">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <app-loading *ngIf="loading"></app-loading>
+
+  <ng-container *ngIf="!loading">
+    <div class="row">
+      <div class="col-lg">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Nombre</th>
+              <th>Cantidad</th>
+              <th>Precio Unitario</th>
+              <th>Valor Agregado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let prod of carrito.carrito.productos; let i = index;">
+              <th>{{i + 1}}</th>
+              <td>{{prod.nombre_producto}}</td>
+              <td>{{prod.cantidad}}</td>
+              <td>{{prod.precio_unidad | currency: 'Q'}}</td>
+              <td>{{(prod.precio_unidad * prod.cantidad) | currency: 'Q'}}</td>
+            </tr>
+            <tr>
+              <th>Total</th>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>{{total | currency: 'Q'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-lg">
+        <div class="row">
+          <div class="col-lg">
+            <h4>Método de Pago</h4>
+          </div>
+        </div>
+        Selecciona el método de pago con el que ejecutaras el pago de los productos listados en la tabla de la factura. Si deseas agregar otro método de pago haz click 
+        <a class="link" role="button" (click)="irAMetodosPago()">aqui</a>
+        <select id="seleccionarMetodoPago" class="form-select mt-3" [(ngModel)]="metodoPagoSeleccionadoId">
+          <option [ngValue]="null">Seleccionar...</option>
+          <option *ngFor="let metodo of metodosPago" [ngValue]="metodo.id">{{metodo.detalles}}</option>
+        </select>
+        <ng-container *ngIf="metodoPagoSeleccionadoId">
+          <ng-container *ngIf="metodoPagoSeleccionado.tipo_metodo_pago === 'TRANSFERENCIA'">
+            <div class="alert alert-warning mt-3" >
+              Es necesario subir un comprobante de la transferencia en formato PDF para corroborar la validez del pago.
+            </div>
+            <div class="row">
+              <div class="col-lg">
+                <input type="file" class="form-control" (change)="onCVSelected($event)">
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+        <button id="confirmarOrden" class="btn btn-primary mt-3" [disabled]="!metodoPagoSeleccionadoId" (click)="confirmar()">Confirmar</button>
+      </div>
+    </div>
+  </ng-container>
+
+</div>

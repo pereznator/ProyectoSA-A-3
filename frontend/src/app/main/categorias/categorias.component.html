@@ -1,0 +1,45 @@
+<div class="container">
+  <div class="row mt-5">
+    <div class="col-lg-10">
+      <h1>Categorías</h1>
+    </div>
+    <div class="col-lg" *ngIf="user">
+      <div class="d-grid gap-2" *ngIf="user.tipoUsuario === 'ADMINISTRADOR'">
+        <button class="btn btn-sm btn-primary" (click)="crearCategoria()">
+          Nueva Categoría
+        </button>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <app-loading *ngIf="loading"></app-loading>
+  <div class="row">
+    <div class="col-lg-4"></div>
+    <div class="col-lg-4">
+      <table class="table text-center mt-3" *ngIf="!loading">
+        <thead class="table-dark">
+          <tr>
+            <th>Categoría</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let categoria of categorias">
+            <td>{{categoria.descripcion}}</td>
+            <td>
+              <button class="btn btn-sm btn-primary mx-3" ngbTooltip="Ver" (click)="verCategoria(categoria.id)">
+                <i class="bi bi-eye"></i>
+              </button>
+              <ng-container *ngIf="user">
+                <button class="btn btn-sm btn-danger" ngbTooltip="Eliminar" *ngIf="user.tipoUsuario === 'ADMINISTRADOR'">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </ng-container>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-lg-4"></div>
+  </div>
+</div>

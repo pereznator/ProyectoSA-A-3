@@ -1,0 +1,52 @@
+<div class="container">
+  <div class="row mt-5">
+    <div class="col-lg-9">
+      <h1>Proveedores</h1>
+    </div>
+    <div class="col-lg">
+      <div class="d-grid gap-2">
+        <button class="btn btn-sm btn-primary" (click)="crearProveedor()">
+          Nuevo Proveedor
+        </button>
+      </div>
+    </div>
+    <div class="col-lg">
+      <div class="d-grid gap-2">
+        <button class="btn btn-sm btn-secondary" (click)="atras()">
+          Atras
+        </button>
+      </div>
+    </div>
+  </div>
+  <hr>
+  <app-loading *ngIf="loading"></app-loading>
+  <div class="row">
+    <div class="col-lg-3"></div>
+    <div class="col-lg">
+      <table class="table text-center mt-3" *ngIf="!loading">
+        <thead class="table-dark">
+          <tr>
+            <th>Nombre</th>
+            <th>Fecha Creación</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let proveedor of proveedores">
+            <td>{{proveedor.nombre}}</td>
+            <td>{{proveedor.fecha}}</td>
+            <td>
+              <!-- <button class="btn btn-sm btn-primary mx-3" ngbTooltip="Ver">
+                <i class="bi bi-eye"></i>
+              </button> -->
+              <button class="btn btn-sm btn-danger" ngbTooltip="Eliminar" (click)="eliminar(proveedor.id)">
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-lg-3"></div>
+  </div>
+</div>

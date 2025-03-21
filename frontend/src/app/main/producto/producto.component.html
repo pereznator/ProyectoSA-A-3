@@ -1,0 +1,149 @@
+<div class="container mt-5">
+  <app-loading *ngIf="loading"></app-loading>
+  <div class="row" *ngIf="!loading">
+      <div class="col-md-11">
+          <h1>
+              {{producto.nombre}}
+              <small>({{producto.fecha | date: 'yyyy'}})</small>
+          </h1>
+      </div>
+      <div class="col-lg-1">
+          <div class="d-grid gap-2">
+              <button class="btn btn-secondary" (click)="location.back()">Regresar</button>
+          </div>
+      </div>
+  </div>
+  <hr>
+  <div class="row" *ngIf="!loading">
+      <div class="col-lg-3"></div>
+      <div class="col-lg-3">
+        <div class="row">
+          <div class="col">
+            <div class="card">
+              <img [src]="producto.portada" class="card-img-top img-perfil" alt="...">
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col">
+            <div class="d-grid gap-2">
+              <button id="agregarAlCarrito" class="btn btn-success" (click)="agregarAlCarrito()">Agregar al Carrito</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+          <div class="row">
+              <div class="col-lg-3">
+                  <dt class="form-label">Titulo</dt>
+              </div>
+              <div class="col-lg">
+                  <p>{{producto.nombre}}</p>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-lg-3">
+                  <dt class="form-label">Categoria</dt>
+              </div>
+              <div class="col-lg">
+                  <p>{{producto.categoria}}</p>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-lg-3">
+                  <dt class="form-label">Proveedor</dt>
+              </div>
+              <div class="col-lg">
+                  <p>{{producto.proveedor}}</p>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-lg-3">
+                  <dt class="form-label">Año de Publicación</dt>
+              </div>
+              <div class="col-lg">
+                  <p>{{producto.fecha | date}}</p>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-lg-3">
+                  <dt class="form-label">Precio</dt>
+              </div>
+              <div class="col-lg">
+                  <p>{{producto.precio| currency: 'Q'}}</p>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-lg-3">
+                  <dt class="form-label">Unidades Disponibles</dt>
+              </div>
+              <div class="col-lg">
+                  <p>{{producto.enExistencia}}</p>
+              </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <p class="lead" style="text-align: justify; text-justify: inter-word;">{{producto.descripcion}}</p>
+            </div>
+          </div>
+      </div>
+  </div>
+  <!-- COMENTARIOS -->
+  <div class="row" *ngIf="!loading">
+    <div class="col-lg-2"></div>
+    <div class="col-lg-8">
+        <div class="d-flex justify-content-between">
+            <h3>Comentarios</h3>
+            <button class="btn btn-primary btn-sm" *ngIf="!showComentarioInput && user" (click)="showComentarioInput = true">Comentar</button>
+        </div>
+        <ng-container *ngIf="showComentarioInput">
+            <div class="row">
+                <div class="col">
+                    <textarea class="form-control" placeholder="Escribe tu comentario del libro." rows="5" cols="30" [(ngModel)]="nuevoComentario"></textarea>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between mt-2" style="width: 100%;">
+              <div>
+                <select class="form-select form-select-sm" [(ngModel)]="nuevaPuntuacion">
+                  <option [ngValue]="null">Seleccionar Puntaje</option>
+                  <option [ngValue]="1">1/5</option>
+                  <option [ngValue]="2">2/5</option>
+                  <option [ngValue]="3">3/5</option>
+                  <option [ngValue]="4">4/5</option>
+                  <option [ngValue]="5">5/5</option>
+                </select>  
+              </div>
+              <div>
+                <button class="btn btn-secondary mx-3" (click)="showComentarioInput = false">Cancelar</button>
+                <button class="btn btn-primary" (click)="publicarComentario()" [disabled]="nuevaPuntuacion === null || nuevoComentario === ''">Publicar</button>
+              </div>
+            </div>
+        </ng-container>
+        <div class="card mt-3" *ngFor="let comentario of comentarios">
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-lg-10">
+                        {{comentario.nombre}} {{comentario.apellido}}
+                        <small>({{comentario.valoracion}}/5)</small>
+                    </div>
+                    <div class="col-lg" *ngIf="user">
+                        <div class="d-grid gap-2">
+                            <button class="btn btn-outline-danger" *ngIf="user.idCliente === comentario.cliente_id" (click)="eliminarComentario(comentario.id)">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <p><em>{{comentario.comentario}}</em></p>
+            </div>
+            <div class="card-footer text-body-secondary">
+              {{comentario.fecha_registro | date}}
+            </div>
+        </div>
+        <div class="alert alert-info mt-3" *ngIf="comentarios.length === 0">
+            Aun no hay comentarios publicados para este juego.
+        </div>
+    </div>
+    <div class="col-lg-2"></div>
+</div>
+</div>
