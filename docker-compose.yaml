@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  db-userauth:
+    image: mysql:latest
+    container_name: mysql-auth-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: auth_db  # base de datos para usuarios y auth
+      TZ: America/Guatemala
+    ports:
+      - "3307:3306"  # el puerto externo es 3307 para no chocar con el otro
+    volumes:
+      - auth_data:/var/lib/mysql
+
+  db-product:
+    image: mysql:latest
+    container_name: mysql-product-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: product_db  # base de datos para productos
+      TZ: America/Guatemala
+    ports:
+      - "3308:3306"  # puerto externo 3308
+    volumes:
+      - product_data:/var/lib/mysql
+
+volumes:
+  auth_data:
+    driver: local
+  product_data:
+    driver: local
