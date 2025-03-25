@@ -1,3 +1,4 @@
+
 create
     definer = root@`%` procedure AgregarReviewProducto(IN p_product_id int, IN p_user_id int, IN p_rating int, IN p_review text)
 BEGIN
@@ -247,4 +248,3 @@ BEGIN
     FROM products p
     JOIN categories c ON c.id = p.category_id;
 END;
-

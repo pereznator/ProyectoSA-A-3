@@ -25,7 +25,7 @@ create table users
     phone           varchar(20)                                           not null,
     dob             date                                                  not null,
     gender          enum ('male', 'female')                               not null,
-    profile_picture longtext                                              null,
+    profile_picture varchar(255)                                          null,
     status          enum ('active', 'inactive') default 'active'          not null,
     role            enum ('admin', 'user')      default 'user'            not null,
     created_at      timestamp                   default CURRENT_TIMESTAMP null,
@@ -136,4 +136,3 @@ create table user_sessions
 
 create index user_id
     on user_sessions (user_id);
-
