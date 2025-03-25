@@ -699,4 +699,3 @@ BEGIN
         'user_id', v_user_id
     ) AS resultado;
 END;
-
