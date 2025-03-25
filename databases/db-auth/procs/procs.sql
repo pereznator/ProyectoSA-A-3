@@ -179,6 +179,43 @@ BEGIN
 END;
 
 create
+    definer = root@`%` procedure CerrarSesion(IN p_usuario_id int)
+BEGIN
+    DECLARE v_error_message VARCHAR(255);
+
+    -- Manejo de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
+
+        IF v_error_message IS NULL THEN
+            SET v_error_message = 'Error desconocido';
+        END IF;
+
+        SELECT JSON_OBJECT(
+            'status', 'error',
+            'message', CONCAT('Error al cerrar sesión: ', v_error_message)
+        ) AS resultado;
+
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    -- Marcar todas las sesiones activas del usuario como inactivas
+    UPDATE user_sessions
+    SET is_active = FALSE
+    WHERE user_id = p_usuario_id AND is_active = TRUE;
+
+    COMMIT;
+
+    SELECT JSON_OBJECT(
+        'status', 'success',
+        'message', 'Sesiones cerradas correctamente.'
+    ) AS resultado;
+END;
+
+create
     definer = root@`%` procedure CrearUsuario(IN p_first_name varchar(100), IN p_last_name varchar(100),
                                               IN p_email varchar(150), IN p_username varchar(100),
                                               IN p_password varchar(255), IN p_phone varchar(20), IN p_dob date,
@@ -188,11 +225,12 @@ BEGIN
     DECLARE v_error_message VARCHAR(255);
     DECLARE v_user_id INT;
     DECLARE v_primary_count INT DEFAULT 0;
+    DECLARE v_password_hashed VARCHAR(64);
 
+    -- Manejador de errores
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
-
         IF v_error_message IS NULL THEN
             SET v_error_message = 'Error desconocido';
         END IF;
@@ -207,24 +245,27 @@ BEGIN
 
     START TRANSACTION;
 
-    -- Validación: correo y username únicos
+    -- Validar que el correo o username no existan
     IF EXISTS (SELECT 1 FROM users WHERE email = p_email OR username = p_username) THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Correo o username ya existe.';
     END IF;
+
+    -- Encriptar contraseña con SHA-256
+    SET v_password_hashed = SHA2(p_password, 256);
 
     -- Insertar usuario
     INSERT INTO users (
         first_name, last_name, email, username, password,
         phone, dob, gender, profile_picture, role, status, created_at, updated_at
     ) VALUES (
-        p_first_name, p_last_name, p_email, p_username, p_password,
+        p_first_name, p_last_name, p_email, p_username, v_password_hashed,
         p_phone, p_dob, p_gender, p_profile_picture, p_role, 'inactive', NOW(), NOW()
     );
 
     SET v_user_id = LAST_INSERT_ID();
 
-    -- Validación: solo una dirección principal
+    -- Validar que solo una dirección sea principal
     SET v_primary_count = (
         SELECT COUNT(*)
         FROM JSON_TABLE(p_addresses_json, '$[*]' COLUMNS (
@@ -235,13 +276,12 @@ BEGIN
 
     IF v_primary_count > 1 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Solo se permite una dirección primaria.';
+        SET MESSAGE_TEXT = 'Solo se permite una dirección principal.';
     END IF;
 
-    -- Recorrer e insertar direcciones
+    -- Insertar direcciones
     SET @i = 0;
     SET @total = JSON_LENGTH(p_addresses_json);
-
     WHILE @i < @total DO
         SET @address = JSON_UNQUOTE(JSON_EXTRACT(p_addresses_json, CONCAT('$[', @i, '].address')));
         SET @city = JSON_UNQUOTE(JSON_EXTRACT(p_addresses_json, CONCAT('$[', @i, '].city')));
@@ -313,14 +353,48 @@ BEGIN
 END;
 
 create
-    definer = root@`%` procedure IniciarSesion(IN p_login varchar(150), IN p_password varchar(255))
+    definer = root@`%` procedure ExpirarSesiones()
 BEGIN
     DECLARE v_error_message VARCHAR(255);
-    DECLARE v_user_id INT;
-    DECLARE v_password VARCHAR(255);
-    DECLARE v_role ENUM('admin', 'user');
 
-    -- Manejo de errores general
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
+        IF v_error_message IS NULL THEN
+            SET v_error_message = 'Error desconocido';
+        END IF;
+
+        SELECT JSON_OBJECT(
+            'status', 'error',
+            'message', v_error_message
+        ) AS resultado;
+
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    -- Marcar como inactivos todos los tokens expirados
+    UPDATE user_sessions
+    SET is_active = FALSE
+    WHERE is_active = TRUE AND expires_at <= NOW();
+
+    COMMIT;
+
+    SELECT JSON_OBJECT(
+        'status', 'success',
+        'message', 'Sesiones expiradas marcadas como inactivas.'
+    ) AS resultado;
+END;
+
+create
+    definer = root@`%` procedure GuardarSesionUsuario(IN p_user_id int, IN p_token text, IN p_ip_address varchar(50),
+                                                      IN p_user_agent varchar(255), IN p_expires_at datetime)
+BEGIN
+    DECLARE v_error_message VARCHAR(255);
+    DECLARE v_session_id INT;
+
+    -- Manejador de errores
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
     BEGIN
         GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
@@ -337,13 +411,60 @@ BEGIN
 
     START TRANSACTION;
 
-    -- Intentar buscar por correo (si contiene @)
+    -- Insertar sesión
+    INSERT INTO user_sessions (
+        user_id, token, ip_address, user_agent, is_active, expires_at, created_at
+    ) VALUES (
+        p_user_id, p_token, p_ip_address, p_user_agent, TRUE, p_expires_at, NOW()
+    );
+
+    SET v_session_id = LAST_INSERT_ID();
+
+    COMMIT;
+
+    SELECT JSON_OBJECT(
+        'status', 'success',
+        'message', 'Sesión registrada correctamente.',
+        'session_id', v_session_id
+    ) AS resultado;
+END;
+
+create
+    definer = root@`%` procedure IniciarSesion(IN p_login varchar(150), IN p_password varchar(255))
+BEGIN
+    DECLARE v_error_message VARCHAR(255);
+    DECLARE v_user_id INT;
+    DECLARE v_password_hashed VARCHAR(64);
+    DECLARE v_password_db VARCHAR(255);
+    DECLARE v_role ENUM('admin', 'user');
+
+    -- Manejador de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
+        IF v_error_message IS NULL THEN
+            SET v_error_message = 'Error desconocido';
+        END IF;
+
+        SELECT JSON_OBJECT(
+            'status', 'error',
+            'message', v_error_message
+        ) AS resultado;
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    -- Encriptar la contraseña ingresada
+    SET v_password_hashed = SHA2(p_password, 256);
+
+    -- Buscar por correo o username
     IF p_login LIKE '%@%' THEN
-        SELECT id, password, role INTO v_user_id, v_password, v_role
+        SELECT id, password, role INTO v_user_id, v_password_db, v_role
         FROM users
         WHERE email = p_login AND status = 'active';
     ELSE
-        SELECT id, password, role INTO v_user_id, v_password, v_role
+        SELECT id, password, role INTO v_user_id, v_password_db, v_role
         FROM users
         WHERE username = p_login AND status = 'active';
     END IF;
@@ -354,8 +475,8 @@ BEGIN
         SET MESSAGE_TEXT = 'Usuario no encontrado o inactivo.';
     END IF;
 
-    -- Validar contraseña
-    IF v_password != p_password THEN
+    -- Comparar hash
+    IF v_password_db != v_password_hashed THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'Contraseña incorrecta.';
     END IF;
@@ -642,6 +763,56 @@ BEGIN
 END;
 
 create
+    definer = root@`%` procedure ValidarTokenUsuario(IN p_token text)
+BEGIN
+    DECLARE v_error_message VARCHAR(255);
+    DECLARE v_user_id INT;
+    DECLARE v_expires_at DATETIME;
+
+    -- Manejo de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
+        IF v_error_message IS NULL THEN
+            SET v_error_message = 'Error desconocido';
+        END IF;
+
+        SELECT JSON_OBJECT(
+            'status', 'error',
+            'message', v_error_message
+        ) AS resultado;
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    -- Buscar token válido y activo
+    SELECT user_id, expires_at
+    INTO v_user_id, v_expires_at
+    FROM user_sessions
+    WHERE token = p_token
+      AND is_active = TRUE
+      AND expires_at > NOW()
+    LIMIT 1;
+
+    -- Si no se encontró sesión válida
+    IF v_user_id IS NULL THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Token inválido, expirado o no activo.';
+    END IF;
+
+    COMMIT;
+
+    -- Respuesta
+    SELECT JSON_OBJECT(
+        'status', 'success',
+        'message', 'Token válido.',
+        'user_id', v_user_id,
+        'expires_at', v_expires_at
+    ) AS resultado;
+END;
+
+create
     definer = root@`%` procedure VerificarCorreo(IN p_token varchar(255))
 BEGIN
     DECLARE v_error_message VARCHAR(255);
@@ -699,3 +870,4 @@ BEGIN
         'user_id', v_user_id
     ) AS resultado;
 END;
+
