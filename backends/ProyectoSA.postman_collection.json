@@ -573,7 +573,94 @@
 		},
 		{
 			"name": "product-service",
-			"item": []
+			"item": [
+				{
+					"name": "product",
+					"item": [
+						{
+							"name": "Crear Producto",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Laptop Gamer\",\n  \"description\": \"Alta gama para juegos\",\n  \"price\": 9500.00,\n  \"stock_quantity\": 10,\n  \"code\": \"LP-GAMER-001\",\n  \"main_image_url\": \"https://ejemplo.com/laptop.jpg\",\n  \"value\": 9500.00,\n  \"category_name\": \"Tecnología\",\n  \"marcas\": [\"Asus\", \"NVIDIA\"],\n  \"regiones\": [\"Petén\", \"Izabal\"],\n  \"imagenes\": [\n    \"https://ejemplo.com/laptop-lado.jpg\",\n    \"https://ejemplo.com/laptop-caja.jpg\"\n  ]\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{product-service-host}}:{{product-service-port}}/api/product/crear-producto",
+									"protocol": "http",
+									"host": [
+										"{{product-service-host}}"
+									],
+									"port": "{{product-service-port}}",
+									"path": [
+										"api",
+										"product",
+										"crear-producto"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Agregar Review",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"product_id\": 8,\n  \"user_id\": 2,\n  \"rating\": 4,\n  \"review\": \"Excelente producto, llegó rápido y funciona perfecto.\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{product-service-host}}:{{product-service-port}}/api/product/agregar-review-producto",
+									"protocol": "http",
+									"host": [
+										"{{product-service-host}}"
+									],
+									"port": "{{product-service-port}}",
+									"path": [
+										"api",
+										"product",
+										"agregar-review-producto"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener producto",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{product-service-host}}:{{product-service-port}}/api/product/obtener-productos",
+									"protocol": "http",
+									"host": [
+										"{{product-service-host}}"
+									],
+									"port": "{{product-service-port}}",
+									"path": [
+										"api",
+										"product",
+										"obtener-productos"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
 		}
 	],
 	"variable": [
@@ -585,6 +672,16 @@
 		{
 			"key": "auth-service-port",
 			"value": "3001",
+			"type": "default"
+		},
+		{
+			"key": "product-service-port",
+			"value": "127.0.0.1",
+			"type": "default"
+		},
+		{
+			"key": "product-service-host",
+			"value": "127.0.0.1",
 			"type": "default"
 		}
 	]
