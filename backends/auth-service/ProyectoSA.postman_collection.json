@@ -1,0 +1,591 @@
+{
+	"info": {
+		"_postman_id": "001ae377-6722-4a43-82fa-fceac3d2b4a1",
+		"name": "ProyectoSA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20178200"
+	},
+	"item": [
+		{
+			"name": "auth-service",
+			"item": [
+				{
+					"name": "user",
+					"item": [
+						{
+							"name": "Crear Usuario",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"first_name\": \"Jose\",\n  \"last_name\": \"Panaza\",\n  \"email\": \"josepanaza@gmail.com\",\n  \"username\": \"jpanaza\",\n  \"password\": \"1234\",\n  \"phone\": \"55113538\",\n  \"dob\": \"2003-06-19\",\n  \"gender\": \"male\",\n  \"role\": \"admin\",\n  \"profile_picture\": null,\n  \"addresses\": [\n    {\n      \"address\": \"Zona 6, Catalina\",\n      \"city\": \"Villa Nueva\",\n      \"department\": \"Guatemala\",\n      \"is_primary\": 1\n    },\n    {\n      \"address\": \"19 Calle 11-66\",\n      \"city\": \"Guatemala Zona 11\",\n      \"department\": \"Guatemala\",\n      \"is_primary\": 0\n    }\n  ]\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/crear-usuario",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"crear-usuario"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Crear Usuario",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"first_name\": \"Jose\",\n  \"last_name\": \"Panaza\",\n  \"email\": \"josepanaza@gmail.com\",\n  \"username\": \"jpanaza\",\n  \"password\": \"1234\",\n  \"phone\": \"55113538\",\n  \"dob\": \"2003-06-19\",\n  \"gender\": \"male\",\n  \"role\": \"admin\",\n  \"profile_picture\": null,\n  \"addresses\": [\n    {\n      \"address\": \"Zona 6, Catalina\",\n      \"city\": \"Villa Nueva\",\n      \"department\": \"Guatemala\",\n      \"is_primary\": 1\n    },\n    {\n      \"address\": \"19 Calle 11-66\",\n      \"city\": \"Guatemala Zona 11\",\n      \"department\": \"Guatemala\",\n      \"is_primary\": 0\n    }\n  ]\n}\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/crear-usuario",
+											"protocol": "http",
+											"host": [
+												"{{auth-service-host}}"
+											],
+											"port": "{{auth-service-port}}",
+											"path": [
+												"api",
+												"user",
+												"crear-usuario"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:5173"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "73"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"49-oYw8Rt8gf499YHkK+pSllt7NQMY\""
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 26 Mar 2025 00:18:21 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"success\",\n    \"message\": \"Usuario creado exitosamente.\",\n    \"user_id\": 4\n}"
+								}
+							]
+						},
+						{
+							"name": "Reportar Usuario",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"reported_user_id\": 2,\n  \"reporter_user_id\": 4,\n  \"reason\": \"Comportamiento ofensivo en el chat\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/reportar-usuario",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"reportar-usuario"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Activar Usuario",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 4\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/activar-usuario",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"activar-usuario"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Estado Reporte",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"report_id\": 1,\n  \"estado\": \"reviewed\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/actualizar-estado-reporte",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"actualizar-estado-reporte"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Perfil Usuario",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 2,\n  \"email\": \"lucia.nueva@email.com\",\n  \"phone\": \"12345678\",\n  \"addresses\": [\n    {\n      \"address\": \"Colonia El Manantial\",\n      \"city\": \"Mixco\",\n      \"department\": \"Guatemala\",\n      \"is_primary\": 1\n    }\n  ]\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/actualizar-perfil-usuario",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"actualizar-perfil-usuario"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Desactivar Usuario",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 2\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/desactivar-usuario",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"desactivar-usuario"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Reportes Usuario",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/obtener-reportes-usuarios",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"obtener-reportes-usuarios"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Usuario No Admin",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/obtener-usuarios-no-admin",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"obtener-usuarios-no-admin"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener usuario por ID",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/obtener-usuario-por-id/:user_id",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"obtener-usuario-por-id",
+										":user_id"
+									],
+									"variable": [
+										{
+											"key": "user_id",
+											"value": "4"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "auth",
+					"item": [
+						{
+							"name": "Iniciar Sesion",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"login\": \"josepanaza@gmail.com\",\n  \"password\": \"1234\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/auth/iniciar-sesion",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"auth",
+										"iniciar-sesion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Registrar Verificacion Email",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 4,\n  \"token\": \"5a7b6c9e-8dff-4e2f-bcd9-0c8de2f9a9f0\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/auth/registrar-verificacion-email",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"auth",
+										"registrar-verificacion-email"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Validar Token",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/auth/validar-token",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"auth",
+										"validar-token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Verificar Correo",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"token\":\"5a7b6c9e-8dff-4e2f-bcd9-0c8de2f9a9f0\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/auth/verificar-correo",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"auth",
+										"verificar-correo"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cerrar Sesion",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 4\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/auth/cerrar-sesion",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"auth",
+										"cerrar-sesion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Expirar Sesiones",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/auth/expirar-sesiones",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"auth",
+										"expirar-sesiones"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "api_works",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{auth-service-host}}:{{auth-service-port}}",
+							"protocol": "http",
+							"host": [
+								"{{auth-service-host}}"
+							],
+							"port": "{{auth-service-port}}"
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "product-service",
+			"item": []
+		}
+	],
+	"variable": [
+		{
+			"key": "auth-service-host",
+			"value": "127.0.0.1",
+			"type": "default"
+		},
+		{
+			"key": "auth-service-port",
+			"value": "3001",
+			"type": "default"
+		}
+	]
+}
