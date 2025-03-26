@@ -12,7 +12,7 @@ app.use(cookieParser());
 
 // Configurar CORS correctamente
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173', // Origen de la petición
+    origin: [process.env.CORS_ORIGIN, process.env.PRODUCT_SERVICE_URL],
     credentials: true, // Permitir el uso de cookies y JWT en el frontend
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
     allowedHeaders: ['Content-Type', 'Authorization'], // Headers permitidos
