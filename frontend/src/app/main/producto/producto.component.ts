@@ -86,7 +86,7 @@ export class ProductoComponent implements OnInit {
       this.router.navigate(["auth", "login"]);
       return;
     }
-    if (this.user.tipoUsuario !== "CLIENTE") {
+    if (this.user.role !== "user") {
       return;
     }
     const modal = this.modalService.open(AgregarCarritoComponent);

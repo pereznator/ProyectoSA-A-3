@@ -136,7 +136,7 @@ export class CrearOrdenComponent implements OnInit {
           this.clietSerivce.crearPago(pagoBody).pipe(take(1)).subscribe((respPago) => {
             console.log("RESP CARRITO", respPago);
             this.carrito.carrito.productos = []
-            this.clietSerivce.actualizarCarrito(this.user.idCarrito, this.carrito).pipe(take(1)).subscribe(respCarrito => {
+            this.clietSerivce.actualizarCarrito("this.user.idCarrito", this.carrito).pipe(take(1)).subscribe(respCarrito => {
               console.log("RESP CARRITO", respCarrito);
               this.loading = false;
               this.router.navigate(["cliente", "ordenes"]);

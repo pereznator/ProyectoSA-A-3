@@ -7,7 +7,7 @@ import { environment } from "../../environments/environment";
 
 @Injectable({ providedIn: "root" })
 export class AuthService {
-  private serverUrl: string = environment.serverUrl;
+  private serverUrl: string = environment.authServerUrl;
   private authenticated = false;
   private tokenSubject: BehaviorSubject<string>;
   private _user: ReplaySubject<User> = new ReplaySubject<User>(1);
@@ -38,38 +38,34 @@ export class AuthService {
   }
 
   login(body: any): Observable<any> {
-    if (body.username === 'admin') {
-      this.refreshToken = "123";
-      this.tokenSubject.next(this.refreshToken);
-      this.user = {
-        id: 1,
-        tipoUsuario: "ADMINISTRADOR",
-        email: "email@gmail.com",
-        emailVerified: true,
-        estado: "activo",
-        username: "adminUsername",
-        idCarrito: "1"
-      };
-      return of(true);
-    }
-    return this.httpClient.post(`${this.serverUrl}/auth/login`, body).pipe(
+    return this.httpClient.post(`${this.serverUrl}/api/auth/iniciar-sesion`, body, { withCredentials: true }).pipe(
       catchError((err) => {
         return of(false)
       }),
       switchMap((response: any) => {
-        if (response.AuthenticationResult.RefreshToken) {
-          this.refreshToken = response.AuthenticationResult.RefreshToken;
-        }
-        this.tokenSubject.next(response.AuthenticationResult.AccessToken);
-        this.getUser().pipe(take(1)).subscribe(userResponse => {
+        // if (response.AuthenticationResult.RefreshToken) {
+        //   this.refreshToken = response.AuthenticationResult.RefreshToken;
+        // }
+        // this.tokenSubject.next(response.AuthenticationResult.AccessToken);
+        this.getUser(response.user_id).pipe(take(1)).subscribe(userResponse => {
           this.user = {
-            tipoUsuario: userResponse.database.tipo_usuario,
-            email: userResponse.cognito.email,
-            emailVerified: userResponse.cognito.email_verified,
-            estado: userResponse.database.estado_usuario,
-            id: userResponse.database.id,
-            username: userResponse.cognito.Username,
-            idCarrito: userResponse.database.carrito_id
+            id: userResponse.user_id,
+            first_name: userResponse.first_name,
+            last_name: userResponse.last_name,
+            email: userResponse.email,
+            username: userResponse.username,
+            password: '', // No viene en la respuesta, puedes dejarlo vacío o null
+            phone: userResponse.phone,
+            dob: userResponse.dob,
+            gender: userResponse.gender,
+            role: userResponse.role,
+            profile_picture: userResponse.profile_picture,
+            addresses: userResponse.addresses.map(addr => ({
+              address: addr.address,
+              city: addr.city,
+              department: addr.department,
+              is_primary: addr.is_primary
+            }))
           };
           console.log(userResponse.database.estado_usuario);
         }, err => {
@@ -82,42 +78,38 @@ export class AuthService {
   }
 
   loginWithRefreshToken(): Observable<any> {
-    if (this.refreshToken === "123") {
-      this.refreshToken = "123";
-      this.tokenSubject.next(this.refreshToken);
-      this.user = {
-        id: 1,
-        tipoUsuario: "ADMINISTRADOR",
-        email: "email@gmail.com",
-        emailVerified: true,
-        estado: "activo",
-        username: "adminUsername",
-        idCarrito: "1"
-      };
-      return of(true);
-    }
-    return this.httpClient.get(`${this.serverUrl}/auth/refresh`, { headers: { authorization: `Bearer ${this.refreshToken}` } }).pipe(
+    return this.httpClient.get(`${this.serverUrl}/api/auth/validar-token`, { withCredentials: true }).pipe(
       catchError((err) => {
         console.log(err);
-        localStorage.removeItem('refreshToken');
+        // localStorage.removeItem('refreshToken');
         this.router.navigate(["auth", "login"]);
         // Remove the access token from the local storage
         return of(false)
       }),
       switchMap((response: any) => {
-        if (response.RefreshToken) {
-          this.refreshToken = response.RefreshToken;
-        }
-        this.tokenSubject.next(response.AccessToken);
-        this.getUser().pipe(take(1)).subscribe(userResponse => {
+        // if (response.RefreshToken) {
+        //   this.refreshToken = response.RefreshToken;
+        // }
+        // this.tokenSubject.next(response.AccessToken);
+        this.getUser(response.user_id).pipe(take(1)).subscribe(userResponse => {
           this.user = {
-            tipoUsuario: userResponse.database.tipo_usuario,
-            email: userResponse.cognito.email,
-            emailVerified: userResponse.cognito.email_verified,
-            estado: userResponse.database.estado_usuario,
-            id: userResponse.database.id,
-            username: userResponse.cognito.Username,
-            idCarrito: userResponse.database.carrito_id
+            id: userResponse.user_id,
+            first_name: userResponse.first_name,
+            last_name: userResponse.last_name,
+            email: userResponse.email,
+            username: userResponse.username,
+            password: '', // No viene en la respuesta, puedes dejarlo vacío o null
+            phone: userResponse.phone,
+            dob: userResponse.dob,
+            gender: userResponse.gender,
+            role: userResponse.role,
+            profile_picture: userResponse.profile_picture,
+            addresses: userResponse.addresses.map(addr => ({
+              address: addr.address,
+              city: addr.city,
+              department: addr.department,
+              is_primary: addr.is_primary
+            }))
           };
         }, err => {
           console.log(err);
@@ -144,14 +136,14 @@ export class AuthService {
     return this.httpClient.put(`${this.serverUrl}/cliente/${idSub}/reset-pwd`, body);
   }
 
-  getUser(): Observable<any> {
-    return this.httpClient.get(`${this.serverUrl}/auth/get-usr`, { headers: { authorization: `Bearer ${this.tokenSubject.value}` } }).pipe(
+  getUser(userId: string): Observable<any> {
+    return this.httpClient.get(`${this.serverUrl}/api/user/obtener-usuario-por-id/${userId}`, { withCredentials: true }).pipe(
       catchError((err) => {
         console.log(err);
         return of(false);
       }),
       switchMap((response: any) => {
-        return of(response);
+        return of(response.usuario);
       })
     )
   }
@@ -165,7 +157,7 @@ export class AuthService {
       switchMap(response => {
         console.log(response);
         // Remove the access token from the local storage
-        localStorage.removeItem('refreshToken');
+        // localStorage.removeItem('refreshToken');
     
         // Set the authenticated flag to false
         this.authenticated = false;

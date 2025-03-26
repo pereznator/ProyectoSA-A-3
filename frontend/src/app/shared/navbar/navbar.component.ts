@@ -45,9 +45,9 @@ export class NavbarComponent implements OnInit {
   }
 
   irAPerfil(): void {
-    if (this.user.tipoUsuario === "CLIENTE") {
+    if (this.user.role === "user") {
       this.router.navigate(["cliente", "perfil"])
-    } else if (this.user.tipoUsuario === "ADMINISTRADOR") {
+    } else if (this.user.role === "admin") {
       this.router.navigate(["admin", "perfil"])
     }
   }

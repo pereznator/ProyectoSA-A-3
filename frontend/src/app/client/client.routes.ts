@@ -9,13 +9,13 @@ import { CrearOrdenComponent } from "./ordenes/crear-orden/crear-orden.component
 import { VerOrdenComponent } from "./ordenes/ver-orden/ver-orden.component";
 
 const routes: Routes = [
-  { path: "perfil", component: PerfilComponent, data: { roles: ["CLIENTE"] }, canActivate: [hasPermission] },
-  { path: "carrito", component: CarritoComponent, data: { roles: ["CLIENTE"] }, canActivate: [hasPermission] },
-  { path: "ordenes", component: OrdenesComponent, data: { roles: ["CLIENTE"] }, canActivate: [hasPermission] },
-  { path: "ordenes/nuevo", component: CrearOrdenComponent, data: { roles: ["CLIENTE"] }, canActivate: [hasPermission] },
-  { path: "ordenes/:id", component: VerOrdenComponent, data: { roles: ["CLIENTE"] }, canActivate: [hasPermission] },
-  { path: "metodos-pago", component: MetodosPagoComponent, data: { roles: ["CLIENTE"] }, canActivate: [hasPermission] },
-  { path: "metodos-pago/nuevo", component: NuevoMetodoPagoComponent, data: { roles: ["CLIENTE"] }, canActivate: [hasPermission] },
+  { path: "perfil", component: PerfilComponent, data: { roles: ["user"] }, canActivate: [hasPermission] },
+  { path: "carrito", component: CarritoComponent, data: { roles: ["user"] }, canActivate: [hasPermission] },
+  { path: "ordenes", component: OrdenesComponent, data: { roles: ["user"] }, canActivate: [hasPermission] },
+  { path: "ordenes/nuevo", component: CrearOrdenComponent, data: { roles: ["user"] }, canActivate: [hasPermission] },
+  { path: "ordenes/:id", component: VerOrdenComponent, data: { roles: ["user"] }, canActivate: [hasPermission] },
+  { path: "metodos-pago", component: MetodosPagoComponent, data: { roles: ["user"] }, canActivate: [hasPermission] },
+  { path: "metodos-pago/nuevo", component: NuevoMetodoPagoComponent, data: { roles: ["user"] }, canActivate: [hasPermission] },
 ]
 
 export default routes;
