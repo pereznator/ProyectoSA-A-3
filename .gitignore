@@ -10,3 +10,7 @@
 /backends/auth-service/node_modules
 /backends/auth-service/dist
 /backends/auth-service/.env
+
+/backends/product-service/node_modules
+/backends/product-service/dist
+/backends/product-service/.env
