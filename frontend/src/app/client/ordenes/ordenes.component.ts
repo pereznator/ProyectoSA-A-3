@@ -41,7 +41,7 @@ export class OrdenesComponent implements OnInit {
 
   getPedidos(): void {
     this.loading = true;
-    this.clientService.obtenerPedidosDeCliente(this.user.idCliente).pipe(take(1)).subscribe(resp => {
+    this.clientService.obtenerPedidosDeCliente(this.user.id).pipe(take(1)).subscribe(resp => {
       console.log(resp);
       this.pedidos = resp.response_database.map(pedido => {
         if (pedido.tipo_metodo_pago === "TARJETA") {

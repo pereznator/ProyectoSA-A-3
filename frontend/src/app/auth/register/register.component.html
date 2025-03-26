@@ -4,7 +4,6 @@
     <div class="col-md-2"></div>
     <div class="col-md-8 rounded-3 bg-light">
       <div class="p-3" *ngIf="!loading">
-        <ng-container *ngIf="vistaActual == 'formulario-registro'">
           <h3>Registrate</h3>
           <form [formGroup]="registerForm">
             <div class="d-flex justify-content-between">
@@ -68,6 +67,35 @@
                 </div>
                 <div class="row mt-2">
                   <div class="col-lg">
+                    <label for="departamento">Departamento de Guatemala:</label>
+                    <select id="departamento" class="form-select" formControlName="departamento" [ngClass]="{'is-invalid': notValidDepartamento}">
+                      <option [ngValue]="null">-- Selecciona un departamento --</option>
+                      <option *ngFor="let depto of departamentos" [value]="depto">
+                        {{ depto }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="col-lg">
+                    <label for="fechaNacimiento">Fecha de Nacimiento</label>
+                    <input type="date" id="fechaNacimiento" class="form-control" [ngClass]="{'is-invalid': notValidFechaNacimiento}" formControlName="fechaNacimiento">
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <div class="col-lg-6">
+                    <label for="sexo">Sexo:</label>
+                    <select id="sexo" class="form-select" formControlName="sexo" [ngClass]="{'is-invalid': notValidSexo}">
+                      <option [ngValue]="null">-- Selecciona tu sexo --</option>
+                      <option [value]="'H'">
+                        Hombre
+                      </option>
+                      <option [value]="'M'">
+                        Mujer
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <div class="col-lg">
                     <label class="form-label">Contraseña</label>
                     <input id="password" type="password" class="form-control" [ngClass]="{'is-invalid': notValidPassword}" formControlName="password">
                     <div class="invalid-feedback">
@@ -91,90 +119,9 @@
             </div>
             <div class="d-flex justify-content-between mt-3">
               <a class="text-primary" [routerLink]="['/auth/login']">Ya tienes cuenta?</a>
-              <button id="btnRegistro" type="button" class="btn btn-primary" [disabled]="registerForm.invalid" (click)="cambiarVista()">Continuar</button>
+              <button id="btnRegistro" type="button" class="btn btn-primary" [disabled]="registerForm.invalid" (click)="register()">Registrar</button>
             </div>
           </form>
-        </ng-container>
-        <ng-container *ngIf="vistaActual === 'elegir-opcion'">
-          <div class="p-5 d-flex flex-column ">
-            <div class="d-flex flex-row justify-content-center">
-              <h1>¿Deseas agregar método de pago?</h1>
-            </div>
-            <div class="d-flex flex-row justify-content-between mt-5">
-              <button id="enOtroMomento" class="btn btn-secondary" (click)="register()">En otro momento</button>
-              <button class="btn btn-primary" (click)="cambiarVista()">Agregar método de pago</button>
-            </div>
-          </div>
-        </ng-container>
-        <ng-container *ngIf="vistaActual === 'metodo-pago'">
-          <h3>Agregar Método de Pago</h3>
-          <ul class="nav nav-tabs mt-2">
-            <li class="nav-item">
-              <a class="nav-link active" role="button" [ngClass]="{'active': metodoPagoSeleccionado === 'tarjeta'}" (click)="metodoPagoSeleccionado = 'tarjeta'">Tarjeta</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" role="button" [ngClass]="{'active': metodoPagoSeleccionado === 'efectivo'}" (click)="metodoPagoSeleccionado = 'efectivo'">Efectivo</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" role="button" [ngClass]="{'active': metodoPagoSeleccionado === 'transferencia'}" (click)="metodoPagoSeleccionado = 'transferencia'">Transferencia</a>
-            </li>
-          </ul>
-
-          <div class="w-full p-4">
-            <ng-container *ngIf="metodoPagoSeleccionado === 'tarjeta'">
-              <h5 class>Agregar Tarjeta</h5>
-              <div class="row">
-                <div class="col-lg-2"></div>
-                <div class="col-lg-8">
-                  <form [formGroup]="tarjetaForm">
-                    <div class="row">
-                      <div class="col-12">
-                        <label for="form-label">Numero de Tarjeta</label>
-                        <input type="text" class="form-control" [ngClass]="{'is-invalid': notValidNumeroTarjeta}" formControlName="numero" placeholder="xxxx-xxxx-xxxx-xxxx">
-                        <div class="invalid-feedback">
-                          La tarjeta debe tener un minimo de 16 caracteres.
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row mt-3">
-                      <div class="col-lg-4">
-                        <label for="form-label">Mes de Expiracion</label>
-                        <input type="number" class="form-control" [ngClass]="{'is-invalid': notValidMesExpTarjeta}" formControlName="mesExp" placeholder="##">
-                        <div class="invalid-feedback">
-                          Mes de Expiracion es requerida.
-                        </div>
-                      </div>
-                      <div class="col-lg-4">
-                        <label for="form-label">Año de Expiracion</label>
-                        <input type="number" class="form-control" [ngClass]="{'is-invalid': notValidYearExpTarjeta}" formControlName="yearExp" placeholder="####">
-                        <div class="invalid-feedback">
-                          Año de Expiracion es requerida.
-                        </div>
-                      </div>
-                      <div class="col-lg-4">
-                        <label for="form-label">CVV</label>
-                        <input type="text" class="form-control" [ngClass]="{'is-invalid': notValidCVVTarjeta}" formControlName="cvv" placeholder="CVV">
-                        <div class="invalid-feedback">
-                          CVV es requerido.
-                        </div>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-                <div class="col-lg-2"></div>
-              </div>
-            </ng-container>
-            <ng-container *ngIf="metodoPagoSeleccionado !== 'tarjeta'">
-              <div class="d-flex justify-content-center">
-                <h6 class="h6">Método de pago '{{metodoPagoSeleccionado}}' seleccionado.</h6>
-              </div>
-            </ng-container>
-            <div class="d-flex justify-content-between">
-              <button class="btn btn-secondary" (click)="vistaActual = 'elegir-opcion'">Regresar</button>
-              <button class="btn btn-primary" (click)="onAgregarMetodoPago()">Agregar</button>
-            </div>
-          </div>
-        </ng-container>
       </div>
     </div>
     <div class="col-md-2"></div>

@@ -128,7 +128,7 @@
                     </div>
                     <div class="col-lg" *ngIf="user">
                         <div class="d-grid gap-2">
-                            <button class="btn btn-outline-danger" *ngIf="user.idCliente === comentario.cliente_id" (click)="eliminarComentario(comentario.id)">Eliminar</button>
+                            <button class="btn btn-outline-danger" *ngIf="user.id === comentario.cliente_id" (click)="eliminarComentario(comentario.id)">Eliminar</button>
                         </div>
                     </div>
                 </div>

@@ -81,7 +81,7 @@ export class PedidosComponent implements OnInit {
       this.adminService.actualizarPedido(pedido.id, { estado_pedido_id: 2, cliente_id: null, oferta_id: null }).pipe(take(1)).subscribe(respPedido => {
         console.log("RESP PEDIDO", respPedido);
         const validacionPagoBody = {
-          colaborador_id: this.user.idColaborador === 0 ? 7 : this.user.idColaborador,
+          colaborador_id: this.user.id === 0 ? 7 : this.user.id,
           pago_id: pedido.pago_id
         };
         this.adminService.crearValidacionPago(validacionPagoBody).pipe(take(1)).subscribe(respValidacionPago => {

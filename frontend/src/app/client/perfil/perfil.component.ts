@@ -71,7 +71,7 @@ export class PerfilComponent implements OnInit {
   getUser(): void {
     this.loading = true;
     this.authService.user$.pipe(take(1)).subscribe(user => {
-      this.clientSerivce.getUser(`${user.idCliente}`).pipe(take(1)).subscribe(resp => {
+      this.clientSerivce.getUser(`${user.id}`).pipe(take(1)).subscribe(resp => {
         console.log(resp);
         this.estado_usuario_id = resp.response_database.result[0].estado_usuario_id;
         this.cliente = {

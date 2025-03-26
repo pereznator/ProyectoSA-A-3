@@ -1,4 +1,4 @@
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
@@ -11,18 +11,39 @@ import { ClientService } from '../../client/client.service';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, NgClass, NgIf, RouterLink],
+  imports: [FormsModule, ReactiveFormsModule, NgClass, NgIf, RouterLink, NgFor],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent {
+  departamentos: string[] = [
+    'Alta Verapaz',
+    'Baja Verapaz',
+    'Chimaltenango',
+    'Chiquimula',
+    'El Progreso',
+    'Escuintla',
+    'Guatemala',
+    'Huehuetenango',
+    'Izabal',
+    'Jalapa',
+    'Jutiapa',
+    'Petén',
+    'Quetzaltenango',
+    'Quiché',
+    'Retalhuleu',
+    'Sacatepéquez',
+    'San Marcos',
+    'Santa Rosa',
+    'Sololá',
+    'Suchitepéquez',
+    'Totonicapán',
+    'Zacapa'
+  ];
   showAlert: boolean = false;
   alertMessage: string = "";
   imagenPerfil: string | ArrayBuffer = null;
   archivo: File = null;
-  vistaActual = "formulario-registro";
-  metodoPagoSeleccionado = "tarjeta";
-  agregarMetodoPago = false;
 
   passwordRegex = /^(?=.*[A-Z])(?=.*[\W])(?=.*[0-9])(?=.*[a-z]).{8,128}$/;
 
@@ -35,7 +56,10 @@ export class RegisterComponent {
     passwordRepeat: [null, [Validators.required]],
     img: [null, [Validators.required]],
     direccion: [null, [Validators.required]],
-    username: [null, [Validators.required]]
+    departamento: [null, [Validators.required]],
+    username: [null, [Validators.required]],
+    fechaNacimiento: [null, [Validators.required]],
+    sexo: [null, [Validators.required]]
     // nombre: ["Jorge", [Validators.required]],
     // apellido: ["Perez", [Validators.required]],
     // telefono: ["123456787", [Validators.required]],
@@ -105,21 +129,14 @@ export class RegisterComponent {
   get notValidYearExpTarjeta(): boolean {
     return this.tarjetaForm.get("yearExp").touched && this.tarjetaForm.get("yearExp").invalid;
   }
-
-  cambiarVista(): void {
-    console.log(this.vistaActual);
-    if (this.vistaActual == "formulario-registro") {
-      this.registerForm.markAllAsTouched();
-      this.showAlert = false;
-      if (this.registerForm.invalid) {
-        return;
-      }
-      this.vistaActual = "elegir-opcion";
-      return;
-    } else if (this.vistaActual === "elegir-opcion") {
-      this.vistaActual = "metodo-pago";
-      this.agregarMetodoPago = true;
-    }
+  get notValidDepartamento(): boolean {
+    return this.registerForm.get("departamento").touched && this.registerForm.get("departamento").invalid;
+  }
+  get notValidFechaNacimiento(): boolean {
+    return this.registerForm.get("fechaNacimiento").touched && this.registerForm.get("fechaNacimiento").invalid;
+  }
+  get notValidSexo(): boolean {
+    return this.registerForm.get("sexo").touched && this.registerForm.get("sexo").invalid;
   }
 
   register(): void {
@@ -151,13 +168,9 @@ export class RegisterComponent {
       registerBody.fotografia = url;
       this.authService.register(registerBody).pipe(take(1)).subscribe(resp => {
         console.log(resp);
-        if (!this.agregarMetodoPago) {
-          this.router.navigate(["auth", "login"]);
-          return;
-        }
-        this.crearMetodoPago(resp.database.results[1].insertId);
+        this.router.navigate(["auth", "login"]);
+        return;
       }, err => {
-        this.vistaActual = "formulario-registro";
         console.log(err);
         this.showAlert = true;
         this.alertMessage = err.error.msg ?? "Algo salió mal.";
@@ -179,63 +192,6 @@ export class RegisterComponent {
       lector.onload = () => {
         this.imagenPerfil = lector.result;
       };
-    }
-  }
-
-  onAgregarMetodoPago(): void {
-    if (this.metodoPagoSeleccionado === "tarjeta") {
-      this.tarjetaForm.markAllAsTouched();
-      if (this.tarjetaForm.invalid) {
-        return;
-      }
-      this.register();
-    }
-  }
-
-  crearMetodoPago(idCliente: number) : void {
-    if (this.metodoPagoSeleccionado === "tarjeta") {
-      this.tarjetaForm.markAllAsTouched();
-      if (this.tarjetaForm.invalid) {
-        return;
-      }
-      this.tarjetaForm.disable();
-      const fechaExp = new Date(this.tarjetaForm.get("yearExp").value, this.tarjetaForm.get("mesExp").value - 1);
-      
-      const detalleTarjeta = {
-        numero_tarjeta: this.tarjetaForm.get("numero").value,
-        cvv: this.tarjetaForm.get("cvv").value,
-        fecha_exp: fechaExp.toISOString().slice(0, 10),
-      };
-
-      this.clienteService.crearDetalleTarjeta(detalleTarjeta).pipe(take(1)).subscribe(respDetalle => {
-        console.log("DETALLE", respDetalle);
-        const detalleId = respDetalle.response_database.result.insertId;
-        const metodoPagoBody = {
-          tipo_metodo_pago_id: 1,
-          cliente_id: idCliente,
-          detalle_tarjeta_id: detalleId
-        };
-        this.clienteService.crearMetodoPago(metodoPagoBody).pipe(take(1)).subscribe(respMetodoPago => {
-          console.log(respMetodoPago);
-          this.router.navigate(["cliente", "metodos-pago"]);
-        }, err => {
-          console.log(err);
-        });
-      }, err => {
-        console.log(err);
-      });
-    } else {
-      const metodoPagoBody = {
-        tipo_metodo_pago_id: this.metodoPagoSeleccionado === "efectivo" ? 2 : 3,
-        cliente_id: idCliente,
-        detalle_tarjeta_id: null
-      };
-      this.clienteService.crearMetodoPago(metodoPagoBody).pipe(take(1)).subscribe(resp => {
-        console.log(resp);
-        this.router.navigate(["cliente", "metodos-pago"]);
-      }, err => {
-        console.log(err);
-      });
     }
   }
 }

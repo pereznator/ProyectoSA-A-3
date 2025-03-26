@@ -37,7 +37,7 @@ export class MetodosPagoComponent implements OnInit {
     this.loading = true;
     this.authService.user$.pipe(take(1)).subscribe(user => {
       this.usuario = user;
-      this.clienteService.getMetodosPago(this.usuario.idCliente).pipe(take(1)).subscribe(resp => {
+      this.clienteService.getMetodosPago(this.usuario.id).pipe(take(1)).subscribe(resp => {
         console.log(resp);
         this.metodosPago = resp.response_database.result.map(met => {
           if (met.tipo_metodo_pago === "TARJETA") {

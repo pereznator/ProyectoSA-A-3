@@ -61,7 +61,7 @@ export class CrearOrdenComponent implements OnInit {
     this.loading = true;
     this.authService.user$.subscribe(user => {
       this.user = user;
-      this.clietSerivce.getCarrito(this.user.idCliente).pipe(take(1)).subscribe(resp => {
+      this.clietSerivce.getCarrito(this.user.id).pipe(take(1)).subscribe(resp => {
         console.log(resp);
         this.carrito = resp.response_dinamodb;
         this.getMetodosPago();
@@ -72,7 +72,7 @@ export class CrearOrdenComponent implements OnInit {
   }
 
   getMetodosPago(): void {
-    this.clietSerivce.getMetodosPago(this.user.idCliente).pipe(take(1)).subscribe(resp => {
+    this.clietSerivce.getMetodosPago(this.user.id).pipe(take(1)).subscribe(resp => {
       this.metodosPago = resp.response_database.result.map(met => {
         if (met.tipo_metodo_pago === "TARJETA") {
           met["detalles"] = `[TARJETA] Termina en: ${met.numero_tarjeta.slice(11, 15)}, exp ${met.fecha_exp}`;
@@ -121,7 +121,7 @@ export class CrearOrdenComponent implements OnInit {
       const pedido = {
         estado_pedido_id: 1,
         oferta_id: null,
-        cliente_id: this.user.idCliente,
+        cliente_id: this.user.id,
         detalle_pedido: this.carrito.carrito.productos.map(pro => ({ cantidad: pro.cantidad, producto_id: pro.producto_id }))
       };
 

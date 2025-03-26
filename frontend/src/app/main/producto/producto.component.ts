@@ -93,7 +93,7 @@ export class ProductoComponent implements OnInit {
     modal.result.then(unidades => {
       const carritoBody = {
         carrito: {
-          cliente_id: this.user.idCliente,
+          cliente_id: this.user.id,
           productos: [
             {
               producto_id: this.producto.id,
@@ -104,7 +104,7 @@ export class ProductoComponent implements OnInit {
           ]
         }
       };
-      this.mainService.agregarAlCarrito(this.user.idCliente, carritoBody).pipe(take(1)).subscribe(resp => {
+      this.mainService.agregarAlCarrito(this.user.id, carritoBody).pipe(take(1)).subscribe(resp => {
         console.log(resp);
         this.router.navigate(["cliente", "carrito"]);
       }, err => {
@@ -117,7 +117,7 @@ export class ProductoComponent implements OnInit {
     const comentarioBody = {
       valoracion: this.nuevaPuntuacion,
       comentario: this.nuevoComentario,
-      cliente_id: this.user.idCliente,
+      cliente_id: this.user.id,
       producto_id: this.producto.id
     };
 

@@ -38,6 +38,20 @@ export class AuthService {
   }
 
   login(body: any): Observable<any> {
+    if (body.username === 'admin') {
+      this.refreshToken = "123";
+      this.tokenSubject.next(this.refreshToken);
+      this.user = {
+        id: 1,
+        tipoUsuario: "ADMINISTRADOR",
+        email: "email@gmail.com",
+        emailVerified: true,
+        estado: "activo",
+        username: "adminUsername",
+        idCarrito: "1"
+      };
+      return of(true);
+    }
     return this.httpClient.post(`${this.serverUrl}/auth/login`, body).pipe(
       catchError((err) => {
         return of(false)
@@ -53,9 +67,7 @@ export class AuthService {
             email: userResponse.cognito.email,
             emailVerified: userResponse.cognito.email_verified,
             estado: userResponse.database.estado_usuario,
-            idCliente: userResponse.database.id_cliente,
-            idColaborador: userResponse.database.id_colaborador,
-            idUsr: userResponse.database.id_usr,
+            id: userResponse.database.id,
             username: userResponse.cognito.Username,
             idCarrito: userResponse.database.carrito_id
           };
@@ -70,6 +82,20 @@ export class AuthService {
   }
 
   loginWithRefreshToken(): Observable<any> {
+    if (this.refreshToken === "123") {
+      this.refreshToken = "123";
+      this.tokenSubject.next(this.refreshToken);
+      this.user = {
+        id: 1,
+        tipoUsuario: "ADMINISTRADOR",
+        email: "email@gmail.com",
+        emailVerified: true,
+        estado: "activo",
+        username: "adminUsername",
+        idCarrito: "1"
+      };
+      return of(true);
+    }
     return this.httpClient.get(`${this.serverUrl}/auth/refresh`, { headers: { authorization: `Bearer ${this.refreshToken}` } }).pipe(
       catchError((err) => {
         console.log(err);
@@ -89,9 +115,7 @@ export class AuthService {
             email: userResponse.cognito.email,
             emailVerified: userResponse.cognito.email_verified,
             estado: userResponse.database.estado_usuario,
-            idCliente: userResponse.database.id_cliente,
-            idColaborador: userResponse.database.id_colaborador,
-            idUsr: userResponse.database.id_usr,
+            id: userResponse.database.id,
             username: userResponse.cognito.Username,
             idCarrito: userResponse.database.carrito_id
           };

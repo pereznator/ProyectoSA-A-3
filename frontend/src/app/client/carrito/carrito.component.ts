@@ -49,7 +49,7 @@ export class CarritoComponent implements OnInit {
 
   getCarrito(): void {
     this.loading = true;
-    this.clientService.getCarrito(this.user.idCliente).pipe(take(1)).subscribe(resp => {
+    this.clientService.getCarrito(this.user.id).pipe(take(1)).subscribe(resp => {
       console.log(resp);
       this.carrito = resp.response_dinamodb;
 
