@@ -1,4 +1,4 @@
-<div class="container">
+<!-- <div class="container">
   <div class="row mt-5">
     <div class="col-lg-10">
       <h1>{{isNew ? "Nuevo Producto" : "Editar Producto"}}</h1>
@@ -40,10 +40,7 @@
               </div>
               <div class="col-lg">
                 <label class="form-label">Categoria</label>
-                <select id="categoria" class="form-select" [ngClass]="{'is-invalid': notValidCategoria}" formControlName="categoriaId">
-                  <option [ngValue]="null">Elegir categoría</option>
-                  <option *ngFor="let categoria of categorias" [value]="categoria.id">{{categoria.descripcion}}</option>
-                </select>
+                <input id="nombre" type="text" class="form-control" [ngClass]="{'is-invalid': notValidCategoria}" formControlName="categoria">
                 <div class="invalid-feedback">
                   Categoria es requerida
                 </div>
@@ -63,10 +60,7 @@
             <div class="row">
               <div class="col-lg">
                 <label class="form-label">Proveedor</label>
-                <select id="proveedor" class="form-select" [ngClass]="{'is-invalid': notValidProveedor}" formControlName="proveedorId">
-                  <option [ngValue]="null">Elegir proveedor</option>
-                  <option *ngFor="let proveedor of proveedores" [value]="proveedor.id">{{proveedor.nombre}}</option>
-                </select>
+                <input id="nombre" type="text" class="form-control" [ngClass]="{'is-invalid': notValidProveedor}" formControlName="proveedor">
                 <div class="invalid-feedback">
                   Proveedor es requerida
                 </div>
@@ -102,4 +96,176 @@
     </div>
     </form>
   </ng-container>
+</div> -->
+
+
+
+<div class="container">
+  <div class="row mt-5">
+    <div class="col-lg-10">
+      <h1>{{ isNew ? 'Nuevo Producto' : 'Editar Producto' }}</h1>
+    </div>
+    <div class="col-lg" *ngIf="!isNew">
+      <!-- <div class="d-grid gap-2">
+        <button class="btn btn-danger btn-sm" (click)="eliminar()">Eliminar</button>
+      </div> -->
+    </div>
+    <div class="col-lg">
+      <div class="d-grid gap-2">
+        <button class="btn btn-secondary btn-sm" (click)="atras()">Atrás</button>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+  <app-loading *ngIf="loading"></app-loading>
+
+  <ng-container *ngIf="!loading">
+    <form [formGroup]="productoForm">
+      <div class="row">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-8">
+          <div class="d-flex justify-content-between">
+            <div class="card" style="width: 18rem; height: min-content;">
+              <img [src]="imagenProducto || '../../../assets/img/register-img-placeholder.png'" class="card-img-top" alt="Portada">
+              <div class="card-body">
+                <label class="form-label">Portada</label>
+                <input type="file" class="form-control" (change)="cargarImagen($event)" [disabled]="!isNew">
+              </div>
+            </div>
+            <div style="width: 32rem">
+              <!-- Fila 1 -->
+          <div class="row mb-3">
+            <div class="col">
+              <label class="form-label">Código</label>
+              <input type="text" class="form-control" formControlName="code" [ngClass]="{ 'is-invalid': notValidCode }">
+              <div class="invalid-feedback">Código es requerido</div>
+            </div>
+            <div class="col">
+              <label class="form-label">Nombre</label>
+              <input type="text" class="form-control" formControlName="name" [ngClass]="{ 'is-invalid': notValidName }">
+              <div class="invalid-feedback">Nombre es requerido</div>
+            </div>
+          </div>
+
+          <!-- Fila 2 -->
+          <div class="row mb-3">
+            <div class="col">
+              <label class="form-label">Precio</label>
+              <input type="number" class="form-control" formControlName="price" [ngClass]="{ 'is-invalid': notValidPrice }">
+              <div class="invalid-feedback">Precio es requerido</div>
+            </div>
+            <div class="col">
+              <label class="form-label">Valor</label>
+              <input type="number" class="form-control" formControlName="value" [ngClass]="{ 'is-invalid': notValidValue }">
+              <div class="invalid-feedback">Valor es requerido</div>
+            </div>
+          </div>
+
+          <!-- Fila 3 -->
+          <div class="row mb-3">
+            <div class="col">
+              <label class="form-label">Categoría</label>
+              <input type="text" class="form-control" formControlName="category" [ngClass]="{ 'is-invalid': notValidCategory }">
+              <div class="invalid-feedback">Categoría es requerida</div>
+            </div>
+            <div class="col">
+              <label class="form-label">Cantidad en Stock</label>
+              <input type="number" class="form-control" formControlName="stock_quantity" [ngClass]="{ 'is-invalid': notValidStockQuantity }">
+              <div class="invalid-feedback">Cantidad es requerida</div>
+            </div>
+          </div>
+
+          <!-- Fila 4 -->
+          <div class="mb-3">
+            <label class="form-label">Descripción</label>
+            <textarea rows="3" class="form-control" formControlName="description" [ngClass]="{ 'is-invalid': notValidDescription }"></textarea>
+            <div class="invalid-feedback">Descripción es requerida</div>
+          </div>
+
+          <!-- Fila 5 -->
+          <div class="row mb-3">
+            
+            <div class="col">
+              <label class="form-label">Marcas</label>
+              <!-- <input type="text" class="form-control" formControlName="brands" [ngClass]="{ 'is-invalid': notValidBrands }"> -->
+              <div class="invalid-feedback">Marcas son requeridas</div>
+              <mat-form-field class="w-100" appearance="outline">
+                <!-- <mat-label>Marcas</mat-label> -->
+                <mat-chip-grid #chipList aria-label="Selección de marcas">
+                  <mat-chip *ngFor="let brand of brands" [removable]="isNew" (removed)="removeBrand(brand)">
+                    {{ brand }}
+                    <button matChipRemove *ngIf="isNew">
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip>
+                  <input
+                    [disabled]="!isNew"
+                    [placeholder]="isNew ?'Añadir marca...' : ''"
+                    [matChipInputFor]="chipList"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    [matChipInputAddOnBlur]="true"
+                    (matChipInputTokenEnd)="addBrand($event)">
+                </mat-chip-grid>
+              </mat-form-field>
+              <div class="text-danger mt-1" *ngIf="notValidBrands">
+                Marcas son requeridas
+              </div>
+            </div>
+          </div>
+          <div class="row mb-3">
+            
+            <div class="col">
+              <label class="form-label">Regiones Restringidas</label>
+              <!-- <input type="text" class="form-control" formControlName="brands" [ngClass]="{ 'is-invalid': notValidBrands }"> -->
+              <!-- <div class="invalid-feedback">Marcas son requeridas</div> -->
+              <mat-form-field class="w-100" appearance="outline">
+                <!-- <mat-label>Regiones Restringidas</mat-label> -->
+                <mat-chip-grid #chipListRegion aria-label="Selección de marcas">
+                  <mat-chip *ngFor="let region of regiones" [removable]="isNew" (removed)="removeRegion(region)">
+                    {{ region }}
+                    <button matChipRemove *ngIf="isNew">
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip>
+                  <input
+                    [disabled]="!isNew"
+                    [placeholder]="isNew ? 'Añadir region...' : ''"
+                    [matChipInputFor]="chipListRegion"
+                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                    [matChipInputAddOnBlur]="true"
+                    (matChipInputTokenEnd)="addRegion($event)">
+                </mat-chip-grid>
+              </mat-form-field>
+              <div class="text-danger mt-1" *ngIf="notValidBrands">
+                Marcas son requeridas
+              </div>
+            </div>
+          </div>
+
+          <!-- Fila 6 -->
+          <!-- <div class="mb-3">
+            <label class="form-label">Regiones Restringidas</label>
+            <input type="text" class="form-control" formControlName="restricted_regions" [ngClass]="{ 'is-invalid': notValidRestrictedRegions }">
+            <div class="invalid-feedback">Las regiones son requeridas</div>
+          </div> -->
+
+          <!-- Botón Guardar -->
+          <div class="d-flex justify-content-end mt-3">
+            <button class="btn btn-primary" [disabled]="productoForm.invalid" (click)="guardar()" *ngIf="isNew">Guardar</button>
+          </div>
+
+          <!-- Alerta -->
+          <div class="alert alert-danger mt-2" *ngIf="showAlert">
+            {{ alertMessage }}
+          </div>
+            </div>
+          </div>
+          <!-- Imagen portada -->
+        </div>
+        <div class="col-lg-2"></div>
+      </div>
+    </form>
+  </ng-container>
 </div>
+

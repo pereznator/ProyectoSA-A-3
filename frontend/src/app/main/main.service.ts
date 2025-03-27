@@ -1,9 +1,11 @@
 import { Injectable } from "@angular/core";
 import { HttpService, RequestMethod } from "../http.service";
 import { Observable } from "rxjs";
+import { environment } from "../../environments/environment";
 
 @Injectable({ providedIn: "root" })
 export class MainService {
+  productoServerUrl = environment.productoServerUrl;
   constructor(private httpService: HttpService) {}
 
   obtenerCategorias(): Observable<any> {
@@ -66,5 +68,11 @@ export class MainService {
   }
   obtenerTop10Valorados(): Observable<any> {
     return this.httpService.request(RequestMethod.GET, "/reports/top-ten-productos/valoracion");
+  }
+  obtenerProductos(): Observable<any> {
+    return this.httpService.request(RequestMethod.GET, `${this.productoServerUrl}/api/product/obtener-productos`);
+  }
+  obtenerProducto(idProducto: number): Observable<any> {
+    return this.httpService.request(RequestMethod.GET, `${this.productoServerUrl}/api/product/obtener-producto-por-id/${idProducto}`);
   }
 }

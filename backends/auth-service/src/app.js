@@ -1,12 +1,16 @@
 const express = require('express');
 const cors = require('cors');
+const morgan = require('morgan');
 const routes = require('./routes');
 const cookieParser = require('cookie-parser');
+const { generateUploadUrl } = require("./controllers/gcloud/generate-upload-url")
+
 
 const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(morgan('tiny'));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -25,6 +29,7 @@ app.get('/', (req, res) => {
 
 // Especificar rutas
 app.use('/api', routes);
+app.get("/generate-upload-url", generateUploadUrl);
 
 // Manejo de errores: Not Found
 app.use((req, res) => {

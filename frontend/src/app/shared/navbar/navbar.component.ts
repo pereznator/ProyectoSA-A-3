@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { NgClass, NgIf } from '@angular/common';
@@ -10,11 +10,12 @@ import { User } from '../../auth/auth.types';
   standalone: true,
   imports: [RouterLinkActive, RouterLink, NgClass, NgIf],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.scss'
+  styleUrl: './navbar.component.scss',
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class NavbarComponent implements OnInit {
 
-  user: User;
+  user: any;
   loading: boolean = true;
 
   constructor(
@@ -26,13 +27,17 @@ export class NavbarComponent implements OnInit {
   
   ngOnInit(): void {
     this.loading = true;
-    this.authSerivce.user$.subscribe(user => {
+    this.authSerivce.currentUser$.subscribe(user => {
       this.user = user;
-      console.log(this.user);
       this.loading = false;
     }, err => {
+      console.log("NAVBAR ERROR", err);
       console.log(err);
     });
+    // this.authSerivce.user$.subscribe(user => {
+    //   console.log("NAVBAR", this.user);
+    // }, err => {
+    // });
   }
 
   cerrarSesion(): void {
@@ -45,9 +50,9 @@ export class NavbarComponent implements OnInit {
   }
 
   irAPerfil(): void {
-    if (this.user.tipoUsuario === "CLIENTE") {
+    if (this.user.role === "user") {
       this.router.navigate(["cliente", "perfil"])
-    } else if (this.user.tipoUsuario === "ADMINISTRADOR") {
+    } else if (this.user.role === "admin") {
       this.router.navigate(["admin", "perfil"])
     }
   }

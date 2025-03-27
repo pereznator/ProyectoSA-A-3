@@ -48,23 +48,25 @@ export class ProductoComponent implements OnInit {
   getProducto(): void {
     this.loading = true;
     this.activatedRoute.params.pipe(take(1)).subscribe(params => {
-      this.mainService.obtenerProductoPorId(params["idProducto"]).pipe(take(1), map(resp => resp['response_database'].result[0])).subscribe(resp => {
+      this.mainService.obtenerProducto(params["idProducto"]).pipe(take(1)).subscribe(resp => {
         console.log(resp);
         this.producto = {
-          id: resp.id,
-          portada: resp.portada,
-          nombre: resp.nombre,
-          categoriaId: resp.categoria_producto_id,
-          precio: resp.precio,
-          costo: resp.costo,
-          fecha: resp.fecha_registro,
-          descripcion: resp.descripcion,
-          proveedorId: resp.proveedor_id,
-          categoria: resp.categoria_producto,
-          proveedor: resp.proveedor,
-          enExistencia: resp.en_existencia
+          id: resp.product_id,
+          name: resp.name,
+          description: resp.description,
+          price: resp.price,
+          stock_quantity: resp.stock_quantity,
+          code: resp.code,
+          main_image_url: resp.main_image_url,
+          value: resp.value,
+          category_name: resp.category,
+          marcas: resp.brands,
+          regiones: resp.restricted_regions,
+          imagenes: resp.images,
+          brands: resp.brands,
+          status: resp.status,
         };
-        this.getComentarios();
+        // this.getComentarios();
       }, err => {
         console.log(err);
       });
@@ -86,25 +88,25 @@ export class ProductoComponent implements OnInit {
       this.router.navigate(["auth", "login"]);
       return;
     }
-    if (this.user.tipoUsuario !== "CLIENTE") {
+    if (this.user.role !== "user") {
       return;
     }
     const modal = this.modalService.open(AgregarCarritoComponent);
     modal.result.then(unidades => {
       const carritoBody = {
         carrito: {
-          cliente_id: this.user.idCliente,
+          cliente_id: this.user.id,
           productos: [
             {
               producto_id: this.producto.id,
               cantidad: unidades,
-              precio_unidad: this.producto.precio,
-              nombre_producto: this.producto.nombre
+              precio_unidad: this.producto.price,
+              nombre_producto: this.producto.name
             }
           ]
         }
       };
-      this.mainService.agregarAlCarrito(this.user.idCliente, carritoBody).pipe(take(1)).subscribe(resp => {
+      this.mainService.agregarAlCarrito(this.user.id, carritoBody).pipe(take(1)).subscribe(resp => {
         console.log(resp);
         this.router.navigate(["cliente", "carrito"]);
       }, err => {
@@ -117,7 +119,7 @@ export class ProductoComponent implements OnInit {
     const comentarioBody = {
       valoracion: this.nuevaPuntuacion,
       comentario: this.nuevoComentario,
-      cliente_id: this.user.idCliente,
+      cliente_id: this.user.id,
       producto_id: this.producto.id
     };
 

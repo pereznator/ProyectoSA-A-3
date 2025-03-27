@@ -1,9 +1,13 @@
 import { Injectable } from "@angular/core";
 import { HttpService, RequestMethod } from "../http.service";
 import { Observable } from "rxjs";
+import { environment } from "../../environments/environment";
 
 @Injectable({ providedIn: "root" })
 export class ClientService {
+
+  productoServerUrl = environment.productoServerUrl;
+
   constructor(private httpService: HttpService) {}
 
   getUser(idCliente: string): Observable<any> {
@@ -56,5 +60,9 @@ export class ClientService {
 
   obtenerPedidoPorId(idPedido): Observable<any> {
     return this.httpService.request(RequestMethod.GET, `/pedido/${idPedido}`);
+  }
+
+  crearReview(review: any): Observable<any> {
+    return this.httpService.request(RequestMethod.POST, `${this.productoServerUrl}/api/product/agregar-review-producto`, review);
   }
 }

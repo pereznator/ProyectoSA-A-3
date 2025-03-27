@@ -1,4 +1,5 @@
 export const environment = {
   production: false,
-  serverUrl: "http://localhost:9000"
+  authServerUrl: "http://localhost:3001",
+  productoServerUrl: "http://localhost:3002",
 };

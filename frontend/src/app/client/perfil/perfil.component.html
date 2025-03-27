@@ -13,24 +13,24 @@
       <form [formGroup]="perfilForm" *ngIf="!loading">
         <div class="d-flex justify-content-between">
           <div class="card" style="width: 18rem;">
-            <img [src]="imagenPerfil ? imagenPerfil : cliente.fotografia" class="card-img-top img-perfil" alt="...">
+            <img [src]="imagenPerfil ? imagenPerfil : usuario.profile_picture" class="card-img-top img-perfil" alt="...">
             <div class="card-body">
               <h5 class="card-content">Imagen de Perfil</h5>
-              <input type="file" (change)="cargarImagen($event)" class="form-control mb-2" formControlName="img">
+              <!-- <input type="file" (change)="cargarImagen($event)" disable class="form-control mb-2" formControlName="img"> -->
             </div>
           </div>
           <div class="p-2">
             <div class="row mt-2">
               <div class="col-lg">
                 <label class="form-label">Nombre(s)</label>
-                <input type="text" class="form-control" [ngClass]="{'is-invalid': notValidNombre}" formControlName="nombre">
+                <input type="text" class="form-control"  [ngClass]="{'is-invalid': notValidNombre}" formControlName="nombre">
                 <div class="invalid-feedback">
                   Nombre es requerido
                 </div>   
               </div>
               <div class="col-lg">
                 <label class="form-label">Apellido(s)</label>
-                <input type="text" class="form-control" [ngClass]="{'is-invalid': notValidApellido}" formControlName="apellido">
+                <input type="text" class="form-control"  [ngClass]="{'is-invalid': notValidApellido}" formControlName="apellido">
                 <div class="invalid-feedback">
                   Apellido es requerido
                 </div>
@@ -57,7 +57,7 @@
             <div class="row mt-2">
               <div class="col-lg">
                 <label class="form-label">Nombre de Usuario</label>
-                <input type="text" class="form-control" [ngClass]="{'is-invalid': notValidUsername}" formControlName="username">
+                <input type="text" class="form-control"  [ngClass]="{'is-invalid': notValidUsername}" formControlName="username">
                 <div class="invalid-feedback">
                   Username es requerido.
                 </div>
@@ -70,10 +70,10 @@
                 </div>
               </div>
             </div>
-            <!-- <div class="row mt-2">
+            <div class="row mt-2">
               <div class="col-lg">
-                <label class="form-label">Nueva Contraseña</label>
-                <input type="password" class="form-control" [ngClass]="{'is-invalid': notValidPassword}" formControlName="password">
+                <label class="form-label">Ciudad</label>
+                <input type="text" class="form-control" [ngClass]="{'is-invalid': notValidCity}" formControlName="city">
                 <div class="invalid-feedback">
                   Debe tener mínimo 8 caracteres, 1 especial, 1 mayúscula, 1 minúscula
                 </div>
@@ -81,13 +81,15 @@
             </div>
             <div class="row mt-2">
               <div class="col-lg">
-                <label class="form-label">Repetir Contraseña</label>
-                <input type="password" class="form-control" [ngClass]="{'is-invalid': notValidPasswordRepeat}" formControlName="passwordRepeat">
-                <div class="invalid-feedback">
-                  Debe ser exactamente igual
-                </div>
+                <label for="departamento">Departamento de Guatemala:</label>
+                <select id="departamento" class="form-select" formControlName="departamento" [ngClass]="{'is-invalid': notValidDepartamento}">
+                  <option [ngValue]="null">-- Selecciona un departamento --</option>
+                  <option *ngFor="let depto of departamentos" [value]="depto">
+                    {{ depto }}
+                  </option>
+                </select>
               </div>
-            </div> -->
+            </div>
           </div>
         </div>
         <div class="alert alert-danger mt-2" *ngIf="showAlert">

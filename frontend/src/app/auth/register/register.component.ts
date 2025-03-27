@@ -1,4 +1,4 @@
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
@@ -7,52 +7,74 @@ import { take } from 'rxjs';
 import { S3Service } from '../../s3.service';
 import { v4 } from 'uuid';
 import { ClientService } from '../../client/client.service';
+import { User } from '../auth.types';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, NgClass, NgIf, RouterLink],
+  imports: [FormsModule, ReactiveFormsModule, NgClass, NgIf, RouterLink, NgFor],
   templateUrl: './register.component.html',
   styleUrl: './register.component.scss'
 })
 export class RegisterComponent {
+  departamentos: string[] = [
+    'Alta Verapaz',
+    'Baja Verapaz',
+    'Chimaltenango',
+    'Chiquimula',
+    'El Progreso',
+    'Escuintla',
+    'Guatemala',
+    'Huehuetenango',
+    'Izabal',
+    'Jalapa',
+    'Jutiapa',
+    'Petén',
+    'Quetzaltenango',
+    'Quiché',
+    'Retalhuleu',
+    'Sacatepéquez',
+    'San Marcos',
+    'Santa Rosa',
+    'Sololá',
+    'Suchitepéquez',
+    'Totonicapán',
+    'Zacapa'
+  ];
   showAlert: boolean = false;
   alertMessage: string = "";
   imagenPerfil: string | ArrayBuffer = null;
   archivo: File = null;
-  vistaActual = "formulario-registro";
-  metodoPagoSeleccionado = "tarjeta";
-  agregarMetodoPago = false;
 
   passwordRegex = /^(?=.*[A-Z])(?=.*[\W])(?=.*[0-9])(?=.*[a-z]).{8,128}$/;
 
   registerForm: FormGroup = this.fb.group({
-    nombre: [null, [Validators.required]],
-    apellido: [null, [Validators.required]],
-    telefono: [null, [Validators.required]],
-    correo: [null, [Validators.required, Validators.email]],
-    password: [null, [Validators.required, Validators.pattern(this.passwordRegex)]],
-    passwordRepeat: [null, [Validators.required]],
+    // nombre: [null, [Validators.required]],
+    // apellido: [null, [Validators.required]],
+    // telefono: [null, [Validators.required]],
+    // correo: [null, [Validators.required, Validators.email]],
+    // password: [null, [Validators.required, Validators.pattern(this.passwordRegex)]],
+    // passwordRepeat: [null, [Validators.required]],
+    // img: [null, [Validators.required]],
+    // direccion: [null, [Validators.required]],
+    // departamento: [null, [Validators.required]],
+    // username: [null, [Validators.required]],
+    // fechaNacimiento: [null, [Validators.required]],
+    // sexo: [null, [Validators.required]],
+    // city: [null, [Validators.required]]
+    nombre: ["Jorge", [Validators.required]],
+    apellido: ["Perez", [Validators.required]],
+    telefono: ["12345678", [Validators.required]],
+    correo: ["jorgeperezlj@gmail.com", [Validators.required, Validators.email]],
+    password: ["Pa$$word123", [Validators.required, Validators.pattern(this.passwordRegex)]],
+    passwordRepeat: ["Pa$$word123", [Validators.required]],
     img: [null, [Validators.required]],
-    direccion: [null, [Validators.required]],
-    username: [null, [Validators.required]]
-    // nombre: ["Jorge", [Validators.required]],
-    // apellido: ["Perez", [Validators.required]],
-    // telefono: ["123456787", [Validators.required]],
-    // correo: ["usac@gmail.com", [Validators.required, Validators.email]],
-    // password: ["Pa$$word123", [Validators.required, Validators.pattern(this.passwordRegex)]],
-    // passwordRepeat: ["Pa$$word123", [Validators.required]],
-    // img: [null, []],
-    // direccion: ["101 Salty Springs", [Validators.required]],
-    // username: ["username", [Validators.required]]
-  });
-
-  tarjetaForm: FormGroup = this.fb.group({
-    nombre: [null, []],
-    numero: [null, [Validators.required, Validators.minLength(16)]],
-    cvv: [null, [Validators.required, Validators.minLength(3), Validators.maxLength(3)]],
-    mesExp: [null, [Validators.required, Validators.min(1), Validators.max(12)]],
-    yearExp: [null, [Validators.required, Validators.min(2024)]]
+    direccion: ["direccion", [Validators.required]],
+    departamento: ["Guatemala", [Validators.required]],
+    username: ["jorigot", [Validators.required]],
+    fechaNacimiento: [null, [Validators.required]],
+    sexo: ["female", [Validators.required]],
+    city: ["city", [Validators.required]]
   });
 
   loading: boolean = false;
@@ -92,34 +114,17 @@ export class RegisterComponent {
     }
     return this.registerForm.get("passwordRepeat").value !== this.registerForm.get("password").value;
   }
-
-  get notValidNumeroTarjeta(): boolean {
-    return this.tarjetaForm.get("numero").touched && this.tarjetaForm.get("numero").invalid;
+  get notValidDepartamento(): boolean {
+    return this.registerForm.get("departamento").touched && this.registerForm.get("departamento").invalid;
   }
-  get notValidCVVTarjeta(): boolean {
-    return this.tarjetaForm.get("cvv").touched && this.tarjetaForm.get("cvv").invalid;
+  get notValidFechaNacimiento(): boolean {
+    return this.registerForm.get("fechaNacimiento").touched && this.registerForm.get("fechaNacimiento").invalid;
   }
-  get notValidMesExpTarjeta(): boolean {
-    return this.tarjetaForm.get("mesExp").touched && this.tarjetaForm.get("mesExp").invalid;
+  get notValidSexo(): boolean {
+    return this.registerForm.get("sexo").touched && this.registerForm.get("sexo").invalid;
   }
-  get notValidYearExpTarjeta(): boolean {
-    return this.tarjetaForm.get("yearExp").touched && this.tarjetaForm.get("yearExp").invalid;
-  }
-
-  cambiarVista(): void {
-    console.log(this.vistaActual);
-    if (this.vistaActual == "formulario-registro") {
-      this.registerForm.markAllAsTouched();
-      this.showAlert = false;
-      if (this.registerForm.invalid) {
-        return;
-      }
-      this.vistaActual = "elegir-opcion";
-      return;
-    } else if (this.vistaActual === "elegir-opcion") {
-      this.vistaActual = "metodo-pago";
-      this.agregarMetodoPago = true;
-    }
+  get notValidCity(): boolean {
+    return this.registerForm.get("city").touched && this.registerForm.get("city").invalid;
   }
 
   register(): void {
@@ -128,15 +133,26 @@ export class RegisterComponent {
       return;
     }
     this.registerForm.disable();
-    const registerBody = {
-      nombre: this.registerForm.get("nombre").value,
-      apellido: this.registerForm.get("apellido").value,
-      celular: this.registerForm.get("telefono").value,
-      direccion_entrega: this.registerForm.get("direccion").value,
+    const registerBody: User = {
+      id: null,
+      first_name: this.registerForm.get("nombre").value,
+      last_name: this.registerForm.get("apellido").value,
       email: this.registerForm.get("correo").value,
+      username: this.registerForm.get("username").value,
       password: this.registerForm.get("password").value,
-      fotografia: "",
-      username: this.registerForm.get("username").value
+      phone: this.registerForm.get("telefono").value,
+      dob: this.registerForm.get("fechaNacimiento").value,
+      gender: this.registerForm.get("sexo").value,
+      role: "user",
+      profile_picture: "",
+      addresses: [
+        {
+          address: this.registerForm.get("direccion").value,
+          city: this.registerForm.get("city").value,
+          department: this.registerForm.get("departamento").value,
+          is_primary: 1
+        }
+      ]
     };
 
     if (!this.archivo) {
@@ -146,18 +162,20 @@ export class RegisterComponent {
     }
 
     const id = v4();
-    this.s3Service.uploadFileToBucket(this.archivo, "proyecto-2-ayd-2-g1", id).pipe(take(1)).subscribe(bucketResp => {
-      const url = bucketResp.Location;
-      registerBody.fotografia = url;
+    this.s3Service.generateUploadUrl(this.archivo, id).pipe(take(1)).subscribe(url => {
+      registerBody.profile_picture = url;
       this.authService.register(registerBody).pipe(take(1)).subscribe(resp => {
         console.log(resp);
-        if (!this.agregarMetodoPago) {
+        const registerVerificationEmailBody = {
+          user_id: resp.user_id,
+          token: v4()
+        };
+        this.authService.registerVerificationEmail(registerVerificationEmailBody).pipe(take(1)).subscribe(respVerificatioEmail => {
+          console.log("Email enviado", respVerificatioEmail);
           this.router.navigate(["auth", "login"]);
           return;
-        }
-        this.crearMetodoPago(resp.database.results[1].insertId);
+        });
       }, err => {
-        this.vistaActual = "formulario-registro";
         console.log(err);
         this.showAlert = true;
         this.alertMessage = err.error.msg ?? "Algo salió mal.";
@@ -165,6 +183,7 @@ export class RegisterComponent {
       });
       this.registerForm.enable();
     }, err => {
+      console.log(err);
       this.showAlert = true;
       this.alertMessage = "Algo salió mal subiendo la imagen.";
       this.registerForm.enable();
@@ -179,63 +198,6 @@ export class RegisterComponent {
       lector.onload = () => {
         this.imagenPerfil = lector.result;
       };
-    }
-  }
-
-  onAgregarMetodoPago(): void {
-    if (this.metodoPagoSeleccionado === "tarjeta") {
-      this.tarjetaForm.markAllAsTouched();
-      if (this.tarjetaForm.invalid) {
-        return;
-      }
-      this.register();
-    }
-  }
-
-  crearMetodoPago(idCliente: number) : void {
-    if (this.metodoPagoSeleccionado === "tarjeta") {
-      this.tarjetaForm.markAllAsTouched();
-      if (this.tarjetaForm.invalid) {
-        return;
-      }
-      this.tarjetaForm.disable();
-      const fechaExp = new Date(this.tarjetaForm.get("yearExp").value, this.tarjetaForm.get("mesExp").value - 1);
-      
-      const detalleTarjeta = {
-        numero_tarjeta: this.tarjetaForm.get("numero").value,
-        cvv: this.tarjetaForm.get("cvv").value,
-        fecha_exp: fechaExp.toISOString().slice(0, 10),
-      };
-
-      this.clienteService.crearDetalleTarjeta(detalleTarjeta).pipe(take(1)).subscribe(respDetalle => {
-        console.log("DETALLE", respDetalle);
-        const detalleId = respDetalle.response_database.result.insertId;
-        const metodoPagoBody = {
-          tipo_metodo_pago_id: 1,
-          cliente_id: idCliente,
-          detalle_tarjeta_id: detalleId
-        };
-        this.clienteService.crearMetodoPago(metodoPagoBody).pipe(take(1)).subscribe(respMetodoPago => {
-          console.log(respMetodoPago);
-          this.router.navigate(["cliente", "metodos-pago"]);
-        }, err => {
-          console.log(err);
-        });
-      }, err => {
-        console.log(err);
-      });
-    } else {
-      const metodoPagoBody = {
-        tipo_metodo_pago_id: this.metodoPagoSeleccionado === "efectivo" ? 2 : 3,
-        cliente_id: idCliente,
-        detalle_tarjeta_id: null
-      };
-      this.clienteService.crearMetodoPago(metodoPagoBody).pipe(take(1)).subscribe(resp => {
-        console.log(resp);
-        this.router.navigate(["cliente", "metodos-pago"]);
-      }, err => {
-        console.log(err);
-      });
     }
   }
 }

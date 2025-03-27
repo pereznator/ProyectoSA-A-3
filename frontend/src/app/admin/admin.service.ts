@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpService, RequestMethod } from '../http.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
+
+  authServerUrl = environment.authServerUrl;
+  productoServerurl = environment.productoServerUrl;
 
   constructor(private httpService: HttpService) { }
 
@@ -25,12 +29,8 @@ export class AdminService {
     return this.httpService.request(RequestMethod.DELETE, `/proveedor/${idProveedor}`);
   }
 
-  crearProducto(producto: any): Observable<any> {
-    return this.httpService.request(RequestMethod.POST, "/producto", producto);
-  }
-
   obtenerProductos(): Observable<any> {
-    return this.httpService.request(RequestMethod.GET, "/producto");
+    return this.httpService.request(RequestMethod.GET, `${this.productoServerurl}/api/product/obtener-productos`);
   }
 
   obtenerProductoPorId(idProducto: string): Observable<any> {
@@ -85,5 +85,26 @@ export class AdminService {
   }
   actualizarOferta(idOferta: number, body: any): Observable<any> {
     return this.httpService.request(RequestMethod.PUT, `/oferta/${idOferta}`, body);
+  }
+
+  obtenerUsuarios(): Observable<any> {
+    return this.httpService.request(RequestMethod.GET, `${this.authServerUrl}/api/user/obtener-usuarios-no-admin`);
+  }
+  obtenerUsuarioPorId(idUsuario: number): Observable<any> {
+    return this.httpService.request(RequestMethod.GET, `${this.authServerUrl}/api/user/obtener-usuario-por-id/${idUsuario}`);
+  }
+
+  reportarUsuario(body: any): Observable<any> {
+    return this.httpService.request(RequestMethod.POST, `${this.authServerUrl}/api/user/reportar-usuario`, body);
+  }
+
+  obtenerReportados(): Observable<any> {
+    return this.httpService.request(RequestMethod.GET, `${this.authServerUrl}/api/user/obtener-reportes-usuarios`);
+  }
+  actualizarReporteUsuario(body: any): Observable<any> {
+    return this.httpService.request(RequestMethod.PUT, `${this.authServerUrl}/api/user/actualizar-estado-reporte`, body);
+  }
+  crearProducto(body: any): Observable<any> {
+    return this.httpService.request(RequestMethod.POST, `${this.productoServerurl}/api/product/crear-producto`, body);
   }
 }

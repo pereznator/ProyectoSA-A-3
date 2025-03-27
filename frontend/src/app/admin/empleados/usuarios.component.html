@@ -1,0 +1,78 @@
+<div class="container">
+  <div class="row mt-5">
+    <div class="col-lg-8">
+      <h1>Usuarios</h1>
+    </div>
+    <div class="col-lg">
+      <div class="d-grid gap-2">
+        <button class="btn btn-secondary btn-sm" (click)="verReportados()">Ver Reportes</button>
+      </div>
+    </div>
+    <div class="col-lg">
+      <div class="d-grid gap-2">
+        <button class="btn btn-primary btn-sm" (click)="crearUsuario()">Nuevo Usuario</button>
+      </div>
+    </div>
+  </div>
+  <hr>
+
+  <app-loading *ngIf="loading"></app-loading>
+
+  <table class="table mt-3" *ngIf="!loading">
+    <thead class="table-dark">
+      <tr>
+        <th></th>
+        <th>Nombre</th>
+        <th>Apellido</th>
+        <th>Username</th>
+        <th>Correo</th>
+        <th>Telefono</th>
+        <th>Genero</th>
+        <th>Fecha Nacimiento</th>
+        <th>Fecha de Registro</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let usuario of usuarios">
+        <td>
+          <img [src]="usuario.profile_picture" class="rounded float-start fotografia" alt="fotografia">
+        </td>
+        <td>
+          {{usuario.first_name}}
+        </td>
+        <td>
+          {{usuario.last_name}}
+        </td>
+        <td>
+          {{usuario.username}}
+        </td>
+        <td>
+          {{usuario.email}}
+        </td>
+        <td>
+          {{usuario.phone}}
+        </td>
+        <td>
+          {{usuario.gender === 'female' ? 'Mujer' : 'Hombre'}}
+        </td>
+        <td>
+          {{usuario.dob | date: 'yyyy-MM-dd'}}
+        </td>
+        <td>
+          {{usuario.created_at | date: 'yyyy-MM-dd'}}
+        </td>
+        <td>
+          <span class="badge" [ngClass]="{'text-bg-success': usuario.status === 'active', 'text-bg-danger': usuario.status !== 'active'}">
+            {{usuario.status | uppercase}}
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-secondary mx-3" ngbTooltip="Editar" (click)="editarUsuario(usuario.user_id)"><i class="bi bi-pencil-square"></i></button>
+          <button class="btn btn-warning" ngbTooltip="Reportar Usuario" (click)="reportarUsuario(usuario)"><i class="bi bi-exclamation-circle"></i></button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
