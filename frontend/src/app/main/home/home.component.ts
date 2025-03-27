@@ -30,9 +30,9 @@ export class HomeComponent implements OnInit {
   ) {}
   
   ngOnInit(): void {
-    this.getOfertas();
-    this.getTop10Vendidos();
-    this.getTop10Valorados();
+    // this.getOfertas();
+    // this.getTop10Vendidos();
+    // this.getTop10Valorados();
   }
 
   getOfertas(): void {

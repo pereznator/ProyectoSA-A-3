@@ -1,0 +1,35 @@
+<div class="container h-100 mt-5">
+
+  <div class="row">
+    <div class="col-md-4"></div>
+    <div class="col-md-4 rounded-3 bg-light">
+      <div class="p-3">
+        <h3 *ngIf="showSuccess">Email Confirmado!</h3> 
+        <h3 *ngIf="showAlert">Algo Salió Mal</h3> 
+        <div class="alert alert-danger mt-2" *ngIf="showAlert">
+          Se ha vencido el tiempo para confirmar tu correo electrónico. Por favor, vuelve a enviar el correo de confirmación.
+        </div>
+        <ng-container *ngIf="showSuccess">
+          <p>Ya está todo listo para que puedas utilizar tu cuenta!</p>
+        </ng-container>
+
+        <ng-container *ngIf="showEmailEnviado">
+          <div class="w-max mt-2">
+            <p>Correo de confirmación enviado!</p>
+            <div class="alert alert-info mt-2" >
+              Hemos enviado un correo a la dirección de correo electrónico asociado a tu cuenta.
+            </div>
+          </div>
+        </ng-container>
+        <div class="d-flex justify-content-between mt-2">
+          <a class="text-primary" [routerLink]="['/auth/login']">Ir a Login</a>
+          <div class="d-flex flex-column" *ngIf="showAlert">
+            <button type="button" class="btn btn-primary" (click)="sendEmail()">Volver a Enviar Correo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4"></div>
+  </div>
+
+</div>

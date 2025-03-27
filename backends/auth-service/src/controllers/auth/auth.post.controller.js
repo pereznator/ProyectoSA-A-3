@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken');
 const pool = require('../../config/db');
+const nodemailer = require('nodemailer');
 const { parseJwtExpiration } = require('../../utils/jwtUtils'); 
+const { getMailContent } = require("../../utils/mailContent");
+
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRATION = process.env.JWT_EXPIRATION;
@@ -24,10 +27,17 @@ const iniciarSesionController = async (req, res) => {
             return res.status(400).json(parsedResult);
         }
 
-        const { user_id, role } = parsedResult;
+        const { user_id, role  } = parsedResult;
+        
+        const [rowsUsuario] = await pool.query('CALL ObtenerUsuarioPorId(?)', [user_id]);
 
+        const resultadoUsuario = rowsUsuario[0][0]?.resultado;
+        const usuarioEmail = resultadoUsuario.usuario.email;
+        const usuarioNombre = resultadoUsuario.usuario.username;
+        const status = resultadoUsuario.usuario.status;
+        
         const token = jwt.sign(
-            { user_id, role },
+            { user_id, role, username: usuarioNombre, email: usuarioEmail, status },
             JWT_SECRET,
             { expiresIn: JWT_EXPIRATION }
         );
@@ -45,7 +55,7 @@ const iniciarSesionController = async (req, res) => {
         ]);
 
         res.cookie('token', token, {
-            httpOnly: true,
+            // httpOnly: false,
             secure: true,
             sameSite: 'Strict',
             expires: expiresAt
@@ -86,12 +96,47 @@ const registrarVerificacionEmail = async (req, res) => {
         const resultado = rows[0][0]?.resultado;
         const parsedResult = typeof resultado === 'string' ? JSON.parse(resultado) : resultado;
 
-        if (parsedResult.status === 'success') {
-            return res.status(201).json(parsedResult);
-        } else {
+        if (parsedResult.status !== 'success') {
             return res.status(400).json(parsedResult);
         }
 
+        const [rowsUsuario] = await pool.query('CALL ObtenerUsuarioPorId(?)', [user_id]);
+        
+        const resultadoUsuario = rowsUsuario[0][0]?.resultado;
+
+        const usuarioEmail = resultadoUsuario.usuario.email;
+        const usuarioNombre = resultadoUsuario.usuario.username;
+        const url = `${process.env.FRONTEND_URL}/auth/confirm-email/${token}?usr=${user_id}`;
+
+
+        // Looking to send emails in production? Check out our Email API/SMTP product!
+        const transporter = nodemailer.createTransport({
+            host: "sandbox.smtp.mailtrap.io",
+            port: 2525,
+            auth: {
+                user: process.env.MAILTRAP_USER,
+                pass: process.env.MAILTRAP_PASSWORD
+            }
+        });
+
+
+        const mailOptions = {
+            from: '"swaptify" <noreply@swaptify.com>',
+            to: usuarioEmail,
+            subject: `Bienvenido ${usuarioNombre} a Swaptify!`,
+            html: getMailContent(url, usuarioNombre)
+          };
+          
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error(error);
+                return res.status(500).json({
+                    status: 'error',
+                    message: 'Error al enviar el correo de verificación.'
+                });
+            }
+            return res.status(201).json(parsedResult);
+        });
     } catch (error) {
         console.error(error);
         return res.status(500).json({

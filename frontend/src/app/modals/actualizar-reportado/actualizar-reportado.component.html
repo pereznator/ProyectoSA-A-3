@@ -1,0 +1,24 @@
+<div style="width: 100%;" class="p-4">
+  <div class="row">
+      <div class="col-md-10">
+          <h3 class="fs-4">Actualizar Reporte</h3>
+      </div>
+  </div>
+  <hr>
+  <div class="row">
+    <p>Actualizar estado del reporta para darle seguimiento, seleccionar uno de los siguientes estados.</p>
+  </div>
+  
+  <div class="form-group">
+    <select class="form-select" id="status" [(ngModel)]="selected">
+      <option [ngValue]="null">--Seleccionar Estado--</option>
+      <option *ngFor="let option of options">{{option}}</option>
+    </select>
+  </div>
+
+  <div class="d-flex justify-content-end mt-3">
+      <button class="btn btn-secondary mx-2" (click)="modal.dismiss()">Cancelar</button>
+      <button id="confirm" class="btn btn-primary" [disabled]="!selected" (click)="modal.close(selected)">Confirmar</button>
+  </div>
+
+</div>

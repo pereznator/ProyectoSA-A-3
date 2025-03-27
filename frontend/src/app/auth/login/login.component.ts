@@ -58,19 +58,19 @@ export class LoginComponent implements OnInit {
     this.showAlert = false;
     this.loginForm.disable();
     const loginBody = {
-      username: this.loginForm.get("username").value,
+      login: this.loginForm.get("username").value,
       password: this.loginForm.get("password").value
     };
 
-    if (this.username !== loginBody.username) {
+    if (this.username !== loginBody.login) {
       this.intentos = 0
     }
 
     if (this.intentos === 0) {
-      this.username = loginBody.username;
+      this.username = loginBody.login;
     }
 
-    if (this.username === loginBody.username) {
+    if (this.username === loginBody.login) {
       this.intentos++;
     }
 
@@ -81,18 +81,18 @@ export class LoginComponent implements OnInit {
       this.showAlert = false;
       this.router.navigate(["home"]);
     }, err => {
+      console.log(err);
       this.loginForm.enable();
       this.showAlert = true;
-      this.alertMessage = "Credenciales Invalidas";
-      console.log("show alert true");
+      this.alertMessage = err.error?.message ?? "Credenciales Invalidas";
       if (this.intentos > 5) {
-        this.authService.desactivar(this.username).pipe(take(1)).subscribe(resp => {
-          console.log(resp);
-          this.showAlert = true;
-          this.alertMessage = `Usuario ${this.username} bloqueado por exceder límite de intentos de inicio de sesión.`;
-        }, err => {
-          console.log(err);
-        });
+        // this.authService.desactivar(this.username).pipe(take(1)).subscribe(resp => {
+        //   console.log(resp);
+        //   this.showAlert = true;
+        //   this.alertMessage = `Usuario ${this.username} bloqueado por exceder límite de intentos de inicio de sesión.`;
+        // }, err => {
+        //   console.log(err);
+        // });
       }
     });
     

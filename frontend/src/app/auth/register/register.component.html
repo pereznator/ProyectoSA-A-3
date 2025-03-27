@@ -85,13 +85,17 @@
                     <label for="sexo">Sexo:</label>
                     <select id="sexo" class="form-select" formControlName="sexo" [ngClass]="{'is-invalid': notValidSexo}">
                       <option [ngValue]="null">-- Selecciona tu sexo --</option>
-                      <option [value]="'H'">
+                      <option [value]="'male'">
                         Hombre
                       </option>
-                      <option [value]="'M'">
+                      <option [value]="'female'">
                         Mujer
                       </option>
                     </select>
+                  </div>
+                  <div class="col-lg-6">
+                    <label for="city">Ciudad</label>
+                    <input type="text" id="city" class="form-control" [ngClass]="{'is-invalid': notValidCity}" formControlName="city">
                   </div>
                 </div>
                 <div class="row mt-2">

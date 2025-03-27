@@ -1,16 +1,17 @@
 const express = require('express');
 const cors = require('cors');
 const routes = require('./routes');
-
+const morgan = require('morgan');
 const app = express();
 
 // Middleware
 app.use(express.json());
+app.use(morgan('tiny'));
 app.use(express.urlencoded({ extended: true }));
 
 // Configurar CORS correctamente
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173', // Origen de la petición
+    origin: process.env.CORS_ORIGIN || 'http://localhost:4200', // Origen de la petición
     credentials: true, // Permitir el uso de cookies y JWT en el frontend
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
     allowedHeaders: ['Content-Type', 'Authorization'], // Headers permitidos

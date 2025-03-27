@@ -48,23 +48,25 @@ export class ProductoComponent implements OnInit {
   getProducto(): void {
     this.loading = true;
     this.activatedRoute.params.pipe(take(1)).subscribe(params => {
-      this.mainService.obtenerProductoPorId(params["idProducto"]).pipe(take(1), map(resp => resp['response_database'].result[0])).subscribe(resp => {
+      this.mainService.obtenerProducto(params["idProducto"]).pipe(take(1)).subscribe(resp => {
         console.log(resp);
         this.producto = {
-          id: resp.id,
-          portada: resp.portada,
-          nombre: resp.nombre,
-          categoriaId: resp.categoria_producto_id,
-          precio: resp.precio,
-          costo: resp.costo,
-          fecha: resp.fecha_registro,
-          descripcion: resp.descripcion,
-          proveedorId: resp.proveedor_id,
-          categoria: resp.categoria_producto,
-          proveedor: resp.proveedor,
-          enExistencia: resp.en_existencia
+          id: resp.product_id,
+          name: resp.name,
+          description: resp.description,
+          price: resp.price,
+          stock_quantity: resp.stock_quantity,
+          code: resp.code,
+          main_image_url: resp.main_image_url,
+          value: resp.value,
+          category_name: resp.category,
+          marcas: resp.brands,
+          regiones: resp.restricted_regions,
+          imagenes: resp.images,
+          brands: resp.brands,
+          status: resp.status,
         };
-        this.getComentarios();
+        // this.getComentarios();
       }, err => {
         console.log(err);
       });
@@ -98,8 +100,8 @@ export class ProductoComponent implements OnInit {
             {
               producto_id: this.producto.id,
               cantidad: unidades,
-              precio_unidad: this.producto.precio,
-              nombre_producto: this.producto.nombre
+              precio_unidad: this.producto.price,
+              nombre_producto: this.producto.name
             }
           ]
         }

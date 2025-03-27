@@ -25,8 +25,9 @@ export interface User {
   password: string;
   phone: string;
   dob: string;
-  gender: 'male' | 'female' | 'other'; // ajustable según necesidades
-  role: 'admin' | 'user' | 'moderator'; // puedes agregar más roles según tu app
+  gender: 'male' | 'female';
+  role: 'admin' | 'user';
   profile_picture: string | null;
   addresses: Address[];
+  status?: 'active' | 'inactive';
 }

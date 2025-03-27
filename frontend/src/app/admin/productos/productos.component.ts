@@ -32,7 +32,8 @@ export class ProductosComponent implements OnInit {
   getProductos(): void {
     this.loading = true;
     this.adminService.obtenerProductos().pipe(take(1)).subscribe(resp => {
-      this.productos = resp.response_database.result;
+      console.log(resp);
+      this.productos = resp.productos;
       this.loading = false;
     }, err => {
       console.log(err);

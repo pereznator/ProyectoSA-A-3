@@ -3,8 +3,7 @@
   <div class="row" *ngIf="!loading">
       <div class="col-md-11">
           <h1>
-              {{producto.nombre}}
-              <small>({{producto.fecha | date: 'yyyy'}})</small>
+              {{producto.name}}
           </h1>
       </div>
       <div class="col-lg-1">
@@ -20,7 +19,7 @@
         <div class="row">
           <div class="col">
             <div class="card">
-              <img [src]="producto.portada" class="card-img-top img-perfil" alt="...">
+              <img [src]="producto.main_image_url" class="card-img-top img-perfil" alt="...">
             </div>
           </div>
         </div>
@@ -38,7 +37,7 @@
                   <dt class="form-label">Titulo</dt>
               </div>
               <div class="col-lg">
-                  <p>{{producto.nombre}}</p>
+                  <p>{{producto.name}}</p>
               </div>
           </div>
           <div class="row">
@@ -46,7 +45,7 @@
                   <dt class="form-label">Categoria</dt>
               </div>
               <div class="col-lg">
-                  <p>{{producto.categoria}}</p>
+                  <p>{{producto.category_name}}</p>
               </div>
           </div>
           <div class="row">
@@ -54,36 +53,36 @@
                   <dt class="form-label">Proveedor</dt>
               </div>
               <div class="col-lg">
-                  <p>{{producto.proveedor}}</p>
+                  <p>{{producto.brands}}</p>
               </div>
           </div>
-          <div class="row">
+          <!-- <div class="row">
               <div class="col-lg-3">
                   <dt class="form-label">Año de Publicación</dt>
               </div>
               <div class="col-lg">
                   <p>{{producto.fecha | date}}</p>
               </div>
-          </div>
+          </div> -->
           <div class="row">
               <div class="col-lg-3">
                   <dt class="form-label">Precio</dt>
               </div>
               <div class="col-lg">
-                  <p>{{producto.precio| currency: 'Q'}}</p>
+                  <p>{{producto.price| currency: 'Q'}}</p>
               </div>
           </div>
-          <div class="row">
+          <!-- <div class="row">
               <div class="col-lg-3">
                   <dt class="form-label">Unidades Disponibles</dt>
               </div>
               <div class="col-lg">
                   <p>{{producto.enExistencia}}</p>
               </div>
-          </div>
+          </div> -->
           <div class="row">
             <div class="col">
-              <p class="lead" style="text-align: justify; text-justify: inter-word;">{{producto.descripcion}}</p>
+              <p class="lead" style="text-align: justify; text-justify: inter-word;">{{producto.description}}</p>
             </div>
           </div>
       </div>

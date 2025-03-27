@@ -110,8 +110,8 @@ export class CrearOrdenComponent implements OnInit {
       let pdfUrl: string;
       if (this.file) {
         const pdfId = v4();
-        pdfUrl = `https://proyecto-2-ayd-2-g1.s3.amazonaws.com/${pdfId}`;
-        this.s3Service.uploadFileToBucket(this.file, "proyecto-2-ayd-2-g1", pdfId).pipe(take(1)).subscribe(resp => {
+        pdfUrl = `https://software-avanzado-bucket.s3.amazonaws.com/${pdfId}`;
+        this.s3Service.generateUploadUrl(this.file,  pdfId).pipe(take(1)).subscribe(resp => {
           console.log("BUCKET SUCCESS", resp);
         }, err => {
           console.log("BUCKET ERROR", err);

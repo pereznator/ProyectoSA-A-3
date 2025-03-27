@@ -1,23 +1,44 @@
-import { NgClass, NgIf } from '@angular/common';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../auth/auth.service';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { take } from 'rxjs';
-import { ClientService } from '../client.service';
-import { Cliente } from '../client.types';
 import { LoadingComponent } from '../../shared/loading/loading.component';
-import { S3Service } from '../../s3.service';
-import { v4 } from "uuid";
+import { User } from '../../auth/auth.types';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [NgIf, FormsModule, ReactiveFormsModule, NgClass, RouterLink, LoadingComponent],
+  imports: [NgIf, FormsModule, ReactiveFormsModule, NgClass, NgFor, LoadingComponent],
   templateUrl: './perfil.component.html',
   styleUrl: './perfil.component.scss'
 })
 export class PerfilComponent implements OnInit {
+  departamentos: string[] = [
+    'Alta Verapaz',
+    'Baja Verapaz',
+    'Chimaltenango',
+    'Chiquimula',
+    'El Progreso',
+    'Escuintla',
+    'Guatemala',
+    'Huehuetenango',
+    'Izabal',
+    'Jalapa',
+    'Jutiapa',
+    'Petén',
+    'Quetzaltenango',
+    'Quiché',
+    'Retalhuleu',
+    'Sacatepéquez',
+    'San Marcos',
+    'Santa Rosa',
+    'Sololá',
+    'Suchitepéquez',
+    'Totonicapán',
+    'Zacapa'
+  ];
   imagenPerfil: string | ArrayBuffer = null;
   archivo: File = null;
   perfilForm: FormGroup;
@@ -25,15 +46,14 @@ export class PerfilComponent implements OnInit {
   alertMessage: string = "";
   loading: boolean = false;
 
-  cliente: Cliente;
+  usuario: User;
   passwordRegex = /^(?=.*[A-Z])(?=.*[\W])(?=.*[0-9])(?=.*[a-z]).{8,128}$/;
   estado_usuario_id: number;
 
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
-    private clientSerivce: ClientService,
-    private s3Service: S3Service
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -55,36 +75,40 @@ export class PerfilComponent implements OnInit {
   get notValidDireccion(): boolean {
     return this.perfilForm.get("direccion").touched && this.perfilForm.get("direccion").invalid;
   }
+  get notValidCity(): boolean {
+    return this.perfilForm.get("city").touched && this.perfilForm.get("city").invalid;
+  }
+  get notValidDepartamento(): boolean {
+    return this.perfilForm.get("departamento").touched && this.perfilForm.get("departamento").invalid;
+  }
   get notValidUsername(): boolean {
     return this.perfilForm.get("username").touched && this.perfilForm.get("username").invalid;
-  }
-  get notValidPassword(): boolean {
-    return this.perfilForm.get("password").touched && this.perfilForm.get("password").invalid;
-  }
-  get notValidPasswordRepeat(): boolean {
-    if (this.perfilForm.get("passwordRepeat").touched && this.perfilForm.get("passwordRepeat").invalid) {
-      return true;
-    }
-    return this.perfilForm.get("passwordRepeat").value !== this.perfilForm.get("password").value;
   }
 
   getUser(): void {
     this.loading = true;
-    this.authService.user$.pipe(take(1)).subscribe(user => {
-      this.clientSerivce.getUser(`${user.id}`).pipe(take(1)).subscribe(resp => {
-        console.log(resp);
-        this.estado_usuario_id = resp.response_database.result[0].estado_usuario_id;
-        this.cliente = {
-          id: resp.response_database.result[0].id,
-          nombre: resp.response_database.result[0].nombre,
-          apellido: resp.response_database.result[0].apellido,
-          email: resp.response_cognito.email,
-          password: "",
-          username: resp.response_cognito.Username,
-          direccion: resp.response_database.result[0].direccion_entrega,
-          fotografia: resp.response_database.result[0].fotografia,
-          celular: resp.response_database.result[0].celular,
-          estado: resp.response_database.result[0].estado_usuario,
+    this.authService.currentUser$.pipe(take(1)).subscribe(user => {
+      this.authService.getUser(`${user.id}`).pipe(take(1)).subscribe(userResponse => {
+        console.log(userResponse);
+        this.usuario = {
+          id: userResponse.user_id,
+          first_name: userResponse.first_name,
+          last_name: userResponse.last_name,
+          email: userResponse.email,
+          username: userResponse.username,
+          password: '',
+          phone: userResponse.phone,
+          dob: userResponse.dob,
+          gender: userResponse.gender,
+          role: userResponse.role,
+          profile_picture: userResponse.profile_picture,
+          addresses: userResponse.addresses.map(addr => ({
+            address: addr.address,
+            city: addr.city,
+            department: addr.department,
+            is_primary: addr.is_primary
+          })),
+          status: userResponse.status
         };
         this.buildForm();
       }, err => {
@@ -95,16 +119,22 @@ export class PerfilComponent implements OnInit {
 
   buildForm(): void {
     this.perfilForm = this.fb.group({
-      nombre: [this.cliente.nombre, [Validators.required]],
-      apellido: [this.cliente.apellido, [Validators.required]],
-      telefono: [this.cliente.celular, [Validators.required]],
-      correo: [this.cliente.email, [Validators.required, Validators.email]],
-      // password: [null, [Validators.required, Validators.pattern(this.passwordRegex)]],
-      // passwordRepeat: [null, [Validators.required]],
-      img: [null, []],
-      direccion: [this.cliente.direccion, [Validators.required]],
-      username: [{ value: this.cliente.username, disabled: true}, [Validators.required]]
+      nombre: [this.usuario.first_name, [Validators.required]],
+      apellido: [this.usuario.last_name, [Validators.required]],
+      correo: [this.usuario.email, [Validators.required, Validators.email]],
+      username: [this.usuario.username, [Validators.required]],
+      telefono: [this.usuario.phone, Validators.required],
+      fechaNacimiento: [this.usuario.dob, Validators.required],
+      sexo: [this.usuario.gender || 'male', Validators.required],
+      role: [this.usuario.role || 'user', Validators.required],
+      profile_picture: [null, []],
+      direccion: [this.usuario.addresses[0].address, Validators.required],
+      city: [this.usuario.addresses[0].city, Validators.required],
+      departamento: [this.usuario.addresses[0].department, Validators.required]
     });
+    this.perfilForm.get("nombre").disable();
+    this.perfilForm.get("apellido").disable();
+    this.perfilForm.get("username").disable();
     this.loading = false;
   }
 
@@ -126,47 +156,35 @@ export class PerfilComponent implements OnInit {
     }
     this.perfilForm.disable();
 
-    const body = {
-      nombre: this.perfilForm.get("nombre").value,
-      apellido: this.perfilForm.get("apellido").value,
-      celular: this.perfilForm.get("telefono").value,
-      email: this.perfilForm.get("correo").value,
-      direccion_entrega: this.perfilForm.get("direccion").value,
-      username: this.perfilForm.get("username").value,
-      estado_usuario_id: this.estado_usuario_id,
-      fotografia: this.cliente.fotografia
+    const actualizarPerfilBody = {
+      "user_id": this.usuario.id,
+      "email": this.perfilForm.get("correo").value,
+      "phone": this.perfilForm.get("telefono").value,
+      "addresses": [
+        {
+          "address": this.perfilForm.get("direccion").value,
+          "city": this.perfilForm.get("city").value,
+          "department": this.perfilForm.get("departamento").value,
+          "is_primary": 1
+        }
+      ]
     };
-
-    if (this.archivo) {
-      const id = v4();
-      this.s3Service.uploadFileToBucket(this.archivo, "proyecto-2-ayd-2-g1", id).subscribe(bucketResp => {
-        console.log(bucketResp);
-        body.fotografia = bucketResp.Location;
-        console.log(body);
-        this.clientSerivce.update(this.cliente.id, body).pipe(take(1)).subscribe(resp => {
-          console.log(resp);
-          this.perfilForm.enable();
-          this.imagenPerfil = null;
-          this.archivo = null;
-          this.getUser()
-        }, err => {
-          console.log(err);
-        });
-      }, err => {
-        console.log(err);
+    this.authService.actualizarPerfil(actualizarPerfilBody).pipe(take(1)).subscribe(resp => {
+      console.log(resp);
+      this.perfilForm.enable();
+      this.snackBar.open('Perfil Actualizado', 'Cerrar', {
+        duration: 3000, // en milisegundos
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom'
       });
-    } else {
-      this.clientSerivce.update(this.cliente.id, body).pipe(take(1)).subscribe(resp => {
-        console.log(resp);
-        this.perfilForm.enable();
-        this.imagenPerfil = null;
-        this.archivo = null;
-        this.getUser();
-      }, err => {
-        this.perfilForm.enable();
-        console.log(err);
-      });
-    }
+      this.getUser();
+      return;
+    }, err => {
+      this.showAlert = true;
+      this.perfilForm.enable();
+      this.alertMessage = err.error.msj;
+      return;
+    });
 
   }
 }
