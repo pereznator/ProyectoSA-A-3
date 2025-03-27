@@ -15,5 +15,4 @@
 
 /backends/product-service/node_modules
 /backends/product-service/dist
-/backends/product-service/.env'backends/auth-service/.env' 
-'backends/auth-service/.env' 
+/backends/product-service/.env
