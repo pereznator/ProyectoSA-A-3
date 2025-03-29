@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-service
+  namespace: sa-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-service
+  template:
+    metadata:
+      labels:
+        app: product-service
+    spec:
+      containers:
+        - name: product-service
+          image: jpanaza/product-service:latest
+          ports:
+            - containerPort: 3002
+          env:
+            - name: PORT
+              value: "3002"
+            - name: CORS_ORIGIN
+              value: "http://localhost"
+            - name: AUTH_SERVICE_URL
+              value: "http://auth-service:3001"
+            - name: DB_HOST
+              value: "db-product"
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_USER
+              value: "root"
+            - name: DB_PASSWORD
+              value: "1234"
+            - name: DB_DATABASE
+              value: "product_db"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-service
+  namespace: sa-app
+spec:
+  selector:
+    app: product-service
+  type: ClusterIP
+  ports:
+    - port: 3002
+      targetPort: 3002

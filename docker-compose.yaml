@@ -79,7 +79,7 @@ services:
       - sa-network
 
   frontend:
-    image: jorigot/swaptify-frontend:v1
+    image: jorigot/swap-sa:v1
     container_name: frontend
     restart: always
     depends_on:
