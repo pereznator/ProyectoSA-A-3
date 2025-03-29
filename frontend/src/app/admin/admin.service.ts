@@ -9,7 +9,7 @@ import { environment } from '../../environments/environment';
 export class AdminService {
 
   authServerUrl = environment.authServerUrl;
-  productoServerurl = environment.productoServerUrl;
+  productServerUrl = environment.productServerUrl;
 
   constructor(private httpService: HttpService) { }
 
@@ -30,7 +30,7 @@ export class AdminService {
   }
 
   obtenerProductos(): Observable<any> {
-    return this.httpService.request(RequestMethod.GET, `${this.productoServerurl}/api/product/obtener-productos`);
+    return this.httpService.request(RequestMethod.GET, `${this.productServerUrl}/api/product/obtener-productos`);
   }
 
   obtenerProductoPorId(idProducto: string): Observable<any> {
@@ -105,6 +105,6 @@ export class AdminService {
     return this.httpService.request(RequestMethod.PUT, `${this.authServerUrl}/api/user/actualizar-estado-reporte`, body);
   }
   crearProducto(body: any): Observable<any> {
-    return this.httpService.request(RequestMethod.POST, `${this.productoServerurl}/api/product/crear-producto`, body);
+    return this.httpService.request(RequestMethod.POST, `${this.productServerUrl}/api/product/crear-producto`, body);
   }
 }

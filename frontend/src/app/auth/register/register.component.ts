@@ -49,32 +49,32 @@ export class RegisterComponent {
   passwordRegex = /^(?=.*[A-Z])(?=.*[\W])(?=.*[0-9])(?=.*[a-z]).{8,128}$/;
 
   registerForm: FormGroup = this.fb.group({
-    // nombre: [null, [Validators.required]],
-    // apellido: [null, [Validators.required]],
-    // telefono: [null, [Validators.required]],
-    // correo: [null, [Validators.required, Validators.email]],
-    // password: [null, [Validators.required, Validators.pattern(this.passwordRegex)]],
-    // passwordRepeat: [null, [Validators.required]],
-    // img: [null, [Validators.required]],
-    // direccion: [null, [Validators.required]],
-    // departamento: [null, [Validators.required]],
-    // username: [null, [Validators.required]],
-    // fechaNacimiento: [null, [Validators.required]],
-    // sexo: [null, [Validators.required]],
-    // city: [null, [Validators.required]]
-    nombre: ["Jorge", [Validators.required]],
-    apellido: ["Perez", [Validators.required]],
-    telefono: ["12345678", [Validators.required]],
-    correo: ["jorgeperezlj@gmail.com", [Validators.required, Validators.email]],
-    password: ["Pa$$word123", [Validators.required, Validators.pattern(this.passwordRegex)]],
-    passwordRepeat: ["Pa$$word123", [Validators.required]],
+    nombre: [null, [Validators.required]],
+    apellido: [null, [Validators.required]],
+    telefono: [null, [Validators.required]],
+    correo: [null, [Validators.required, Validators.email]],
+    password: [null, [Validators.required, Validators.pattern(this.passwordRegex)]],
+    passwordRepeat: [null, [Validators.required]],
     img: [null, [Validators.required]],
-    direccion: ["direccion", [Validators.required]],
-    departamento: ["Guatemala", [Validators.required]],
-    username: ["jorigot", [Validators.required]],
+    direccion: [null, [Validators.required]],
+    departamento: [null, [Validators.required]],
+    username: [null, [Validators.required]],
     fechaNacimiento: [null, [Validators.required]],
-    sexo: ["female", [Validators.required]],
-    city: ["city", [Validators.required]]
+    sexo: [null, [Validators.required]],
+    city: [null, [Validators.required]]
+    // nombre: ["Jorge", [Validators.required]],
+    // apellido: ["Perez", [Validators.required]],
+    // telefono: ["12345678", [Validators.required]],
+    // correo: ["jorgeperezlj@gmail.com", [Validators.required, Validators.email]],
+    // password: ["Pa$$word123", [Validators.required, Validators.pattern(this.passwordRegex)]],
+    // passwordRepeat: ["Pa$$word123", [Validators.required]],
+    // img: [null, [Validators.required]],
+    // direccion: ["direccion", [Validators.required]],
+    // departamento: ["Guatemala", [Validators.required]],
+    // username: ["jorigot", [Validators.required]],
+    // fechaNacimiento: [null, [Validators.required]],
+    // sexo: ["female", [Validators.required]],
+    // city: ["city", [Validators.required]]
   });
 
   loading: boolean = false;

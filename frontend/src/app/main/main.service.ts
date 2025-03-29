@@ -5,7 +5,7 @@ import { environment } from "../../environments/environment";
 
 @Injectable({ providedIn: "root" })
 export class MainService {
-  productoServerUrl = environment.productoServerUrl;
+  productServerUrl = environment.productServerUrl;
   constructor(private httpService: HttpService) {}
 
   obtenerCategorias(): Observable<any> {
@@ -70,9 +70,9 @@ export class MainService {
     return this.httpService.request(RequestMethod.GET, "/reports/top-ten-productos/valoracion");
   }
   obtenerProductos(): Observable<any> {
-    return this.httpService.request(RequestMethod.GET, `${this.productoServerUrl}/api/product/obtener-productos`);
+    return this.httpService.request(RequestMethod.GET, `${this.productServerUrl}/api/product/obtener-productos`);
   }
   obtenerProducto(idProducto: number): Observable<any> {
-    return this.httpService.request(RequestMethod.GET, `${this.productoServerUrl}/api/product/obtener-producto-por-id/${idProducto}`);
+    return this.httpService.request(RequestMethod.GET, `${this.productServerUrl}/api/product/obtener-producto-por-id/${idProducto}`);
   }
 }

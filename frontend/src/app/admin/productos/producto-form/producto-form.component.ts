@@ -175,8 +175,8 @@ export class ProductoFormComponent implements OnInit {
         this.regiones = [...this.producto.regiones]
       }
       this.imagenProducto = this.producto.main_image_url;
+      this.productoForm.disable();
     }
-    this.productoForm.disable();
     this.loading = false;
   }
 

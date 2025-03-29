@@ -6,7 +6,7 @@ import { environment } from "../../environments/environment";
 @Injectable({ providedIn: "root" })
 export class ClientService {
 
-  productoServerUrl = environment.productoServerUrl;
+  productServerUrl = environment.productServerUrl;
 
   constructor(private httpService: HttpService) {}
 
@@ -63,6 +63,6 @@ export class ClientService {
   }
 
   crearReview(review: any): Observable<any> {
-    return this.httpService.request(RequestMethod.POST, `${this.productoServerUrl}/api/product/agregar-review-producto`, review);
+    return this.httpService.request(RequestMethod.POST, `${this.productServerUrl}/api/product/agregar-review-producto`, review);
   }
 }
