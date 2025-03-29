@@ -239,3 +239,17 @@ Sprint 1 (Semana 2):
 ![alt text](./img/trello2.png)
 Sprint 1 (Semana 3):
 ![alt text](./img/trello3.png)
+
+### Diagrama Arquitectura
+
+![arquitectura](./img/Arquitectura_P3.drawio.png)
+
+### Diagrama ER de los microservicios
+
+1. Auth-Service
+
+![ServiceAuth](./databases/db-auth/model/auth_db.png)
+
+2. Product-Service
+
+![ServiceProducto](./databases/db-product/model/product_db.png)
