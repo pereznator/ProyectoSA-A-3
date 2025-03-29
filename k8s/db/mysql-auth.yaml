@@ -1,0 +1,74 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mysql-auth-pv
+  namespace: sa-app
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:              # ✅ compatible con Minikube/local
+    path: /mnt/data/mysql-auth
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mysql-auth-pvc
+  namespace: sa-app
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-auth
+  namespace: sa-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql-auth
+  template:
+    metadata:
+      labels:
+        app: mysql-auth
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:latest
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: "1234"
+            - name: MYSQL_DATABASE
+              value: "auth_db"
+          ports:
+            - containerPort: 3306
+          volumeMounts:
+            - name: mysql-auth-data
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: mysql-auth-data
+          persistentVolumeClaim:
+            claimName: mysql-auth-pvc
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db-userauth
+  namespace: sa-app
+spec:
+  type: NodePort           # ✅ expone puerto para scripts o acceso externo
+  selector:
+    app: mysql-auth
+  ports:
+    - port: 3306
+      targetPort: 3306
+      nodePort: 30307       # Puedes usar uno entre 30000-32767
