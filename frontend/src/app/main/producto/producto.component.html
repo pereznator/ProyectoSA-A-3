@@ -1,4 +1,4 @@
-<div class="container mt-5">
+<!-- <div class="container mt-5">
   <app-loading *ngIf="loading"></app-loading>
   <div class="row" *ngIf="!loading">
       <div class="col-md-11">
@@ -56,14 +56,6 @@
                   <p>{{producto.brands}}</p>
               </div>
           </div>
-          <!-- <div class="row">
-              <div class="col-lg-3">
-                  <dt class="form-label">Año de Publicación</dt>
-              </div>
-              <div class="col-lg">
-                  <p>{{producto.fecha | date}}</p>
-              </div>
-          </div> -->
           <div class="row">
               <div class="col-lg-3">
                   <dt class="form-label">Precio</dt>
@@ -72,14 +64,6 @@
                   <p>{{producto.price| currency: 'Q'}}</p>
               </div>
           </div>
-          <!-- <div class="row">
-              <div class="col-lg-3">
-                  <dt class="form-label">Unidades Disponibles</dt>
-              </div>
-              <div class="col-lg">
-                  <p>{{producto.enExistencia}}</p>
-              </div>
-          </div> -->
           <div class="row">
             <div class="col">
               <p class="lead" style="text-align: justify; text-justify: inter-word;">{{producto.description}}</p>
@@ -87,7 +71,6 @@
           </div>
       </div>
   </div>
-  <!-- COMENTARIOS -->
   <div class="row" *ngIf="!loading">
     <div class="col-lg-2"></div>
     <div class="col-lg-8">
@@ -145,4 +128,99 @@
     </div>
     <div class="col-lg-2"></div>
 </div>
-</div>
+</div> -->
+
+<div class="container mt-5">
+    <app-loading *ngIf="loading"></app-loading>
+  
+    <!-- Encabezado -->
+    <div class="row align-items-center mb-4" *ngIf="!loading">
+      <div class="col-md-10">
+        <h1 class="display-5 fw-bold">{{ producto.name }}</h1>
+        <small class="text-muted">Código: {{ producto.code }}</small>
+      </div>
+      <div class="col-md-2 text-end">
+        <button class="btn btn-outline-secondary" (click)="location.back()">Regresar</button>
+      </div>
+    </div>
+  
+    <hr>
+  
+    <!-- Información del producto -->
+    <div class="row" *ngIf="!loading">
+      <!-- Imagen principal e imágenes adicionales -->
+      <div class="col-lg-4 mb-4">
+        <div class="card shadow-sm mb-3">
+          <img [src]="producto.main_image_url" class="card-img-top rounded img-fluid" alt="Imagen principal">
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+          <img *ngFor="let img of producto.imagenes" [src]="img" class="img-thumbnail" style="width: 80px; height: 80px; object-fit: cover;" alt="Imagen adicional">
+        </div>
+        <div class="d-grid gap-2 mt-3">
+          <button class="btn btn-success btn-lg" (click)="agregarAlCarrito()">Agregar al Carrito</button>
+        </div>
+      </div>
+  
+      <!-- Detalles del producto -->
+      <div class="col-lg-8">
+        <div class="row mb-2">
+          <div class="col-md-4 fw-bold">Categoría:</div>
+          <div class="col-md-8">{{ producto.category_name }}</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-md-4 fw-bold">Marca(s):</div>
+          <div class="col-md-8">{{ producto.brands }}</div>
+        </div>
+        <div class="row mb-2" *ngIf="producto.regiones?.length">
+          <div class="col-md-4 fw-bold">Regiones Restringidas:</div>
+          <div class="col-md-8">{{ producto.regiones.join(', ') }}</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-md-4 fw-bold">Unidades Disponibles:</div>
+          <div class="col-md-8">{{ producto.stock_quantity }}</div>
+        </div>
+        <div class="row mb-2">
+          <div class="col-md-4 fw-bold">Precio:</div>
+          <div class="col-md-8 text-success fs-5">{{ producto.price | currency: 'Q' }}</div>
+        </div>
+        <div class="row mt-4">
+          <div class="col">
+            <h5>Descripción</h5>
+            <p class="text-justify">{{ producto.description }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- <div class="row mt-5" *ngIf="!loading">
+      <div class="col-lg-2"></div>
+      <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3>Comentarios</h3>
+          <button class="btn btn-primary btn-sm" *ngIf="!showComentarioInput && user" (click)="showComentarioInput = true">Comentar</button>
+        </div>
+  
+        <ng-container *ngIf="showComentarioInput">
+          <div class="mb-2">
+            <textarea class="form-control" placeholder="Escribe tu comentario del producto..." rows="4" [(ngModel)]="nuevoComentario"></textarea>
+          </div>
+          <div class="d-flex justify-content-between">
+            <div style="width: 200px;">
+              <select class="form-select form-select-sm" [(ngModel)]="nuevaPuntuacion">
+                <option [ngValue]="null">Seleccionar Puntaje</option>
+                <option *ngFor="let i of [1, 2, 3, 4, 5]" [ngValue]="i">{{ i }}/5</option>
+              </select>
+            </div>
+            <div>
+              <button class="btn btn-secondary me-2" (click)="showComentarioInput = false">Cancelar</button>
+              <button class="btn btn-primary" (click)="publicarComentario()" [disabled]="nuevaPuntuacion === null || nuevoComentario === ''">Publicar</button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+      <div class="col-lg-2"></div>
+    </div> -->
+  </div>
+  
+
+

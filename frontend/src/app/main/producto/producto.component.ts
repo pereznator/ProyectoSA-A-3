@@ -48,7 +48,7 @@ export class ProductoComponent implements OnInit {
   getProducto(): void {
     this.loading = true;
     this.activatedRoute.params.pipe(take(1)).subscribe(params => {
-      this.mainService.obtenerProducto(params["idProducto"]).pipe(take(1)).subscribe(resp => {
+      this.mainService.obtenerProducto(params["idProducto"]).pipe(take(1), map(resp => resp.producto)).subscribe(resp => {
         console.log(resp);
         this.producto = {
           id: resp.product_id,
@@ -66,6 +66,7 @@ export class ProductoComponent implements OnInit {
           brands: resp.brands,
           status: resp.status,
         };
+        this.loading = false;
         // this.getComentarios();
       }, err => {
         console.log(err);
@@ -73,15 +74,7 @@ export class ProductoComponent implements OnInit {
     });
   }
 
-  getComentarios(): void {
-    this.mainService.obtenerComentariosDeProducto(`${this.producto.id}`).pipe(take(1), map(resp => resp["response_database"].result)).subscribe(resp => {
-      this.comentarios = resp;
-      console.log(this.comentarios);
-      this.loading = false;
-    }, err => {
-      console.log(err);
-    });
-  }
+  
 
   agregarAlCarrito(): void {
     if (!this.user) {
@@ -129,7 +122,7 @@ export class ProductoComponent implements OnInit {
       this.nuevaPuntuacion = null;
       this.nuevoComentario = "";
       this.showComentarioInput = false;
-      this.getComentarios();
+      // this.getComentarios();
     })
   }
 
@@ -141,7 +134,7 @@ export class ProductoComponent implements OnInit {
       this.mainService.eliminarComentario(idComentario).pipe(take(1)).subscribe(resp => {
         console.log(resp);
         this.loading = true;
-        this.getComentarios();
+        // this.getComentarios();
       }, err => {
         console.log(err);
       });

@@ -261,13 +261,20 @@ export class UsuarioFormComponent implements OnInit {
         console.log("RESP FOTOGRAFIA", respFotografia);
         registerBody.profile_picture = respFotografia;
         this.authService.register(registerBody).pipe(take(1)).subscribe(resp => {
-          this.usuarioForm.enable();
-          this.usuarioForm.reset();
-          this.imagenPerfil = null;
-          this.archivo = null;
-          this.showSuccess = true;
-          this.alertMessage = "Usuario creado exitosamente.";
-          console.log(resp);
+          const registerVerificationEmailBody = {
+            user_id: resp.user_id,
+            token: v4()
+          };
+          this.authService.registerVerificationEmail(registerVerificationEmailBody).pipe(take(1)).subscribe(respVerificatioEmail => {
+            console.log("Email enviado", respVerificatioEmail);
+            this.usuarioForm.enable();
+            this.usuarioForm.reset();
+            this.imagenPerfil = null;
+            this.archivo = null;
+            this.showSuccess = true;
+            this.alertMessage = "Usuario creado exitosamente.";
+            console.log(resp);
+          });
         }, err => {
           console.log(err);
           this.usuarioForm.enable();
