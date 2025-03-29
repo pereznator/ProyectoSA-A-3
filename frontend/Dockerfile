@@ -1,26 +1,24 @@
-# Etapa 1: Compilación de Angular
+# Etapa 1: Compilación de la app Angular
 FROM node:18 AS builder
 
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
+
 COPY . .
 RUN npm run build -- --configuration production
 
-# Etapa 2: Servir con Nginx
+# Etapa 2: Imagen ligera con Nginx para servir el frontend
 FROM nginx:alpine
 
-# Borrar contenido HTML por defecto
+# Eliminar configuración por defecto y usar nuestra propia
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copiar archivos compilados
+# Copiar los archivos compilados desde la etapa builder
 COPY --from=builder /app/dist/* /usr/share/nginx/html
 
-# Copiar configuración personalizada de Nginx
-COPY nginx.conf /etc/nginx/nginx.conf
+# Copiar configuración personalizada para Angular
+# COPY nginx.conf /etc/nginx/nginx.conf
 
-# Exponer puerto
 EXPOSE 80
-
-# Iniciar Nginx
 CMD ["nginx", "-g", "daemon off;"]
