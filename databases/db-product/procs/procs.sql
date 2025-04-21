@@ -186,6 +186,69 @@ BEGIN
 END;
 
 create
+    definer = root@`%` procedure ObtenerProductoPorId(IN p_product_id int)
+BEGIN
+    DECLARE v_error_message VARCHAR(255);
+
+    -- Manejo de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
+        IF v_error_message IS NULL THEN
+            SET v_error_message = 'Error desconocido';
+        END IF;
+
+        SELECT JSON_OBJECT(
+            'status', 'error',
+            'message', v_error_message
+        ) AS resultado;
+    END;
+
+    -- Obtener producto con todo su detalle y rating promedio
+    SELECT JSON_OBJECT(
+        'status', 'success',
+        'message', 'Producto obtenido correctamente.',
+        'producto', JSON_OBJECT(
+            'product_id', p.id,
+            'name', p.name,
+            'description', p.description,
+            'price', p.price,
+            'stock_quantity', p.stock_quantity,
+            'code', p.code,
+            'value', p.value,
+            'status', p.status,
+            'main_image_url', p.main_image_url,
+            'category', c.name,
+            'rating', (
+                SELECT ROUND(AVG(r.rating), 1)
+                FROM product_reviews r
+                WHERE r.product_id = p.id
+            ),
+            'brands', (
+                SELECT JSON_ARRAYAGG(b.name)
+                FROM product_brands pb
+                JOIN brands b ON b.id = pb.brand_id
+                WHERE pb.product_id = p.id
+            ),
+            'restricted_regions', (
+                SELECT JSON_ARRAYAGG(r.name)
+                FROM product_restricted_regions pr
+                JOIN regions r ON r.id = pr.region_id
+                WHERE pr.product_id = p.id
+            ),
+            'images', (
+                SELECT JSON_ARRAYAGG(pi.image_url)
+                FROM product_images pi
+                WHERE pi.product_id = p.id AND pi.is_main_image = FALSE
+            )
+        )
+    ) AS resultado
+    FROM products p
+    JOIN categories c ON c.id = p.category_id
+    WHERE p.id = p_product_id;
+END;
+
+create
     definer = root@`%` procedure ObtenerProductos()
 BEGIN
     DECLARE v_error_message VARCHAR(255);
@@ -249,66 +312,3 @@ BEGIN
     JOIN categories c ON c.id = p.category_id;
 END;
 
-CREATE DEFINER=`root`@`%` PROCEDURE `product_db`.`ObtenerProductoPorId`(
-    IN p_product_id INT
-)
-BEGIN
-    DECLARE v_error_message VARCHAR(255);
-
-    -- Manejo de errores
-    DECLARE EXIT HANDLER FOR SQLEXCEPTION
-    BEGIN
-        GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
-        IF v_error_message IS NULL THEN
-            SET v_error_message = 'Error desconocido';
-        END IF;
-
-        SELECT JSON_OBJECT(
-            'status', 'error',
-            'message', v_error_message
-        ) AS resultado;
-    END;
-
-    -- Obtener producto con todo su detalle y rating promedio
-    SELECT JSON_OBJECT(
-        'status', 'success',
-        'message', 'Producto obtenido correctamente.',
-        'producto', JSON_OBJECT(
-            'product_id', p.id,
-            'name', p.name,
-            'description', p.description,
-            'price', p.price,
-            'stock_quantity', p.stock_quantity,
-            'code', p.code,
-            'value', p.value,
-            'status', p.status,
-            'main_image_url', p.main_image_url,
-            'category', c.name,
-            'rating', (
-                SELECT ROUND(AVG(r.rating), 1)
-                FROM product_reviews r
-                WHERE r.product_id = p.id
-            ),
-            'brands', (
-                SELECT JSON_ARRAYAGG(b.name)
-                FROM product_brands pb
-                JOIN brands b ON b.id = pb.brand_id
-                WHERE pb.product_id = p.id
-            ),
-            'restricted_regions', (
-                SELECT JSON_ARRAYAGG(r.name)
-                FROM product_restricted_regions pr
-                JOIN regions r ON r.id = pr.region_id
-                WHERE pr.product_id = p.id
-            ),
-            'images', (
-                SELECT JSON_ARRAYAGG(pi.image_url)
-                FROM product_images pi
-                WHERE pi.product_id = p.id AND pi.is_main_image = FALSE
-            )
-        )
-    ) AS resultado
-    FROM products p
-    JOIN categories c ON c.id = p.category_id
-    WHERE p.id = p_product_id;
-END

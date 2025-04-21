@@ -17,3 +17,6 @@ FROM nginx:latest
 COPY --from=build /app/dist/frontend/browser /usr/share/nginx/html
 
 EXPOSE 4200
+
+#construir imagen
+# docker build -t frontend:latest .

@@ -1,3 +1,4 @@
+
 create
     definer = root@`%` procedure ActivarUsuario(IN p_user_id int)
 BEGIN
@@ -179,6 +180,188 @@ BEGIN
 END;
 
 create
+    definer = root@`%` procedure ActualizarPromocion(IN p_id int, IN p_name varchar(100), IN p_description text,
+                                                     IN p_discount_percentage decimal(5, 2), IN p_start_date datetime,
+                                                     IN p_end_date datetime, IN p_is_active tinyint)
+BEGIN
+    DECLARE v_error_message VARCHAR(255);
+    DECLARE v_exists INT;
+
+    -- Manejo de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
+
+        IF v_error_message IS NULL THEN
+            SET v_error_message = 'Error desconocido';
+        END IF;
+
+        SELECT JSON_OBJECT(
+            'status', 'error',
+            'message', CONCAT('Error al actualizar la promoción: ', v_error_message)
+        ) AS resultado;
+
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    -- Verificar existencia
+    SELECT COUNT(*) INTO v_exists FROM promotions WHERE id = p_id;
+
+    IF v_exists = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'La promoción no existe.';
+    END IF;
+
+    -- Validar porcentaje
+    IF p_discount_percentage <= 0 OR p_discount_percentage > 100 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El porcentaje de descuento debe estar entre 0 y 100.';
+    END IF;
+
+    -- Actualizar promoción
+    UPDATE promotions
+    SET name = p_name,
+        description = p_description,
+        discount_percentage = p_discount_percentage,
+        start_date = p_start_date,
+        end_date = p_end_date,
+        is_active = p_is_active,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = p_id;
+
+    COMMIT;
+
+    SELECT JSON_OBJECT(
+        'status', 'success',
+        'message', 'Promoción actualizada correctamente.'
+    ) AS resultado;
+END;
+
+create
+    definer = root@`%` procedure AplicarPromocionUsuario(IN p_user_id int, IN p_promotion_id int)
+BEGIN
+    DECLARE v_error_message VARCHAR(255);
+    DECLARE v_exists INT;
+    DECLARE v_applied INT;
+
+    -- Manejo de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
+
+        IF v_error_message IS NULL THEN
+            SET v_error_message = 'Error desconocido';
+        END IF;
+
+        SELECT JSON_OBJECT(
+            'status', 'error',
+            'message', CONCAT('Error al aplicar promoción: ', v_error_message)
+        ) AS resultado;
+
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    -- Verificar existencia de asignación
+    SELECT COUNT(*) INTO v_exists
+    FROM user_promotions
+    WHERE user_id = p_user_id AND promotion_id = p_promotion_id;
+
+    IF v_exists = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'La promoción no está asignada a este usuario.';
+    END IF;
+
+    -- Verificar si ya fue aplicada
+    SELECT applied INTO v_applied
+    FROM user_promotions
+    WHERE user_id = p_user_id AND promotion_id = p_promotion_id;
+
+    IF v_applied = 1 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'La promoción ya fue utilizada por el usuario.';
+    END IF;
+
+    -- Aplicar promoción
+    UPDATE user_promotions
+    SET applied = 1
+    WHERE user_id = p_user_id AND promotion_id = p_promotion_id;
+
+    COMMIT;
+
+    SELECT JSON_OBJECT(
+        'status', 'success',
+        'message', 'Promoción aplicada correctamente.'
+    ) AS resultado;
+END;
+
+create
+    definer = root@`%` procedure AsignarPromocionUsuario(IN p_user_id int, IN p_promotion_id int)
+BEGIN
+    DECLARE v_error_message VARCHAR(255);
+    DECLARE v_user_exists INT;
+    DECLARE v_promo_exists INT;
+    DECLARE v_already_assigned INT;
+
+    -- Manejo de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
+
+        IF v_error_message IS NULL THEN
+            SET v_error_message = 'Error desconocido';
+        END IF;
+
+        SELECT JSON_OBJECT(
+            'status', 'error',
+            'message', CONCAT('Error al asignar promoción: ', v_error_message)
+        ) AS resultado;
+
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    -- Validar existencia de usuario
+    SELECT COUNT(*) INTO v_user_exists FROM users WHERE id = p_user_id;
+    IF v_user_exists = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El usuario no existe.';
+    END IF;
+
+    -- Validar existencia de la promoción
+    SELECT COUNT(*) INTO v_promo_exists FROM promotions WHERE id = p_promotion_id;
+    IF v_promo_exists = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'La promoción no existe.';
+    END IF;
+
+    -- Verificar si ya fue asignada
+    SELECT COUNT(*) INTO v_already_assigned
+    FROM user_promotions
+    WHERE user_id = p_user_id AND promotion_id = p_promotion_id;
+
+    IF v_already_assigned > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'La promoción ya fue asignada a este usuario.';
+    END IF;
+
+    -- Insertar asignación
+    INSERT INTO user_promotions (user_id, promotion_id, applied)
+    VALUES (p_user_id, p_promotion_id, 0);
+
+    COMMIT;
+
+    SELECT JSON_OBJECT(
+        'status', 'success',
+        'message', 'Promoción asignada correctamente.'
+    ) AS resultado;
+END;
+
+create
     definer = root@`%` procedure CerrarSesion(IN p_usuario_id int)
 BEGIN
     DECLARE v_error_message VARCHAR(255);
@@ -212,6 +395,57 @@ BEGIN
     SELECT JSON_OBJECT(
         'status', 'success',
         'message', 'Sesiones cerradas correctamente.'
+    ) AS resultado;
+END;
+
+create
+    definer = root@`%` procedure CrearPromocion(IN p_name varchar(100), IN p_description text,
+                                                IN p_discount_percentage decimal(5, 2), IN p_start_date datetime,
+                                                IN p_end_date datetime)
+BEGIN
+    DECLARE v_error_message VARCHAR(255);
+    DECLARE v_promo_id INT;
+
+    -- Manejo de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
+
+        IF v_error_message IS NULL THEN
+            SET v_error_message = 'Error desconocido';
+        END IF;
+
+        SELECT JSON_OBJECT(
+            'status', 'error',
+            'message', CONCAT('Error al crear promoción: ', v_error_message)
+        ) AS resultado;
+
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    -- Validar valores del porcentaje
+    IF p_discount_percentage <= 0 OR p_discount_percentage > 100 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El porcentaje de descuento debe estar entre 0 y 100.';
+    END IF;
+
+    -- Insertar promoción
+    INSERT INTO promotions (
+        name, description, discount_percentage, start_date, end_date, is_active
+    ) VALUES (
+        p_name, p_description, p_discount_percentage, p_start_date, p_end_date, 1
+    );
+
+    SET v_promo_id = LAST_INSERT_ID();
+
+    COMMIT;
+
+    SELECT JSON_OBJECT(
+        'status', 'success',
+        'message', 'Promoción creada exitosamente.',
+        'promotion_id', v_promo_id
     ) AS resultado;
 END;
 
@@ -353,6 +587,50 @@ BEGIN
 END;
 
 create
+    definer = root@`%` procedure EliminarPromocion(IN p_id int)
+BEGIN
+    DECLARE v_error_message VARCHAR(255);
+    DECLARE v_exists INT;
+
+    -- Manejo de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
+
+        IF v_error_message IS NULL THEN
+            SET v_error_message = 'Error desconocido';
+        END IF;
+
+        SELECT JSON_OBJECT(
+            'status', 'error',
+            'message', CONCAT('Error al eliminar la promoción: ', v_error_message)
+        ) AS resultado;
+
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    -- Verificar existencia
+    SELECT COUNT(*) INTO v_exists FROM promotions WHERE id = p_id;
+
+    IF v_exists = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'La promoción no existe.';
+    END IF;
+
+    -- Eliminar promoción
+    DELETE FROM promotions WHERE id = p_id;
+
+    COMMIT;
+
+    SELECT JSON_OBJECT(
+        'status', 'success',
+        'message', 'Promoción eliminada correctamente.'
+    ) AS resultado;
+END;
+
+create
     definer = root@`%` procedure ExpirarSesiones()
 BEGIN
     DECLARE v_error_message VARCHAR(255);
@@ -489,6 +767,62 @@ BEGIN
         'user_id', v_user_id,
         'role', v_role
     ) AS resultado;
+END;
+
+create
+    definer = root@`%` procedure ObtenerPromocionesUsuario(IN p_user_id int)
+BEGIN
+    DECLARE v_error_message VARCHAR(255);
+    DECLARE v_exists INT;
+
+    -- Manejo de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
+
+        IF v_error_message IS NULL THEN
+            SET v_error_message = 'Error desconocido';
+        END IF;
+
+        SELECT JSON_OBJECT(
+            'status', 'error',
+            'message', CONCAT('Error al obtener promociones del usuario: ', v_error_message)
+        ) AS resultado;
+
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    -- Validar existencia del usuario
+    SELECT COUNT(*) INTO v_exists FROM users WHERE id = p_user_id;
+    IF v_exists = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El usuario no existe.';
+    END IF;
+
+    COMMIT;
+
+    -- Devolver promociones activas asignadas
+    SELECT
+        JSON_OBJECT(
+            'status', 'success',
+            'message', 'Promociones obtenidas correctamente.',
+            'promociones', JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'id', p.id,
+                    'name', p.name,
+                    'description', p.description,
+                    'discount_percentage', p.discount_percentage,
+                    'start_date', p.start_date,
+                    'end_date', p.end_date,
+                    'applied', up.applied
+                )
+            )
+        ) AS resultado
+    FROM user_promotions up
+    JOIN promotions p ON p.id = up.promotion_id
+    WHERE up.user_id = p_user_id AND p.is_active = 1;
 END;
 
 create
@@ -870,4 +1204,3 @@ BEGIN
         'user_id', v_user_id
     ) AS resultado;
 END;
-
