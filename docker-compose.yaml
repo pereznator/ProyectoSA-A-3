@@ -31,6 +31,21 @@ services:
     networks:
       - sa-network
 
+  db-order:
+    image: mysql:latest
+    container_name: mysql-order-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: order_db
+      TZ: America/Guatemala
+    ports:
+      - "3309:3306"
+    volumes:
+      - order_data:/var/lib/mysql
+    networks:
+      - sa-network
+
   # auth-service:
   #   image: jpanaza/auth-service:latest
   #   container_name: auth-service
@@ -97,6 +112,8 @@ volumes:
   auth_data:
     driver: local
   product_data:
+    driver: local
+  order_data: 
     driver: local
 
 networks:
