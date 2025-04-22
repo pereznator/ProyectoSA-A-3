@@ -554,6 +554,189 @@
 					]
 				},
 				{
+					"name": "promotion",
+					"item": [
+						{
+							"name": "Crear Promocion",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Promo Verano 2025\",\n  \"description\": \"20% de descuento en productos seleccionados\",\n  \"discount_percentage\": 20,\n  \"start_date\": \"2025-05-01 00:00:00\",\n  \"end_date\": \"2025-05-31 23:59:59\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/promotion/crear-promocion",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"promotion",
+										"crear-promocion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Asignar promocion",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 5,\n  \"promotion_id\": 3\n}\n\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/promotion/asignar-promocion",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"promotion",
+										"asignar-promocion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Aplicar Promocion",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 5,\n  \"promotion_id\": 3\n}\n\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/promotion/aplicar-promocion",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"promotion",
+										"aplicar-promocion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Promocion",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": 4,\n  \"name\": \"Promo Verano 2025 - Actualizada\",\n  \"description\": \"Descuento actualizado al 25%\",\n  \"discount_percentage\": 25,\n  \"start_date\": \"2025-05-01 00:00:00\",\n  \"end_date\": \"2025-06-15 23:59:59\",\n  \"is_active\": 1\n}\n\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/promotion/actualizar-promocion",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"promotion",
+										"actualizar-promocion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Eliminar Promocion",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/promotion/eliminar-promocion/3",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"promotion",
+										"eliminar-promocion",
+										"3"
+									],
+									"query": [
+										{
+											"key": "prom",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Promociones",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/promotion/obtener-promociones/5",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"promotion",
+										"obtener-promociones",
+										"5"
+									],
+									"query": [
+										{
+											"key": "prom",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "api_works",
 					"request": {
 						"method": "GET",
