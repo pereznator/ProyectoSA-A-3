@@ -1,16 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { AdminService } from '../../admin/admin.service';
-import { map, take } from 'rxjs';
 import { LoadingComponent } from '../../shared/loading/loading.component';
 import { NgFor, NgIf } from '@angular/common';
+import moment from 'moment';
 
 @Component({
   selector: 'app-oferta',
   standalone: true,
-  imports: [NgSelectModule, FormsModule, LoadingComponent, NgIf, NgFor],
+  imports: [NgSelectModule, ReactiveFormsModule, LoadingComponent, NgIf, NgFor],
   templateUrl: './oferta.component.html',
   styleUrl: './oferta.component.scss'
 })
@@ -22,47 +22,63 @@ export class OfertaComponent implements OnInit {
   valorOferta: number = 0;
   fecha: string;
   descripcion: string;
+  productoForm: FormGroup;
+  @Input() isNew: boolean;
 
   constructor(
     public modal: NgbActiveModal,
-    private adminService: AdminService
+    private adminService: AdminService,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
-    this.getProductos();
+    if (this.isNew) {
+      this.buildForm();
+    } else {
+
+    }
   }
 
-  getProductos(): void {
-    this.loading = true;
-    this.adminService.obtenerProductos().pipe(take(1), map(resp => resp.response_database.result)).subscribe(resp => {
-      console.log(resp);
-      this.productos = resp;
-      this.loading = false;
+  get notValidName() {
+    return this.productoForm.get('name').invalid && this.productoForm.get('name').touched;
+  }
+
+  get notValidDescription() {
+    return this.productoForm.get('description').invalid && this.productoForm.get('description').touched;
+  }
+
+  get notValidDiscount() {
+    return this.productoForm.get('discount_percentage').invalid && this.productoForm.get('discount_percentage').touched;
+  }
+
+  get notValidEndDate() {
+    return this.productoForm.get('end_date').invalid && this.productoForm.get('end_date').touched;
+  }
+
+  buildForm(): void {
+    this.productoForm = this.fb.group({
+      name: [null, [Validators.required]],
+      description: [null, [Validators.required]],
+      discount_percentage: [null, [Validators.required, Validators.max(100), Validators.min(0)]],
+      end_date: [null, [Validators.required]]
     });
   }
 
   retornarValores(): void {
-    if (!this.productoSeleccionado) {
+    if (this.productoForm.invalid) {
+      this.productoForm.markAllAsTouched();
       return;
     }
-    if (this.valorOferta <= 0) {
-      return;
-    }
-    if (!this.fecha) {
-      return;
-    }
-    if (!this.descripcion) {
-      return;
-    }
-
+    const endDate = new Date(this.productoForm.get("end_date").value);
+    
     this.modal.close(
       {
-        descripcion: this.descripcion,
-        monto: this.valorOferta,
-        fecha_vencimiento: new Date(this.fecha).toISOString().slice(0, 10),
-        producto_id: this.productoSeleccionado,
-        estado_oferta_id: 1,
-      }
+        "name": this.productoForm.get("name").value,
+        "description": this.productoForm.get("description").value,
+        "discount_percentage": this.productoForm.get("discount_percentage").value,
+        "start_date": moment().format('YYYY-MM-DD HH:mm:ss'),
+        "end_date": moment(endDate).format('YYYY-MM-DD HH:mm:ss')
+      }      
     );
   }
 }

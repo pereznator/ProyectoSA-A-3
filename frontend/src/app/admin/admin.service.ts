@@ -77,11 +77,11 @@ export class AdminService {
     return this.httpService.request(RequestMethod.POST, "/validacion_pago", body);
   }
   crearOferta(oferta: any): Observable<any> {
-    return this.httpService.request(RequestMethod.POST, "/oferta", oferta);
+    return this.httpService.request(RequestMethod.POST, `${this.authServerUrl}/api/promotion/crear-promocion`, oferta);
   }
 
   obtenerOfertas(): Observable<any> {
-    return this.httpService.request(RequestMethod.GET, "/oferta");
+    return this.httpService.request(RequestMethod.GET, `${this.authServerUrl}/api/promotion/obtener-promociones/1`);
   }
   actualizarOferta(idOferta: number, body: any): Observable<any> {
     return this.httpService.request(RequestMethod.PUT, `/oferta/${idOferta}`, body);

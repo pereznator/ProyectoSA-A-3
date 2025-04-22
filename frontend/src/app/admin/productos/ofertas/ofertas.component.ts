@@ -7,6 +7,7 @@ import { OfertaComponent } from '../../../modals/oferta/oferta.component';
 import { map, take } from 'rxjs';
 import { ConfirmActionComponent } from '../../../modals/confirm-action/confirm-action.component';
 import moment from 'moment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-ofertas',
@@ -23,7 +24,8 @@ export class OfertasComponent implements OnInit{
   constructor(
     private adminService: AdminService,
     private location: Location,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private snackBar: MatSnackBar
   ) {}
   
   ngOnInit(): void {
@@ -32,8 +34,13 @@ export class OfertasComponent implements OnInit{
 
   getOfertas(): void {
     this.loading = true;
-    this.adminService.obtenerOfertas().pipe(take(1), map(resp => resp.response_database.result)).subscribe(resp => {
+    this.adminService.obtenerOfertas().pipe(take(1), map(resp => resp.promociones)).subscribe(resp => {
       console.log(resp);
+      if (!resp) {
+        this.ofertas = [];
+        this.loading = false;
+        return;
+      }
       this.ofertas = resp.map(oferta => {
         oferta["fecha"] = moment(oferta.fecha_vencimiento, "DD/MM/YYYY h:mm:ss A").format('MM/DD/YYYY');
         return oferta;
@@ -46,9 +53,15 @@ export class OfertasComponent implements OnInit{
 
   crearOferta(): void {
     const modal = this.modalService.open(OfertaComponent);
+    modal.componentInstance.isNew = true;
     modal.result.then(oferta => {
       this.adminService.crearOferta(oferta).pipe(take(1)).subscribe(resp => {
         console.log(resp);
+        this.snackBar.open('Oferta Creada Exitosamente', 'Cerrar', {
+          duration: 7000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom'
+        });
         this.getOfertas();
       }, err => {
         console.log(err);
