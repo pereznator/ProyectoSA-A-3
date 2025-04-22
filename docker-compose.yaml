@@ -31,67 +31,67 @@ services:
     networks:
       - sa-network
 
-  auth-service:
-    image: jpanaza/auth-service:latest
-    container_name: auth-service
-    restart: always
-    depends_on:
-      - db-userauth
-    ports:
-      - "3001:3001"
-    environment:
-      - PORT=3001
-      - CORS_ORIGIN=http://localhost
-      - PRODUCT_SERVICE_URL=http://product-service:3002
-      - DB_HOST=db-userauth
-      - DB_PORT=3306
-      - DB_USER=root
-      - DB_PASSWORD=1234
-      - DB_DATABASE=auth_db
-      - JWT_SECRET=SA_PF1_20211147
-      - JWT_EXPIRATION=30m
-      - GCLOUD_PROJECT_ID=software-avanzado-2025-1s
-      - FRONTEND_URL=http://localhost
-      - MAILTRAP_USER=cbc30150d3e687
-      - MAILTRAP_PASSWORD=ee2f9c814435a6
-    networks:
-      - sa-network
+  # auth-service:
+  #   image: jpanaza/auth-service:latest
+  #   container_name: auth-service
+  #   restart: always
+  #   depends_on:
+  #     - db-userauth
+  #   ports:
+  #     - "3001:3001"
+  #   environment:
+  #     - PORT=3001
+  #     - CORS_ORIGIN=http://localhost
+  #     - PRODUCT_SERVICE_URL=http://product-service:3002
+  #     - DB_HOST=db-userauth
+  #     - DB_PORT=3306
+  #     - DB_USER=root
+  #     - DB_PASSWORD=1234
+  #     - DB_DATABASE=auth_db
+  #     - JWT_SECRET=SA_PF1_20211147
+  #     - JWT_EXPIRATION=30m
+  #     - GCLOUD_PROJECT_ID=software-avanzado-2025-1s
+  #     - FRONTEND_URL=http://localhost
+  #     - MAILTRAP_USER=cbc30150d3e687
+  #     - MAILTRAP_PASSWORD=ee2f9c814435a6
+  #   networks:
+  #     - sa-network
 
-  product-service:
-    image: jpanaza/product-service:latest
-    container_name: product-service
-    restart: always
-    depends_on:
-      - db-product
-      - auth-service
-    ports:
-      - "3002:3002"
-    environment:
-      - PORT=3002
-      - CORS_ORIGIN=http://localhost
-      - AUTH_SERVICE_URL=http://auth-service:3001
-      - DB_HOST=db-product
-      - DB_PORT=3306
-      - DB_USER=root
-      - DB_PASSWORD=1234
-      - DB_DATABASE=product_db
-    networks:
-      - sa-network
+  # product-service:
+  #   image: jpanaza/product-service:latest
+  #   container_name: product-service
+  #   restart: always
+  #   depends_on:
+  #     - db-product
+  #     - auth-service
+  #   ports:
+  #     - "3002:3002"
+  #   environment:
+  #     - PORT=3002
+  #     - CORS_ORIGIN=http://localhost
+  #     - AUTH_SERVICE_URL=http://auth-service:3001
+  #     - DB_HOST=db-product
+  #     - DB_PORT=3306
+  #     - DB_USER=root
+  #     - DB_PASSWORD=1234
+  #     - DB_DATABASE=product_db
+  #   networks:
+  #     - sa-network
 
-  frontend:
-    image: jorigot/swap-sa:v1
-    container_name: frontend
-    restart: always
-    depends_on:
-      - auth-service
-      - product-service
-    ports:
-      - "80:80"
-    environment:
-      - authServerUrl=http://auth-service:3001
-      - productServerUrl=http://product-service:3002
-    networks:
-      - sa-network
+  # frontend:
+  #   image: jorigot/swap-sa:v1
+  #   container_name: frontend
+  #   restart: always
+  #   depends_on:
+  #     - auth-service
+  #     - product-service
+  #   ports:
+  #     - "80:80"
+  #   environment:
+  #     - authServerUrl=http://auth-service:3001
+  #     - productServerUrl=http://product-service:3002
+  #   networks:
+  #     - sa-network
 
 volumes:
   auth_data:
