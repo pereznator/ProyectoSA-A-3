@@ -1,4 +1,3 @@
-
 create
     definer = root@`%` procedure ActivarUsuario(IN p_user_id int)
 BEGIN
@@ -206,9 +205,8 @@ BEGIN
 
     START TRANSACTION;
 
-    -- Verificar existencia
+    -- Verificar existencia de la promoción
     SELECT COUNT(*) INTO v_exists FROM promotions WHERE id = p_id;
-
     IF v_exists = 0 THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'La promoción no existe.';
@@ -218,6 +216,12 @@ BEGIN
     IF p_discount_percentage <= 0 OR p_discount_percentage > 100 THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'El porcentaje de descuento debe estar entre 0 y 100.';
+    END IF;
+
+    -- Validar rango de fechas
+    IF p_start_date > p_end_date THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'La fecha de inicio no puede ser posterior a la fecha de fin.';
     END IF;
 
     -- Actualizar promoción
@@ -245,6 +249,7 @@ BEGIN
     DECLARE v_error_message VARCHAR(255);
     DECLARE v_exists INT;
     DECLARE v_applied INT;
+    DECLARE v_activa INT;
 
     -- Manejo de errores
     DECLARE EXIT HANDLER FOR SQLEXCEPTION
@@ -265,7 +270,7 @@ BEGIN
 
     START TRANSACTION;
 
-    -- Verificar existencia de asignación
+    -- Verificar que la promoción esté asignada al usuario
     SELECT COUNT(*) INTO v_exists
     FROM user_promotions
     WHERE user_id = p_user_id AND promotion_id = p_promotion_id;
@@ -285,7 +290,19 @@ BEGIN
         SET MESSAGE_TEXT = 'La promoción ya fue utilizada por el usuario.';
     END IF;
 
-    -- Aplicar promoción
+    -- Verificar que la promoción aún esté activa y en vigencia
+    SELECT COUNT(*) INTO v_activa
+    FROM promotions
+    WHERE id = p_promotion_id
+      AND is_active = 1
+      AND NOW() BETWEEN start_date AND end_date;
+
+    IF v_activa = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'La promoción no está activa o ha expirado.';
+    END IF;
+
+    -- Marcar como aplicada
     UPDATE user_promotions
     SET applied = 1
     WHERE user_id = p_user_id AND promotion_id = p_promotion_id;
@@ -303,7 +320,7 @@ create
 BEGIN
     DECLARE v_error_message VARCHAR(255);
     DECLARE v_user_exists INT;
-    DECLARE v_promo_exists INT;
+    DECLARE v_promo_valida INT;
     DECLARE v_already_assigned INT;
 
     -- Manejo de errores
@@ -325,18 +342,23 @@ BEGIN
 
     START TRANSACTION;
 
-    -- Validar existencia de usuario
+    -- Verificar existencia de usuario
     SELECT COUNT(*) INTO v_user_exists FROM users WHERE id = p_user_id;
     IF v_user_exists = 0 THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'El usuario no existe.';
     END IF;
 
-    -- Validar existencia de la promoción
-    SELECT COUNT(*) INTO v_promo_exists FROM promotions WHERE id = p_promotion_id;
-    IF v_promo_exists = 0 THEN
+    -- Validar que la promoción exista, esté activa y en rango de fecha
+    SELECT COUNT(*) INTO v_promo_valida
+    FROM promotions
+    WHERE id = p_promotion_id
+      AND is_active = 1
+      AND NOW() BETWEEN start_date AND end_date;
+
+    IF v_promo_valida = 0 THEN
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'La promoción no existe.';
+        SET MESSAGE_TEXT = 'La promoción no está activa o está fuera de vigencia.';
     END IF;
 
     -- Verificar si ya fue asignada
@@ -349,7 +371,7 @@ BEGIN
         SET MESSAGE_TEXT = 'La promoción ya fue asignada a este usuario.';
     END IF;
 
-    -- Insertar asignación
+    -- Asignar promoción
     INSERT INTO user_promotions (user_id, promotion_id, applied)
     VALUES (p_user_id, p_promotion_id, 0);
 
@@ -603,7 +625,7 @@ BEGIN
 
         SELECT JSON_OBJECT(
             'status', 'error',
-            'message', CONCAT('Error al eliminar la promoción: ', v_error_message)
+            'message', CONCAT('Error al desactivar la promoción: ', v_error_message)
         ) AS resultado;
 
         ROLLBACK;
@@ -613,20 +635,22 @@ BEGIN
 
     -- Verificar existencia
     SELECT COUNT(*) INTO v_exists FROM promotions WHERE id = p_id;
-
     IF v_exists = 0 THEN
         SIGNAL SQLSTATE '45000'
         SET MESSAGE_TEXT = 'La promoción no existe.';
     END IF;
 
-    -- Eliminar promoción
-    DELETE FROM promotions WHERE id = p_id;
+    -- Desactivar promoción (eliminación lógica)
+    UPDATE promotions
+    SET is_active = 0,
+        updated_at = CURRENT_TIMESTAMP
+    WHERE id = p_id;
 
     COMMIT;
 
     SELECT JSON_OBJECT(
         'status', 'success',
-        'message', 'Promoción eliminada correctamente.'
+        'message', 'Promoción desactivada correctamente.'
     ) AS resultado;
 END;
 
