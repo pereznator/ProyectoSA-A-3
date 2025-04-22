@@ -733,6 +733,14 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "Obtener todas Promociones",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
 						}
 					]
 				},

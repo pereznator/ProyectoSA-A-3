@@ -34,6 +34,28 @@ const obtenerPromocionesUsuario = async (req, res) => {
     }
 };
 
+const obtenerTodasPromociones = async (req, res) => {
+    try {
+        const [rows] = await pool.query('CALL ObtenerTodasPromociones()');
+
+        const resultado = rows[0][0]?.resultado;
+        const parsedResult = typeof resultado === 'string' ? JSON.parse(resultado) : resultado;
+
+        if (parsedResult.status === 'success') {
+            return res.status(200).json(parsedResult);
+        } else {
+            return res.status(400).json(parsedResult);
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            status: 'error',
+            message: 'Error al obtener todas las promociones.'
+        });
+    }
+};
+
 module.exports = {
-    obtenerPromocionesUsuario
+    obtenerPromocionesUsuario,
+    obtenerTodasPromociones
 };

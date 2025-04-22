@@ -9,6 +9,7 @@ const {
 
 const {
     obtenerPromocionesUsuario,
+    obtenerTodasPromociones,
 } = require('../controllers/promotion/promotion.get.controller');
 
 const {
@@ -34,5 +35,6 @@ router.delete('/eliminar-promocion/:promotion_id', eliminarPromocion);
 
 // GET
 router.get('/obtener-promociones/:user_id', obtenerPromocionesUsuario);
+router.get('/obtener-todas-promociones', obtenerTodasPromociones);
 
 module.exports = router;
