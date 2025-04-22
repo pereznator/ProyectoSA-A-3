@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe, Location, NgClass, NgFor, NgIf } from '@angular/common';
+import { CurrencyPipe, DatePipe, Location, NgClass, NgFor, NgIf, PercentPipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { LoadingComponent } from '../../../shared/loading/loading.component';
 import { AdminService } from '../../admin.service';
@@ -12,7 +12,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-ofertas',
   standalone: true,
-  imports: [NgIf, NgFor, NgClass, LoadingComponent, DatePipe, CurrencyPipe, NgbModule],
+  imports: [NgIf, NgFor, NgClass, LoadingComponent, DatePipe, PercentPipe, NgbModule],
   templateUrl: './ofertas.component.html',
   styleUrl: './ofertas.component.scss'
 })
@@ -41,10 +41,7 @@ export class OfertasComponent implements OnInit{
         this.loading = false;
         return;
       }
-      this.ofertas = resp.map(oferta => {
-        oferta["fecha"] = moment(oferta.fecha_vencimiento, "DD/MM/YYYY h:mm:ss A").format('MM/DD/YYYY');
-        return oferta;
-      });
+      this.ofertas = resp;
       this.loading = false;
     }, err => {
       console.log(err);
@@ -68,19 +65,24 @@ export class OfertasComponent implements OnInit{
       });
     }, dismiss => {});
   }
-  
-  cancelarOferta(oferta: any): void {
-    const modal = this.modalService.open(ConfirmActionComponent);
-    modal.componentInstance.title = "Cancelar Oferta";
-    modal.componentInstance.description = "¿Estas seguro que quieres cancelar la oferta?";
-    modal.result.then(() => {
-      this.adminService.actualizarOferta(oferta.id, {descripcion: null,monto: null,fecha_vencimiento: null,producto_id: null,estado_oferta_id: 2}).pipe(take(1)).subscribe(resp => {
+
+  editarOferta(oferta: any): void {
+    const modal = this.modalService.open(OfertaComponent);
+    modal.componentInstance.isNew = false;
+    modal.componentInstance.oferta = oferta;
+    modal.result.then(oferta => {
+      this.adminService.actualizarOferta(oferta).pipe(take(1)).subscribe(resp => {
         console.log(resp);
+        this.snackBar.open('Oferta Actualizada Exitosamente', 'Cerrar', {
+          duration: 7000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom'
+        });
         this.getOfertas();
       }, err => {
         console.log(err);
       });
-    }, () => {});
+    }, dismiss => {});
   }
 
   atras(): void {

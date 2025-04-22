@@ -24,6 +24,7 @@ export class OfertaComponent implements OnInit {
   descripcion: string;
   productoForm: FormGroup;
   @Input() isNew: boolean;
+  @Input() oferta?: any;
 
   constructor(
     public modal: NgbActiveModal,
@@ -32,11 +33,7 @@ export class OfertaComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    if (this.isNew) {
-      this.buildForm();
-    } else {
-
-    }
+    this.buildForm();
   }
 
   get notValidName() {
@@ -50,18 +47,33 @@ export class OfertaComponent implements OnInit {
   get notValidDiscount() {
     return this.productoForm.get('discount_percentage').invalid && this.productoForm.get('discount_percentage').touched;
   }
+  
+  get notValidStartDate() {
+    return this.productoForm.get('start_date').invalid && this.productoForm.get('start_date').touched;
+  }
 
   get notValidEndDate() {
     return this.productoForm.get('end_date').invalid && this.productoForm.get('end_date').touched;
   }
 
   buildForm(): void {
-    this.productoForm = this.fb.group({
-      name: [null, [Validators.required]],
-      description: [null, [Validators.required]],
-      discount_percentage: [null, [Validators.required, Validators.max(100), Validators.min(0)]],
-      end_date: [null, [Validators.required]]
-    });
+    let startDate;
+    let endDate;
+    if (!this.isNew) {
+      startDate = moment(this.oferta.inicio, "YYYY-MM-DD HH:mm:ss.SSSSSS").format("YYYY-MM-DD");
+      endDate = moment(this.oferta.fin, "YYYY-MM-DD HH:mm:ss.SSSSSS").format("YYYY-MM-DD");
+    }
+    const controls = {
+      name: [this.isNew ? null : this.oferta.nombre, [Validators.required]],
+      description: [this.isNew ? null : this.oferta.descripcion, [Validators.required]],
+      discount_percentage: [this.isNew ?  null : this.oferta.descuento, [Validators.required, Validators.max(100), Validators.min(0)]],
+      start_date: [this.isNew ? null : startDate, [Validators.required]],
+      end_date: [this.isNew ? null : endDate, [Validators.required]]
+    };
+    if (!this.isNew) {
+      controls["is_active"] = [this.oferta.activa, [Validators.required]];
+    }
+    this.productoForm = this.fb.group(controls);
   }
 
   retornarValores(): void {
@@ -70,15 +82,22 @@ export class OfertaComponent implements OnInit {
       return;
     }
     const endDate = new Date(this.productoForm.get("end_date").value);
+    const startDate = new Date(this.productoForm.get("start_date").value);
+
+    const body = {
+      "name": this.productoForm.get("name").value,
+      "description": this.productoForm.get("description").value,
+      "discount_percentage": this.productoForm.get("discount_percentage").value,
+      "start_date": moment(startDate).format('YYYY-MM-DD HH:mm:ss'),
+      "end_date": moment(endDate).format('YYYY-MM-DD HH:mm:ss')
+    };
+
+    if (!this.isNew) {
+      body["id"] = this.oferta.id;
+      body["is_active"] = this.productoForm.get("is_active").value;
+    }
     
-    this.modal.close(
-      {
-        "name": this.productoForm.get("name").value,
-        "description": this.productoForm.get("description").value,
-        "discount_percentage": this.productoForm.get("discount_percentage").value,
-        "start_date": moment().format('YYYY-MM-DD HH:mm:ss'),
-        "end_date": moment(endDate).format('YYYY-MM-DD HH:mm:ss')
-      }      
-    );
+    console.log(body);
+    this.modal.close(body);
   }
 }
