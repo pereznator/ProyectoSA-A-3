@@ -897,6 +897,48 @@ BEGIN
 END;
 
 create
+    definer = root@`%` procedure ObtenerTodasPromociones()
+BEGIN
+    DECLARE v_error_message VARCHAR(255);
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
+        IF v_error_message IS NULL THEN
+            SET v_error_message = 'Error desconocido';
+        END IF;
+
+        SELECT JSON_OBJECT(
+            'status', 'error',
+            'message', CONCAT('Error al obtener promociones: ', v_error_message)
+        ) AS resultado;
+
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    SELECT JSON_OBJECT(
+        'status', 'success',
+        'message', 'Promociones obtenidas correctamente.',
+        'promociones', JSON_ARRAYAGG(
+            JSON_OBJECT(
+                'id', p.id,
+                'nombre', p.name,
+                'descripcion', p.description,
+                'descuento', p.discount_percentage,
+                'inicio', p.start_date,
+                'fin', p.end_date,
+                'activa', p.is_active
+            )
+        )
+    ) AS resultado
+    FROM promotions p;
+
+    COMMIT;
+END;
+
+create
     definer = root@`%` procedure ObtenerUsuarioPorId(IN p_user_id int)
 BEGIN
     DECLARE v_error_message VARCHAR(255);
