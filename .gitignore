@@ -17,6 +17,10 @@
 /backends/product-service/dist
 /backends/product-service/.env
 
+/backends/order-service/node_modules
+/backends/order-service/dist
+/backends/order-service/.env
+
 
 /jorge
 minikube-linux-amd64
