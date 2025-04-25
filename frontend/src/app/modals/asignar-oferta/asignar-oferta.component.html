@@ -1,0 +1,52 @@
+<div style="width: 100%;" class="p-4">
+  <div class="row">
+      <div class="col-md-10">
+          <h3 class="fs-4">Asignar Oferta</h3>
+      </div>
+  </div>
+  <hr>
+
+  <app-loading *ngIf="loading"></app-loading>
+
+  <ng-container *ngIf="!loading">
+    <div class="row">
+      <div class="col-md-12 position-relative">
+        <label for="busquedaPromo" class="form-label">Buscar Promoción</label>
+        <input
+          type="text"
+          id="busquedaPromo"
+          class="form-control mb-2"
+          placeholder="Escribe el nombre de la promoción"
+          [(ngModel)]="terminoBusqueda"
+          (input)="onBusquedaChanged()"
+          (focus)="mostrarDropdown = true"
+          (blur)="ocultarDropdown()"
+          autocomplete="off"
+        />
+      
+        <ul class="list-group position-absolute w-100 z-3" *ngIf="mostrarDropdown && promocionesFiltradas.length > 0">
+          <li
+            class="list-group-item list-group-item-action"
+            *ngFor="let promo of promocionesFiltradas"
+            (mousedown)="seleccionarPromocion(promo)"
+          >
+            {{ promo.nombre }} - {{ promo.descuento }}%
+          </li>
+        </ul>
+      
+        <div *ngIf="mostrarDropdown && promocionesFiltradas.length === 0" class="text-muted mt-1">
+          No se encontraron promociones con ese nombre.
+        </div>
+      </div>
+      
+      
+    </div>
+  </ng-container>
+
+  
+  <div class="d-flex justify-content-end mt-3">
+      <button class="btn btn-secondary mx-2" (click)="modal.dismiss()">Cancelar</button>
+      <button class="btn btn-primary" (click)="retornarValores()" >Confirmar</button>
+  </div>
+
+</div>

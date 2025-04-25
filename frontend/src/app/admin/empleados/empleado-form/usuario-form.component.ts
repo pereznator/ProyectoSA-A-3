@@ -3,23 +3,25 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Empleado } from '../../../empleado/empleado.types';
 import { EmpleadoService } from '../../../empleado/empleado.service';
 import { ActivatedRoute } from '@angular/router';
-import { Location, NgClass, NgFor, NgIf, UpperCasePipe } from '@angular/common';
+import { DatePipe, Location, NgClass, NgFor, NgIf, UpperCasePipe } from '@angular/common';
 import { LoadingComponent } from '../../../shared/loading/loading.component';
 import { v4 } from 'uuid';
 import { S3Service } from '../../../s3.service';
 import { map, take } from 'rxjs';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbToast } from '@ng-bootstrap/ng-bootstrap';
 import { ViewCvComponent } from '../../../modals/view-cv/view-cv.component';
 import { ConfirmActionComponent } from '../../../modals/confirm-action/confirm-action.component';
 import { AdminService } from '../../admin.service';
 import { User } from '../../../auth/auth.types';
 import { AuthService } from '../../../auth/auth.service';
+import { AsignarOfertaComponent } from '../../../modals/asignar-oferta/asignar-oferta.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-usuario-form',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, NgIf, NgClass, LoadingComponent, UpperCasePipe, NgFor],
+  imports: [FormsModule, ReactiveFormsModule, NgIf, NgClass, LoadingComponent, UpperCasePipe, NgFor, DatePipe],
   templateUrl: './usuario-form.component.html',
   styleUrl: './usuario-form.component.scss'
 })
@@ -59,6 +61,9 @@ export class UsuarioFormComponent implements OnInit {
   alertMessage: string = "";
   cv: File;
   pdfLink: SafeResourceUrl;
+  promocionesUsuario: any[] = [];
+  loadingPromociones: boolean = false;
+
 
   constructor(
     private fb: FormBuilder,
@@ -68,7 +73,8 @@ export class UsuarioFormComponent implements OnInit {
     private s3Service: S3Service,
     private dom: DomSanitizer,
     private modalService: NgbModal,
-    private authService: AuthService
+    private authService: AuthService,
+    private snackService: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -141,6 +147,7 @@ export class UsuarioFormComponent implements OnInit {
           })),
           status: userResponse.status
         };
+        this.obtenerPromocionesUsuario();
         this.buildForm();
       }, err => {
         console.log(err);
@@ -301,6 +308,44 @@ export class UsuarioFormComponent implements OnInit {
       }, err => {
         console.log(err);
       });
+    }, dismiss => {});
+  }
+
+  obtenerPromocionesUsuario(): void {
+    this.loadingPromociones = true;
+    this.adminService.obtenerOfertasDeUsuario(this.usuario.id).pipe(take(1)).subscribe(resp => {
+      console.log(resp);
+      this.promocionesUsuario = resp.promociones ?? [];
+      this.loadingPromociones = false;
+    }, err => {
+      console.log(err);
+      this.loadingPromociones = false;
+    });
+  }
+
+  asignarPromocion(): void {
+    const modal = this.modalService.open(AsignarOfertaComponent);
+
+    modal.result.then(result => {
+      console.log(result);
+      const body = {
+        user_id: this.usuario.id,
+        promotion_id: result
+      };
+      this.adminService.asignarOferta(body).pipe(take(1)).subscribe({
+        next: (resp) => {
+          console.log(resp);
+          this.snackService.open('Oferta Asignada Exitosamente', 'Cerrar', {
+            duration: 7000,
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom'
+          });
+          this.obtenerPromocionesUsuario();
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
     }, dismiss => {});
   }
 

@@ -86,6 +86,15 @@ export class AdminService {
   actualizarOferta(body: any): Observable<any> {
     return this.httpService.request(RequestMethod.PUT, `${this.authServerUrl}/api/promotion/actualizar-promocion`, body);
   }
+  eliminarOferta(idOferta: any): Observable<any> {
+    return this.httpService.request(RequestMethod.DELETE, `${this.authServerUrl}/api/promotion/eliminar-promocion/${idOferta}`);
+  }
+  obtenerOfertasDeUsuario(idUsuario: number): Observable<any> {
+    return this.httpService.request(RequestMethod.GET, `${this.authServerUrl}/api/promotion/obtener-promociones/${idUsuario}`);
+  }
+  asignarOferta(body: any): Observable<any> {
+    return this.httpService.request(RequestMethod.POST, `${this.authServerUrl}/api/promotion/asignar-promocion`, body);
+  }
 
   obtenerUsuarios(): Observable<any> {
     return this.httpService.request(RequestMethod.GET, `${this.authServerUrl}/api/user/obtener-usuarios-no-admin`);

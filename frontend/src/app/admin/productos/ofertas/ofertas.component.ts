@@ -85,6 +85,26 @@ export class OfertasComponent implements OnInit{
     }, dismiss => {});
   }
 
+  eliminarOferta(oferta: any): void {
+    const modal = this.modalService.open(ConfirmActionComponent, { size: 'md' });
+    modal.componentInstance.title = 'Eliminar Oferta';
+    modal.componentInstance.description = `¿Está seguro que desea eliminar la oferta "${oferta.nombre}"?`;
+    modal.result.then(resp => {
+      console.log(resp);
+      this.adminService.eliminarOferta(oferta.id).pipe(take(1)).subscribe(resp => {
+        console.log(resp);
+        this.snackBar.open('Oferta Eliminada Exitosamente', 'Cerrar', {
+          duration: 7000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom'
+        });
+        this.getOfertas();
+      }, err => {
+        console.log(err);
+      });
+    }, dismiss => {});
+  }
+
   atras(): void {
     this.location.back();
   }

@@ -152,6 +152,48 @@
             {{ alertMessage }}
           </div>
         </form>
+
+        <div class="mt-4" *ngIf="!isNew">
+          <div class="d-flex justify-content-between align-items-center">
+            <h4>Promociones asignadas</h4>
+            <button class="btn btn-success btn-sm" (click)="asignarPromocion()">
+              <i class="bi bi-plus-lg"></i> Agregar promoción
+            </button>
+          </div>
+          
+          <div class="table-responsive mt-2">
+            <table class="table table-bordered table-striped" *ngIf="!loadingPromociones">
+              <thead class="table-light">
+                <tr>
+                  <th>Nombre</th>
+                  <th>Descripción</th>
+                  <th>Descuento (%)</th>
+                  <th>Inicio</th>
+                  <th>Fin</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let promo of promocionesUsuario">
+                  <td>{{ promo.name }}</td>
+                  <td>{{ promo.description }}</td>
+                  <td>{{ promo.discount_percentage }}%</td>
+                  <td>{{ promo.start_date | date: 'short' }}</td>
+                  <td>{{ promo.end_date | date: 'short' }}</td>
+                  <td>
+                    <!-- <button class="btn btn-danger btn-sm" >
+                      <i class="bi bi-trash"></i> Quitar
+                    </button> -->
+                  </td>
+                </tr>
+                <tr *ngIf="promocionesUsuario.length === 0">
+                  <td colspan="6" class="text-center text-muted">Este usuario no tiene promociones asignadas.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        
       </div>
       <div class="col-lg-2"></div>
     </div>
