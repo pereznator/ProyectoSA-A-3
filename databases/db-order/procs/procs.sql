@@ -307,6 +307,52 @@ BEGIN
 END;
 
 create
+    definer = root@`%` procedure EliminarDescuentoExclusivo(IN p_user_id int)
+BEGIN
+    DECLARE v_error_message VARCHAR(255);
+    DECLARE v_exists INT;
+
+    -- Manejo de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
+        IF v_error_message IS NULL THEN
+            SET v_error_message = 'Error desconocido';
+        END IF;
+
+        SELECT JSON_OBJECT(
+            'status', 'error',
+            'message', CONCAT('Error al eliminar el descuento exclusivo: ', v_error_message)
+        ) AS resultado;
+
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    -- Verificar existencia de un descuento válido y no usado
+    SELECT COUNT(*) INTO v_exists
+    FROM exclusive_discounts
+    WHERE user_id = p_user_id AND used = 0 AND expires_at > NOW();
+
+    IF v_exists = 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'No hay descuento exclusivo activo para eliminar.';
+    END IF;
+
+    -- Eliminar el descuento válido
+    DELETE FROM exclusive_discounts
+    WHERE user_id = p_user_id AND used = 0 AND expires_at > NOW();
+
+    COMMIT;
+
+    SELECT JSON_OBJECT(
+        'status', 'success',
+        'message', 'Descuento exclusivo eliminado correctamente.'
+    ) AS resultado;
+END;
+
+create
     definer = root@`%` procedure EliminarFavorito(IN p_user_id int, IN p_product_id int)
 BEGIN
     DECLARE v_error_message VARCHAR(255);
