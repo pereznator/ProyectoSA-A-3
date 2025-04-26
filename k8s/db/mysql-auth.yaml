@@ -1,18 +1,4 @@
 apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: mysql-auth-pv
-  namespace: sa-app
-spec:
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:              # ✅ compatible con Minikube/local
-    path: /mnt/data/mysql-auth
-
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mysql-auth-pvc
@@ -23,6 +9,7 @@ spec:
   resources:
     requests:
       storage: 1Gi
+  storageClassName: standard-rwo  # ✅ importante para GKE Autopilot
 
 ---
 apiVersion: apps/v1
@@ -53,6 +40,13 @@ spec:
           volumeMounts:
             - name: mysql-auth-data
               mountPath: /var/lib/mysql
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
       volumes:
         - name: mysql-auth-data
           persistentVolumeClaim:
@@ -65,10 +59,9 @@ metadata:
   name: db-userauth
   namespace: sa-app
 spec:
-  type: NodePort           # ✅ expone puerto para scripts o acceso externo
+  type: ClusterIP
   selector:
     app: mysql-auth
   ports:
     - port: 3306
       targetPort: 3306
-      nodePort: 30307       # Puedes usar uno entre 30000-32767

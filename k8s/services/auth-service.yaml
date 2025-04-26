@@ -47,6 +47,13 @@ spec:
               value: "cbc30150d3e687"
             - name: MAILTRAP_PASSWORD
               value: "ee2f9c814435a6"
+          resources:                # ✅ Control de CPU/Memoria agregado
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
 
 ---
 apiVersion: v1

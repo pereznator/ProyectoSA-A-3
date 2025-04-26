@@ -1,32 +1,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: product-service
+  name: order-service
   namespace: sa-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: product-service
+      app: order-service
   template:
     metadata:
       labels:
-        app: product-service
+        app: order-service
     spec:
       containers:
-        - name: product-service
-          image: jpanaza/product-service:latest
+        - name: order-service
+          image: jpanaza/order-service:latest
           ports:
-            - containerPort: 3002
+            - containerPort: 3003
           env:
             - name: PORT
-              value: "3002"
+              value: "3003"
             - name: CORS_ORIGIN
               value: "http://localhost"
             - name: AUTH_SERVICE_URL
               value: "http://auth-service:3001"
+            - name: PRODUCT_SERVICE_URL
+              value: "http://product-service:3002"
             - name: DB_HOST
-              value: "db-product"
+              value: "db-order"
             - name: DB_PORT
               value: "3306"
             - name: DB_USER
@@ -34,7 +36,7 @@ spec:
             - name: DB_PASSWORD
               value: "1234"
             - name: DB_DATABASE
-              value: "product_db"
+              value: "order_db"
           resources:                # ✅ Control de CPU/Memoria agregado
             requests:
               memory: "128Mi"
@@ -47,12 +49,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: product-service
+  name: order-service
   namespace: sa-app
 spec:
   selector:
-    app: product-service
+    app: order-service
   type: ClusterIP
   ports:
-    - port: 3002
-      targetPort: 3002
+    - port: 3003
+      targetPort: 3003

@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mysql-product-pvc
+  name: mysql-order-pvc
   namespace: sa-app
 spec:
   accessModes:
@@ -15,17 +15,17 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql-product
+  name: mysql-order
   namespace: sa-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql-product
+      app: mysql-order
   template:
     metadata:
       labels:
-        app: mysql-product
+        app: mysql-order
     spec:
       containers:
         - name: mysql
@@ -34,13 +34,13 @@ spec:
             - name: MYSQL_ROOT_PASSWORD
               value: "1234"
             - name: MYSQL_DATABASE
-              value: "product_db"
+              value: "order_db"
             - name: TZ
               value: "America/Guatemala"
           ports:
             - containerPort: 3306
           volumeMounts:
-            - name: mysql-product-data
+            - name: mysql-order-data
               mountPath: /var/lib/mysql
           resources:
             requests:
@@ -50,20 +50,20 @@ spec:
               memory: "512Mi"
               cpu: "500m"
       volumes:
-        - name: mysql-product-data
+        - name: mysql-order-data
           persistentVolumeClaim:
-            claimName: mysql-product-pvc
+            claimName: mysql-order-pvc
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: db-product
+  name: db-order
   namespace: sa-app
 spec:
-  type: ClusterIP               #  expone puerto para scripts o conexiones externas
+  type: ClusterIP
   selector:
-    app: mysql-product
+    app: mysql-order
   ports:
     - port: 3306
-      targetPort: 3306         # Puedes cambiar este si está ocupado (rango: 30000–32767)
+      targetPort: 3306
