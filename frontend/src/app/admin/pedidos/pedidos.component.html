@@ -3,11 +3,6 @@
     <div class="col-lg-10">
       <h1>Pedidos</h1>
     </div>
-    <!-- <div class="col-lg">
-      <div class="d-grid gap-2">
-        <button class="btn btn-sm btn-secondary">Atras</button>
-      </div>
-    </div> -->
   </div>
   <hr>
 
@@ -15,14 +10,17 @@
 
   <div class="row">
     <div class="col-lg-auto">
-      Filtrar: 
+      Filtrar:
     </div>
     <div class="col-lg-2">
       <select id="tipoPedidos" class="form-select form-select-sm" [(ngModel)]="filtrarPor" (change)="getPedidos()">
-        <option [ngValue]="1">Pendiente</option>
-        <option [ngValue]="2">En Ruta</option>
-        <option [ngValue]="3">Rechazados</option>
-        <option [ngValue]="4">Entregados</option>
+        <!-- 'pendiente', 'procesando', 'enviado', 'entregado', 'cancelado' -->
+        <option [ngValue]="''">Todos</option>
+        <option [ngValue]="'pendiente'">Pendiente</option>
+        <option [ngValue]="'procesando'">Procesando</option>
+        <option [ngValue]="'enviado'">Enviado</option>
+        <option [ngValue]="'entregado'">Entregado</option>
+        <option [ngValue]="'cancelado'">Cancelado</option>
       </select>
     </div>
   </div>
@@ -32,40 +30,43 @@
     <table class="table mt-3">
       <thead class="table-dark">
         <tr>
-          <th>Correlativo</th>
+          <!-- <th>Correlativo</th>
           <th>Fecha</th>
           <th>Estado</th>
           <th>Método de Pago</th>
           <th>Cliente</th>
           <th>Dirección de Entrega</th>
           <th>Monto</th>
+          <th>Acciones</th> -->
+          <th>Correlativo</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Método de Pago</th>
           <th>Acciones</th>
         </tr>
       </thead>
-  
       <tbody>
         <tr *ngFor="let pedido of pedidos; let idx = index">
-          <td [id]="idx+'correlativo'">{{pedido.correlativo}}</td>
-          <td>{{pedido.fecha_registro | date}}</td>
+          <td [id]="idx+'correlativo'">{{4300 + pedido.order_id}}</td>
+          <td>{{pedido.fecha | date}}</td>
           <td>
-            <span class="badge text-bg-warning" *ngIf="pedido.estado_pedido_id === 1">
-              PENDIENTE
-            </span>
-            <span class="badge text-bg-primary" *ngIf="pedido.estado_pedido_id === 2">
-              EN RUTA
-            </span>
-            <span class="badge text-bg-danger" *ngIf="pedido.estado_pedido_id === 3">
-              RECHAZADO
-            </span>
-            <span class="badge text-bg-success" *ngIf="pedido.estado_pedido_id === 4">
-              ENTREGADO
-            </span>
+            <span class="badge text-bg-warning" *ngIf="pedido.estado === 'pendiente'">{{pedido.estado}}</span>
+            <span class="badge text-bg-info" *ngIf="pedido.estado === 'procesando'">{{pedido.estado}}</span>
+            <span class="badge text-bg-success" *ngIf="pedido.estado === 'enviado'">{{pedido.estado}}</span>
+            <span class="badge text-bg-primary" *ngIf="pedido.estado === 'entregado'">{{pedido.estado}}</span>
+            <span class="badge text-bg-danger" *ngIf="pedido.estado === 'cancelado'">{{pedido.estado}}</span>
           </td>
-          <td>{{pedido.tipo_metodo_pago}} {{pedido.detalle_tarjeta}}</td>
-          <td>{{pedido.nombre_cliente}} {{pedido.apellido_cliente}}</td>
-          <td>{{pedido.direccion_entrega}}</td>
-          <td>{{pedido.monto | currency: 'Q'}}</td>
-          <td class="d-flex justify-content-between">
+          <!-- <td>{{pedido.tipo_metodo_pago}} {{pedido.detalle_tarjeta}}</td> -->
+          <td>{{pedido.total | currency: 'Q'}}</td>
+          <td class="d-flex">
+            <button class="btn btn-sm btn-primary" (click)="verOrden(pedido)" ngbTooltip="Ver productos">
+              <i class="bi bi-eye"></i>
+            </button>
+            <button class="btn btn-sm btn-secondary" ngbTooltip="Actualizar Estado" (click)="actualizarEstado(pedido)">
+              <i class="bi bi-plus-circle"></i>
+            </button>
+          </td>
+          <!-- <td class="d-flex justify-content-between">
             <button class="btn btn-sm btn-secondary" ngbTooltip="Ver Contenido" (click)="verPedido(pedido)">
               <i class="bi bi-eye"></i>
             </button>
@@ -81,16 +82,12 @@
             <button [id]="idx + 'rechazar'" class="btn btn-danger btn-sm" *ngIf="filtrarPor === 1" ngbTooltip="Rechazar" (click)="rechazar(pedido)">
               <i class="bi bi-x-square"></i>
             </button>
-          </td>
+          </td> -->
         </tr>
       </tbody>
-  
     </table>
-  
     <div class="alert alert-warning" *ngIf="pedidos.length === 0">
       Aun no hay pedidos registrados.
     </div>
   </ng-container>
-
-
 </div>

@@ -22,15 +22,16 @@
           <th>Acciones</th>
         </tr>
       </thead>
-      <tbody *ngIf="carrito.carrito.productos.length > 0">
-        <tr *ngFor="let producto of carrito.carrito.productos; let i = index;">
-          <td>{{producto.nombre_producto}}</td>
-          <td>{{producto.precio_unidad| currency: 'Q'}}</td>
+      <tbody *ngIf="carrito.length > 0">
+        <tr *ngFor="let producto of carrito; let i = index;">
+          <td>{{producto.producto.name}}</td>
+          <td>{{producto.producto.price| currency: 'Q'}}</td>
           <td>
-            <input type="number" class="form-control form-control-sm" [(ngModel)]="producto.cantidad" style="width: 5vw;">
+            <!-- <input type="number" class="form-control form-control-sm" [(ngModel)]="producto.quantity" style="width: 5vw;"> -->
+            {{producto.quantity}}
           </td>
           <td>
-            <button class="btn btn-sm btn-outline-danger" ngbTooltip="Eliminar del Carrito" (click)="eliminarProducto(i)">
+            <button class="btn btn-sm btn-outline-danger" ngbTooltip="Eliminar del Carrito" (click)="eliminarProducto(producto)">
               <i class="bi bi-trash"></i>
             </button>
           </td>
@@ -50,11 +51,12 @@
       </tbody>
     </table>
     <ng-container *ngIf="carrito">
-      <div class="alert alert-warning" *ngIf="carrito.carrito.productos.length === 0">
+      <div class="alert alert-warning" *ngIf="carrito.length === 0">
         No hay productos en el carrito por el momento.
       </div>
-      <div class="d-flex justify-content-end" *ngIf="carrito.carrito.productos.length > 0">
-        <button class="btn btn-primary" (click)="actualizar()">Actualizar Carrito</button>
+      <div class="d-flex justify-content-end" *ngIf="carrito.length > 0">
+        <button class="btn btn-danger" (click)="actualizar()">Limpiar Carrito</button>
+        <!-- <button class="btn btn-primary" (click)="actualizar()">Actualizar Carrito</button> -->
       </div>
     </ng-container>
     <div class="alert alert-warning" *ngIf="!carrito">

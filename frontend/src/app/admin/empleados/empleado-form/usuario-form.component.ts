@@ -3,23 +3,26 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Empleado } from '../../../empleado/empleado.types';
 import { EmpleadoService } from '../../../empleado/empleado.service';
 import { ActivatedRoute } from '@angular/router';
-import { Location, NgClass, NgFor, NgIf, UpperCasePipe } from '@angular/common';
+import { DatePipe, Location, NgClass, NgFor, NgIf, UpperCasePipe } from '@angular/common';
 import { LoadingComponent } from '../../../shared/loading/loading.component';
 import { v4 } from 'uuid';
 import { S3Service } from '../../../s3.service';
 import { map, take } from 'rxjs';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbToast } from '@ng-bootstrap/ng-bootstrap';
 import { ViewCvComponent } from '../../../modals/view-cv/view-cv.component';
 import { ConfirmActionComponent } from '../../../modals/confirm-action/confirm-action.component';
 import { AdminService } from '../../admin.service';
 import { User } from '../../../auth/auth.types';
 import { AuthService } from '../../../auth/auth.service';
+import { AsignarOfertaComponent } from '../../../modals/asignar-oferta/asignar-oferta.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { truckFlatbed } from 'ngx-bootstrap-icons';
 
 @Component({
   selector: 'app-usuario-form',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, NgIf, NgClass, LoadingComponent, UpperCasePipe, NgFor],
+  imports: [FormsModule, ReactiveFormsModule, NgIf, NgClass, LoadingComponent, UpperCasePipe, NgFor, DatePipe],
   templateUrl: './usuario-form.component.html',
   styleUrl: './usuario-form.component.scss'
 })
@@ -59,6 +62,11 @@ export class UsuarioFormComponent implements OnInit {
   alertMessage: string = "";
   cv: File;
   pdfLink: SafeResourceUrl;
+  promocionesUsuario: any[] = [];
+  loadingPromociones: boolean = false;
+
+  loadingDescuento = true;
+  descuentoExclusivo: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -68,7 +76,8 @@ export class UsuarioFormComponent implements OnInit {
     private s3Service: S3Service,
     private dom: DomSanitizer,
     private modalService: NgbModal,
-    private authService: AuthService
+    private authService: AuthService,
+    private snackService: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -141,6 +150,8 @@ export class UsuarioFormComponent implements OnInit {
           })),
           status: userResponse.status
         };
+        this.obtenerPromocionesUsuario();
+        this.obtenerDescuentoExclusivo();
         this.buildForm();
       }, err => {
         console.log(err);
@@ -284,7 +295,6 @@ export class UsuarioFormComponent implements OnInit {
         this.usuarioForm.enable();
       });
     }
-
   }
 
   cambiarEstado(): void {
@@ -304,7 +314,89 @@ export class UsuarioFormComponent implements OnInit {
     }, dismiss => {});
   }
 
+  obtenerPromocionesUsuario(): void {
+    this.loadingPromociones = true;
+    this.adminService.obtenerOfertasDeUsuario(this.usuario.id).pipe(take(1)).subscribe(resp => {
+      console.log(resp);
+      this.promocionesUsuario = resp.promociones ?? [];
+      this.loadingPromociones = false;
+    }, err => {
+      console.log(err);
+      this.loadingPromociones = false;
+    });
+  }
+
+  asignarPromocion(): void {
+    const modal = this.modalService.open(AsignarOfertaComponent);
+
+    modal.result.then(result => {
+      console.log(result);
+      const body = {
+        user_id: this.usuario.id,
+        promotion_id: result
+      };
+      this.adminService.asignarOferta(body).pipe(take(1)).subscribe({
+        next: (resp) => {
+          console.log(resp);
+          this.snackService.open('Oferta Asignada Exitosamente', 'Cerrar', {
+            duration: 7000,
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom'
+          });
+          this.obtenerPromocionesUsuario();
+        },
+        error: (err) => {
+          console.log(err);
+        }
+      })
+    }, dismiss => {});
+  }
+
   atras(): void {
     this.location.back();
+  }
+
+  obtenerDescuentoExclusivo(): void {
+    this.adminService.obtenerDescuentoExclusivo(this.usuario.id).pipe(take(1)).subscribe(resp => {
+      console.log(resp);
+      this.descuentoExclusivo = {
+        nivel: resp.descuento.nivel,
+        porcentaje: resp.descuento.porcentaje,
+        vence_en: resp.descuento.vence_en,
+        activado_en: resp.descuento.activado_en,
+        usado: resp.descuento.usado
+      };
+      this.loadingDescuento = false;
+    }, err => {
+      this.loadingDescuento = false;
+      console.log(err);
+    });
+  }
+
+  generarDescuentoExclusivo(): void {
+    this.adminService.obtenerTotalAcumulado({ user_id: this.usuario.id, rango: "30d" }).pipe(take(1)).subscribe(total => {
+      const modal = this.modalService.open(ConfirmActionComponent);
+      modal.componentInstance.title = "Generar Descuento Exclusivo";
+      modal.componentInstance.description = "Estas seguro que quieres generar un descuento exclusivo para este usuario? (total acumulado: Q" + total.total_gastado + ".00)";
+      modal.result.then(result => {
+        const body = {
+          user_id: this.usuario.id,
+          total_acumulado: total.total_gastado
+        };
+        this.adminService.generarDescuentoExclusivo(body).pipe(take(1)).subscribe(resp => {
+          console.log(resp);
+          this.snackService.open('Descuento Exclusivo Generado Exitosamente', 'Cerrar', {
+            duration: 7000,
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom'
+          });
+          this.obtenerDescuentoExclusivo();
+        }, err => {
+          console.log(err);
+        });
+      }, dismiss => {});
+    }, errTotal => {
+      console.log(errTotal);
+    });
   }
 }

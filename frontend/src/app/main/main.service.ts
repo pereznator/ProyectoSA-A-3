@@ -6,6 +6,8 @@ import { environment } from "../../environments/environment";
 @Injectable({ providedIn: "root" })
 export class MainService {
   productServerUrl = environment.productServerUrl;
+  orderServiceUrl = environment.orderServiceUrl;
+
   constructor(private httpService: HttpService) {}
 
   obtenerCategorias(): Observable<any> {
@@ -51,8 +53,8 @@ export class MainService {
     return this.httpService.request(RequestMethod.GET, `/producto/buscar/${nombre}/${fechaSort}/${precioSort}`);
   }
 
-  agregarAlCarrito(idCliente: number, carrito: any): Observable<any> {
-    return this.httpService.request(RequestMethod.POST, `/carrito/use/${idCliente}`, carrito);
+  agregarAlCarrito(carrito: any): Observable<any> {
+    return this.httpService.request(RequestMethod.POST, `${this.orderServiceUrl}/api/cart/agregarProductoCarrito`, carrito);
   }
 
   obtenerProductosPorCategoria(idCateria: string, precioSort: string, fechaSort: string, nombreSort: string): Observable<any> {

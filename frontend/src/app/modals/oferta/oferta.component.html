@@ -10,46 +10,75 @@
 
   <ng-container *ngIf="!loading">
     <div class="row">
-      <div class="col">
-        <p>Seleccionar el producto para aplicar la nueva oferta</p>
-        <div class="row">
-          <div class="col-lg-1"></div>
-          <div class="col-lg">
-            <select class="form-select form-select-sm" [(ngModel)]="productoSeleccionado">
-              <option [ngValue]="null">Seleccionar Producto</option>
-              <option *ngFor="let producto of productos"  [value]="producto.id">{{producto.nombre}}</option>
-            </select>
+      <form [formGroup]="productoForm">
+        <div class="col">
+          <div class="row">
+            <div class="col-lg-1"></div>
+            <div class="col-lg">
+              <label class="form-label">Titulo</label>
+              <input type="text" class="form-control form-control-sm" [class.is-invalid]="notValidName" placeholder="Titulo" formControlName="name">
+              <div *ngIf="notValidName" class="invalid-feedback">
+                Por favor ingresar un nombre.
+              </div>
+            </div>
+            <div class="col-lg-1"></div>
           </div>
-          <div class="col-lg-1"></div>
+          <div class="row mt-3">
+            <div class="col-lg-1"></div>
+            <div class="col-lg">
+              <label class="form-label">Descripcion</label>
+              <textarea class="form-control form-control-sm" [class.is-invalid]="notValidDescription" cols="30" rows="3" formControlName="description"></textarea>
+              <div *ngIf="notValidDescription" class="invalid-feedback">
+                Por favor ingresar una descripcion.
+              </div>
+            </div>
+            <div class="col-lg-1"></div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-lg-1"></div>
+            <div class="col-lg">
+              <label class="form-label" style="font-size: small;">Valor de la oferta</label>
+              <input type="number" class="form-control form-control-sm" [class.is-invalid]="notValidDiscount" formControlName="discount_percentage">
+              <div *ngIf="notValidDiscount" class="invalid-feedback">
+                La oferta tiene que ser entre 0 y 100.
+              </div>
+            </div>
+            <div class="col-lg">
+              <label class="form-label" style="font-size: small;">Cuando inicia la oferta</label>
+              <input type="date" class="form-control form-control-sm" [class.is-invalid]="notValidStartDate" formControlName="start_date">
+              <div *ngIf="notValidStartDate" class="invalid-feedback">
+                Por favor ingresar una fecha valida.
+              </div>
+            </div>
+            <div class="col-lg-1"></div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-lg-1"></div>
+            <div class="col-lg">
+              <label class="form-label" style="font-size: small;">Cuando termina la oferta</label>
+              <input type="date" class="form-control form-control-sm" [class.is-invalid]="notValidEndDate" formControlName="end_date">
+              <div *ngIf="notValidEndDate" class="invalid-feedback">
+                Por favor ingresar una fecha valida.
+              </div>
+            </div>
+            <div class="col-lg" *ngIf="!isNew">
+              <label class="form-label" style="font-size: small;">Activa</label>
+              <select class="form-select form-select-sm" formControlName="is_active">
+                <option [ngValue]="0">DESACTIVA</option>
+                <option [ngValue]="1">ACTIVA</option>
+              </select>
+            </div>
+            <div class="col-lg-1"></div>
+          </div>
         </div>
-        <div class="row mt-3">
-          <div class="col-lg-1"></div>
-          <div class="col-lg">
-            <label class="form-label" style="font-size: small;">Valor de la oferta</label>
-            <input type="number" class="form-control form-control-sm" [(ngModel)]="valorOferta">
-          </div>
-          <div class="col-lg">
-            <label class="form-label" style="font-size: small;">Cuando termina la oferta</label>
-            <input type="date" class="form-control form-control-sm" [(ngModel)]="fecha">
-          </div>
-          <div class="col-lg-1"></div>
-        </div>
-        <div class="row mt-3">
-          <div class="col-lg-1"></div>
-          <div class="col-lg">
-            <label class="form-label" style="font-size: samll;">Descripcion</label>
-            <textarea class="form-control form-control-sm" cols="30" rows="3" [(ngModel)]="descripcion"></textarea>
-          </div>
-          <div class="col-lg-1"></div>
-        </div>
-      </div>
+      </form>
     </div>
   </ng-container>
 
   
   <div class="d-flex justify-content-end mt-3">
       <button class="btn btn-secondary mx-2" (click)="modal.dismiss()">Cancelar</button>
-      <button class="btn btn-primary" (click)="retornarValores()" >Confirmar</button>
+      <button class="btn btn-primary" [disabled]="productoForm.invalid" (click)="retornarValores()" >Confirmar</button>
   </div>
 
 </div>

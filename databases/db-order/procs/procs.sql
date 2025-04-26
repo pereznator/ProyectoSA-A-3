@@ -1067,3 +1067,66 @@ BEGIN
         'message', 'Pago registrado correctamente.'
     ) AS resultado;
 END;
+
+CREATE
+    DEFINER = root@`%` PROCEDURE ObtenerTodasOrdenes(IN p_estado VARCHAR(20))
+BEGIN
+    DECLARE v_error_message VARCHAR(255);
+
+    -- Manejo de errores
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION
+    BEGIN
+        GET DIAGNOSTICS CONDITION 1 v_error_message = MESSAGE_TEXT;
+
+        IF v_error_message IS NULL THEN
+            SET v_error_message = 'Error desconocido';
+        END IF;
+
+        SELECT JSON_OBJECT(
+            'status', 'error',
+            'message', CONCAT('Error al obtener las órdenes: ', v_error_message)
+        ) AS resultado;
+
+        ROLLBACK;
+    END;
+
+    START TRANSACTION;
+
+    -- Devolver órdenes filtradas
+    IF p_estado IS NULL OR p_estado = '' THEN
+        -- Si no se especifica estado, traer todas
+        SELECT JSON_OBJECT(
+            'status', 'success',
+            'message', 'Órdenes obtenidas correctamente.',
+            'ordenes', JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'order_id', o.id,
+                    'usuario_id', o.user_id,
+                    'fecha', o.created_at,
+                    'estado', o.status,
+                    'total', o.total
+                )
+            )
+        ) AS resultado
+        FROM orders o;
+    ELSE
+        -- Si se especifica estado, traer solo las que coincidan
+        SELECT JSON_OBJECT(
+            'status', 'success',
+            'message', CONCAT('Órdenes con estado "', p_estado, '" obtenidas correctamente.'),
+            'ordenes', JSON_ARRAYAGG(
+                JSON_OBJECT(
+                    'order_id', o.id,
+                    'usuario_id', o.user_id,
+                    'fecha', o.created_at,
+                    'estado', o.status,
+                    'total', o.total
+                )
+            )
+        ) AS resultado
+        FROM orders o
+        WHERE o.status = p_estado;
+    END IF;
+
+    COMMIT;
+END;

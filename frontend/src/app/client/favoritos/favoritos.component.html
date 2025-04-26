@@ -1,0 +1,67 @@
+<div class="container">
+  <div class="row mt-3">
+    <div class="col-lg-10">
+      <h1>
+        Mis Favoritos
+      </h1>
+    </div>
+    <div class="col-lg">
+
+    </div>
+  </div>
+  <hr>
+  <!-- <div class="row">
+    <div class="col-lg-3">
+      <input id="buscarJuego" type="text" class="form-control form-control-sm" [(ngModel)]="textoBuscar" placeholder="Qué juego deseas buscar?" (keyup.enter)="buscar()">
+    </div>
+    <div class="col-lg-1">
+      <button id="btnBuscar" class="btn btn-primary btn-sm" ngbTooltip="Buscar" (click)="buscar()">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </div> -->
+  
+
+  <table class="table mt-3" *ngIf="!loading">
+    <thead class="table-dark">
+      <tr>
+        <th></th>
+        <th>Nombre</th>
+        <th>Categoria</th>
+        <th>Marcas</th>
+        <th>Precio</th>
+        <th>Costo</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let producto of favoritos">
+        <td>
+          <img [src]="producto.main_image_url" class="rounded float-start fotografia" alt="portada">
+        </td>
+        <td>{{producto.name}}</td>
+        <td>{{producto.category}}</td>
+        <td>{{producto.brands.join(", ")}}</td>
+        <td>{{producto.price | currency: 'Q'}}</td>
+        <td>{{producto.value | currency: 'Q'}}</td>
+        <td>
+          <span *ngIf="producto.status == 'available'" class="badge bg-success">Disponible</span>
+          <span *ngIf="producto.status == 'unavailable'" class="badge bg-danger">No Disponible</span>
+        </td>
+        <td>
+          <button [id]="producto.nombre" class="btn btn-sm btn-secondary" ngbTooltip="Editar" (click)="verProducto(producto.product_id)">
+            <i class="bi bi-eye"></i>
+          </button>
+          <button class="btn btn-sm btn-danger ml-5" ngbTooltip="Quitar de Favoritos" (click)="eliminarFavorito(producto.product_id)">
+            <i class="bi bi-trash"></i>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="alert alert-warning mt-3" *ngIf="!loading && favoritos.length === 0">
+    No se econtraron favoritos.
+  </div>
+  <app-loading *ngIf="loading"></app-loading>
+</div>

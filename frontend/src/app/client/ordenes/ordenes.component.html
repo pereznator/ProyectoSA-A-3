@@ -3,11 +3,11 @@
     <div class="col-lg-10">
       <h1>Mis Pedidos</h1>
     </div>
-    <div class="col-lg">
+    <!-- <div class="col-lg">
       <div class="d-grid gap-2">
         <button class="btn btn-sm btn-secondary">Atras</button>
       </div>
-    </div>
+    </div> -->
   </div>
   <hr>
 
@@ -20,33 +20,31 @@
         <th>Fecha</th>
         <th>Estado</th>
         <th>Método de Pago</th>
-        <th>Monto</th>
+        <!-- <th>Monto</th> -->
         <th>Acciones</th>
       </tr>
     </thead>
 
     <tbody>
       <tr *ngFor="let pedido of pedidos">
-        <td>{{pedido.correlativo}}</td>
-        <td>{{pedido.fecha_registro | date}}</td>
+        <td>{{4300 + pedido.order_id}}</td>
+        <td>{{pedido.fecha | date}}</td>
         <td>
-          <!-- <span class="badge" [ngClass]="{ 'text-bg-warning': pedido.estado_pedido_id === 1, 'text-bg-success': pedido.estado_pedido_id === 2, 'text-bg-danger': pedido.estado_pedido_id === 3 }">
-            {{ pedido.estado_pedido_id === 1 ? 'PENDIENTE' : ( pedido.estado_pedido_id === 2 ? 'AUTORIZADO' : 'RECHAZADO' ) }}
-          </span> -->
-          <span class="badge text-bg-warning" *ngIf="pedido.estado_pedido_id === 1">PENDIENTE</span>
-          <span class="badge text-bg-primary" *ngIf="pedido.estado_pedido_id === 2">EN RUTA</span>
-          <span class="badge text-bg-danger" *ngIf="pedido.estado_pedido_id === 3">RECHAZADO</span>
-          <span class="badge text-bg-success" *ngIf="pedido.estado_pedido_id === 4">ENTREGADO</span>
+          <span class="badge text-bg-warning" *ngIf="pedido.estado === 'pendiente'">{{pedido.estado}}</span>
+          <span class="badge text-bg-info" *ngIf="pedido.estado === 'procesando'">{{pedido.estado}}</span>
+          <span class="badge text-bg-success" *ngIf="pedido.estado === 'enviado'">{{pedido.estado}}</span>
+          <span class="badge text-bg-primary" *ngIf="pedido.estado === 'entregado'">{{pedido.estado}}</span>
+          <span class="badge text-bg-danger" *ngIf="pedido.estado === 'cancelado'">{{pedido.estado}}</span>
         </td>
-        <td>{{pedido.tipo_metodo_pago}} {{pedido.detalle_tarjeta}}</td>
-        <td>{{pedido.monto | currency: 'Q'}}</td>
+        <!-- <td>{{pedido.tipo_metodo_pago}} {{pedido.detalle_tarjeta}}</td> -->
+        <td>{{pedido.total | currency: 'Q'}}</td>
         <td class="d-flex justify-content-between">
           <button class="btn btn-sm btn-primary" (click)="verOrden(pedido)" ngbTooltip="Ver productos">
             <i class="bi bi-eye"></i>
           </button>
-          <button class="btn btn-sm btn-secondary" *ngIf="pedido.tipo_metodo_pago === 'TRANSFERENCIA'" ngbTooltip="Ver constancia de pago" (click)="verCV(pedido.detalle_pago)">
+          <!-- <button class="btn btn-sm btn-secondary" *ngIf="pedido.tipo_metodo_pago === 'TRANSFERENCIA'" ngbTooltip="Ver constancia de pago" (click)="verCV(pedido.detalle_pago)">
             <i class="bi bi-filetype-pdf"></i>
-          </button>
+          </button> -->
         </td>
       </tr>
     </tbody>

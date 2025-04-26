@@ -1,0 +1,37 @@
+<div style="width: 100%;" class="p-4">
+  <div class="row">
+      <div class="col-md-10">
+          <h3 class="fs-4">Actualizar Estado de Orden</h3>
+      </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="row">
+      <div class="col-lg-2"></div>
+      <div class="col-lg-8">
+          <p>¿Cuál es el neuvo estado?</p>
+          <select id="tipoPedidos" class="form-select form-select-sm" [(ngModel)]="estadoNuevo">
+            <!-- 'procesando', 'en camino', 'entregado' -->
+            <option [ngValue]="'procesando'">Procesando</option>
+            <option [ngValue]="'en camino'">En Camino</option>
+            <option [ngValue]="'entregado'">Entregado</option>
+          </select>
+        </div>
+        <div class="col-lg-2"></div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-8">
+          <p>¿Cuántas unidades deseas agregar al carrito?</p>
+          <input id="unidadesCarrito" type="text" class="form-control" [(ngModel)]="location" placeholder="Ubicacion del estado">
+        </div>
+        <div class="col-lg-2"></div>
+      </div>
+  </div>
+  
+  <div class="d-flex justify-content-end mt-3">
+      <button class="btn btn-secondary mx-2" (click)="modal.dismiss()">Cancelar</button>
+      <button id="confirmar" class="btn btn-primary" (click)="cerrar()" [disabled]="!estadoNuevo || !location">Confirmar</button>
+  </div>
+
+</div>
