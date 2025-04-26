@@ -5,6 +5,10 @@ on:
     branches:
       - develop
       - feature/**
+  pull_request:
+    branches:
+      - main
+      - release/**
 
 jobs:
   build:
@@ -59,3 +63,33 @@ jobs:
       - name: Probar order-service
         run: |
           docker run --rm --detach --name order-service-test jpanaza/order-service:latest && sleep 10 && docker stop order-service-test
+
+  delivery:
+    name: Delivery - Publicar Imágenes Versionadas
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout Código
+        uses: actions/checkout@v3
+
+      - name: Loguearse en DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Versionar y Push auth-service
+        run: |
+          docker tag jpanaza/auth-service:latest jpanaza/auth-service:${{ github.run_number }}
+          docker push jpanaza/auth-service:${{ github.run_number }}
+
+      - name: Versionar y Push product-service
+        run: |
+          docker tag jpanaza/product-service:latest jpanaza/product-service:${{ github.run_number }}
+          docker push jpanaza/product-service:${{ github.run_number }}
+
+      - name: Versionar y Push order-service
+        run: |
+          docker tag jpanaza/order-service:latest jpanaza/order-service:${{ github.run_number }}
+          docker push jpanaza/order-service:${{ github.run_number }}
