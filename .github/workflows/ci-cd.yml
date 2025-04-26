@@ -79,6 +79,12 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Pull Imágenes latest
+        run: |
+          docker pull jpanaza/auth-service:latest
+          docker pull jpanaza/product-service:latest
+          docker pull jpanaza/order-service:latest
+
       - name: Versionar y Push auth-service
         run: |
           docker tag jpanaza/auth-service:latest jpanaza/auth-service:${{ github.run_number }}
