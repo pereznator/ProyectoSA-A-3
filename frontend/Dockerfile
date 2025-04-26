@@ -1,22 +1,13 @@
-# Stage 1: Build the Angular application
-FROM node:latest AS build
+# Usa una imagen ligera de nginx
+FROM nginx:alpine
 
-WORKDIR /app
+# Copia los archivos de producción al contenedor
+COPY ./dist/frontend /usr/share/nginx/html
 
-COPY package.json package-lock.json ./
+# Copia tu propio archivo de configuración de nginx (opcional)
+# COPY nginx.conf /etc/nginx/nginx.conf
 
-RUN npm install
+# Expone el puerto
+EXPOSE 80
 
-COPY . .
-
-RUN npm run build --prod
-
-# Stage 2: Serve the Angular application with Nginx
-FROM nginx:latest
-
-COPY --from=build /app/dist/frontend/browser /usr/share/nginx/html
-
-EXPOSE 4200
-
-#construir imagen
-# docker build -t frontend:latest .
+CMD ["nginx", "-g", "daemon off;"]

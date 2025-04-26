@@ -657,7 +657,9 @@ BEGIN
             'user_id', user_id,
             'nivel', level,
             'porcentaje', discount_percentage,
-            'vence_en', expires_at
+            'vence_en', expires_at,
+            'usado', used,
+            'activado_en', activated_at 
         )
     ) AS resultado
     FROM exclusive_discounts
