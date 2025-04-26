@@ -50,12 +50,12 @@ jobs:
 
       - name: Probar auth-service
         run: |
-          docker run --rm jpanaza/auth-service:latest
+          docker run --rm --detach --name auth-service-test jpanaza/auth-service:latest && sleep 10 && docker stop auth-service-test
 
       - name: Probar product-service
         run: |
-          docker run --rm jpanaza/product-service:latest
+          docker run --rm --detach --name product-service-test jpanaza/product-service:latest && sleep 10 && docker stop product-service-test
 
       - name: Probar order-service
         run: |
-          docker run --rm jpanaza/order-service:latest
+          docker run --rm --detach --name order-service-test jpanaza/order-service:latest && sleep 10 && docker stop order-service-test
