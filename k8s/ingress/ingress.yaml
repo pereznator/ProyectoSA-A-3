@@ -2,26 +2,79 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: sa-ingress
-  namespace: sa-app
+  namespace: sa-p6
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
 spec:
   ingressClassName: nginx
   rules:
-    - host: sa.local
-      http:
+    - http:
         paths:
-          - path: /api/user/
-            pathType: Prefix
+          ## AUTH SERVICE
+          - path: /api/user(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: auth-service
                 port:
                   number: 3001
-          - path: /api/product/
-            pathType: Prefix
+          - path: /api/auth(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 3001
+          - path: /api/promotion(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 3001
+
+          ## PRODUCT SERVICE
+          - path: /api/product(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: product-service
                 port:
                   number: 3002
+
+          ## ORDER SERVICE
+          - path: /api/cart(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: order-service
+                port:
+                  number: 3003
+          - path: /api/descuento(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: order-service
+                port:
+                  number: 3003
+          - path: /api/orders(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: order-service
+                port:
+                  number: 3003
+          - path: /api/favorite(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: order-service
+                port:
+                  number: 3003
+          - path: /api/pagos(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: order-service
+                port:
+                  number: 3003

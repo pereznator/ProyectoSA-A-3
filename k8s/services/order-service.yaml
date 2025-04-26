@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  namespace: sa-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      containers:
+        - name: order-service
+          image: jpanaza/order-service:latest
+          ports:
+            - containerPort: 3003
+          env:
+            - name: PORT
+              value: "3003"
+            - name: CORS_ORIGIN
+              value: "http://localhost"
+            - name: AUTH_SERVICE_URL
+              value: "http://auth-service:3001"
+            - name: PRODUCT_SERVICE_URL
+              value: "http://product-service:3002"
+            - name: DB_HOST
+              value: "db-order"
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_USER
+              value: "root"
+            - name: DB_PASSWORD
+              value: "1234"
+            - name: DB_DATABASE
+              value: "order_db"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+  namespace: sa-app
+spec:
+  selector:
+    app: order-service
+  type: ClusterIP
+  ports:
+    - port: 3003
+      targetPort: 3003

@@ -20,4 +20,4 @@ EXPOSE 3003
 CMD ["node", "index.js"]
 
 # Generar imagen
-# docker build -t product-service .
+# docker build -t order-service .

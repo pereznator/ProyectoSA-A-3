@@ -1,21 +1,21 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: mysql-product-pv
+  name: mysql-order-pv
   namespace: sa-app
 spec:
   capacity:
     storage: 1Gi
   accessModes:
     - ReadWriteOnce
-  hostPath:                        # ✅ Compatible con Minikube/local
-    path: /mnt/data/mysql-product
+  hostPath:  # ✅ Compatible con Minikube/local
+    path: /mnt/data/mysql-order
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: mysql-product-pvc
+  name: mysql-order-pvc
   namespace: sa-app
 spec:
   accessModes:
@@ -28,17 +28,17 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mysql-product
+  name: mysql-order
   namespace: sa-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mysql-product
+      app: mysql-order
   template:
     metadata:
       labels:
-        app: mysql-product
+        app: mysql-order
     spec:
       containers:
         - name: mysql
@@ -47,30 +47,30 @@ spec:
             - name: MYSQL_ROOT_PASSWORD
               value: "1234"
             - name: MYSQL_DATABASE
-              value: "product_db"
+              value: "order_db"
             - name: TZ
               value: "America/Guatemala"
           ports:
             - containerPort: 3306
           volumeMounts:
-            - name: mysql-product-data
+            - name: mysql-order-data
               mountPath: /var/lib/mysql
       volumes:
-        - name: mysql-product-data
+        - name: mysql-order-data
           persistentVolumeClaim:
-            claimName: mysql-product-pvc
+            claimName: mysql-order-pvc
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: db-product
+  name: db-order
   namespace: sa-app
 spec:
-  type: NodePort               #  expone puerto para scripts o conexiones externas
+  type: NodePort  # expone puerto para carga de scripts o conexiones locales
   selector:
-    app: mysql-product
+    app: mysql-order
   ports:
     - port: 3306
       targetPort: 3306
-      nodePort: 30308          # Puedes cambiar este si está ocupado (rango: 30000–32767)
+      nodePort: 30309   # Usa este puerto, o uno libre entre 30000–32767
