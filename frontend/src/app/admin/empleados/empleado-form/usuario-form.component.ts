@@ -17,6 +17,7 @@ import { User } from '../../../auth/auth.types';
 import { AuthService } from '../../../auth/auth.service';
 import { AsignarOfertaComponent } from '../../../modals/asignar-oferta/asignar-oferta.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { truckFlatbed } from 'ngx-bootstrap-icons';
 
 @Component({
   selector: 'app-usuario-form',
@@ -64,6 +65,8 @@ export class UsuarioFormComponent implements OnInit {
   promocionesUsuario: any[] = [];
   loadingPromociones: boolean = false;
 
+  loadingDescuento = true;
+  descuentoExclusivo: any = null;
 
   constructor(
     private fb: FormBuilder,
@@ -148,6 +151,7 @@ export class UsuarioFormComponent implements OnInit {
           status: userResponse.status
         };
         this.obtenerPromocionesUsuario();
+        this.obtenerDescuentoExclusivo();
         this.buildForm();
       }, err => {
         console.log(err);
@@ -291,7 +295,6 @@ export class UsuarioFormComponent implements OnInit {
         this.usuarioForm.enable();
       });
     }
-
   }
 
   cambiarEstado(): void {
@@ -351,5 +354,49 @@ export class UsuarioFormComponent implements OnInit {
 
   atras(): void {
     this.location.back();
+  }
+
+  obtenerDescuentoExclusivo(): void {
+    this.adminService.obtenerDescuentoExclusivo(this.usuario.id).pipe(take(1)).subscribe(resp => {
+      console.log(resp);
+      this.descuentoExclusivo = {
+        nivel: resp.descuento.nivel,
+        porcentaje: resp.descuento.porcentaje,
+        vence_en: resp.descuento.vence_en,
+        activado_en: resp.descuento.activado_en,
+        usado: resp.descuento.usado
+      };
+      this.loadingDescuento = false;
+    }, err => {
+      this.loadingDescuento = false;
+      console.log(err);
+    });
+  }
+
+  generarDescuentoExclusivo(): void {
+    this.adminService.obtenerTotalAcumulado({ user_id: this.usuario.id, rango: "30d" }).pipe(take(1)).subscribe(total => {
+      const modal = this.modalService.open(ConfirmActionComponent);
+      modal.componentInstance.title = "Generar Descuento Exclusivo";
+      modal.componentInstance.description = "Estas seguro que quieres generar un descuento exclusivo para este usuario? (total acumulado: Q" + total.total_gastado + ".00)";
+      modal.result.then(result => {
+        const body = {
+          user_id: this.usuario.id,
+          total_acumulado: total.total_gastado
+        };
+        this.adminService.generarDescuentoExclusivo(body).pipe(take(1)).subscribe(resp => {
+          console.log(resp);
+          this.snackService.open('Descuento Exclusivo Generado Exitosamente', 'Cerrar', {
+            duration: 7000,
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom'
+          });
+          this.obtenerDescuentoExclusivo();
+        }, err => {
+          console.log(err);
+        });
+      }, dismiss => {});
+    }, errTotal => {
+      console.log(errTotal);
+    });
   }
 }

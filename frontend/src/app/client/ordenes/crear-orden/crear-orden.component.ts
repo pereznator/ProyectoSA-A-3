@@ -23,7 +23,7 @@ import { v4 } from 'uuid';
 export class CrearOrdenComponent implements OnInit {
   
   loading: boolean = false;
-  carrito: Carrito;
+  carrito: any = [];
   metodosPago: any[] = [];
   user: User;
   metodoPagoSeleccionadoId: number = null;
@@ -59,12 +59,12 @@ export class CrearOrdenComponent implements OnInit {
 
   getCarrito(): void {
     this.loading = true;
-    this.authService.user$.subscribe(user => {
+    this.authService.currentUser$.subscribe(user => {
       this.user = user;
       this.clietSerivce.getCarrito(this.user.id).pipe(take(1)).subscribe(resp => {
         console.log(resp);
-        this.carrito = resp.response_dinamodb;
-        this.getMetodosPago();
+        // this.carrito = resp.;
+        // this.getMetodosPago();
       }, err => {
         console.log(err);
       });
@@ -136,7 +136,7 @@ export class CrearOrdenComponent implements OnInit {
           this.clietSerivce.crearPago(pagoBody).pipe(take(1)).subscribe((respPago) => {
             console.log("RESP CARRITO", respPago);
             this.carrito.carrito.productos = []
-            this.clietSerivce.actualizarCarrito("this.user.idCarrito", this.carrito).pipe(take(1)).subscribe(respCarrito => {
+            this.clietSerivce.limpiarCarrito(this.user.id).pipe(take(1)).subscribe(respCarrito => {
               console.log("RESP CARRITO", respCarrito);
               this.loading = false;
               this.router.navigate(["cliente", "ordenes"]);

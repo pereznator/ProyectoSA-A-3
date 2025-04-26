@@ -1,0 +1,38 @@
+<div style="width: 100%;" class="p-4">
+  <div class="row">
+      <div class="col-md-10">
+          <h3 class="fs-4">Registrar Pago</h3>
+      </div>
+  </div>
+  <hr>
+  <div class="row">
+    <div class="row">
+      <div class="col-lg-2"></div>
+      <div class="col-lg-8">
+          <p>¿Cuál es el método de pago?</p>
+          <select class="form-select form-select-sm" [(ngModel)]="metodoPago">
+            <option [ngValue]="null">Seleccionar Metodo de Pago</option>
+            <option [value]="'tarjeta_credito'">Tarjeta de Credito</option>
+            <option [value]="'tarjeta_debito'">Tarjeta de Debito</option>
+            <option [value]="'transferencia'">Transferencia</option>
+            <option [value]="'Efectivo'">Efectivo</option>
+          </select>
+        </div>
+        <div class="col-lg-2"></div>
+      </div>
+      <div class="row mt-3">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-8">
+          <p>¿Cuántas unidades deseas agregar al carrito?</p>
+          <input id="unidadesCarrito" type="number" class="form-control" [(ngModel)]="cantidad" placeholder="Nombre de la nueva categoría">
+        </div>
+        <div class="col-lg-2"></div>
+      </div>
+  </div>
+  
+  <div class="d-flex justify-content-end mt-3">
+      <button class="btn btn-secondary mx-2" (click)="modal.dismiss()">Cancelar</button>
+      <button id="confirmar" class="btn btn-primary" (click)="cerrar()" [disabled]="cantidad <= 0 || !metodoPago">Confirmar</button>
+  </div>
+
+</div>

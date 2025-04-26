@@ -32,7 +32,7 @@ export class HttpService {
       requestObservable = this.httpClient.patch(url, body, { params });  
       break;
       case RequestMethod.DELETE:
-      requestObservable = this.httpClient.delete(url, { params });  
+      requestObservable = this.httpClient.delete(url, { params, body });  
       break;
     }
     return requestObservable;

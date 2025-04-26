@@ -10,6 +10,7 @@ export class AdminService {
 
   authServerUrl = environment.authServerUrl;
   productServerUrl = environment.productServerUrl;
+  orderServiceUrl = environment.orderServiceUrl;
 
   constructor(private httpService: HttpService) { }
 
@@ -66,11 +67,15 @@ export class AdminService {
   }
 
   obtenerPedidos(params: any): Observable<any> {
-    return this.httpService.request(RequestMethod.GET, `/pedido`, {}, params);
+    return this.httpService.request(RequestMethod.GET, `${this.orderServiceUrl}/api/orders/obtenerTodasOrdenes`, {}, params);
   }
 
-  actualizarPedido(idPedido: number, body: any): Observable<any> {
-    return this.httpService.request(RequestMethod.PUT, `/pedido/${idPedido}`, body);
+  actualizarPedido(body: any): Observable<any> {
+    return this.httpService.request(RequestMethod.PUT, `${this.orderServiceUrl}/api/orders/actualizarSeguimientoPedido`, body);
+  }
+
+  obtenerSeguimientoPedido(idOrden: number): Observable<any> {
+    return this.httpService.request(RequestMethod.GET, `${this.orderServiceUrl}/api/orders/obtenerSeguimientoPedido/${idOrden}`);
   }
 
   crearValidacionPago(body: any): Observable<any> {
@@ -95,6 +100,9 @@ export class AdminService {
   asignarOferta(body: any): Observable<any> {
     return this.httpService.request(RequestMethod.POST, `${this.authServerUrl}/api/promotion/asignar-promocion`, body);
   }
+  aplicarOferta(body: any): Observable<any> {
+    return this.httpService.request(RequestMethod.POST, `${this.authServerUrl}/api/promotion/aplicar-promocion`, body);
+  }
 
   obtenerUsuarios(): Observable<any> {
     return this.httpService.request(RequestMethod.GET, `${this.authServerUrl}/api/user/obtener-usuarios-no-admin`);
@@ -115,5 +123,23 @@ export class AdminService {
   }
   crearProducto(body: any): Observable<any> {
     return this.httpService.request(RequestMethod.POST, `${this.productServerUrl}/api/product/crear-producto`, body);
+  }
+  registrarPago(body: any): Observable<any> {
+    return this.httpService.request(RequestMethod.POST, `${this.orderServiceUrl}/api/pagos/registrarPago`, body);
+  }
+  obtenerPagos(idOrden: any): Observable<any> {
+    return this.httpService.request(RequestMethod.GET, `${this.orderServiceUrl}/api/pagos/obtenerEstadoPago/${idOrden}`);
+  }
+
+
+  obtenerDescuentoExclusivo(idUsuario: number): Observable<any> {
+    return this.httpService.request(RequestMethod.GET, `${this.orderServiceUrl}/api/descuento/obtenerDescuentoExclusivo/${idUsuario}`);
+  }
+  generarDescuentoExclusivo(body: any): Observable<any> {
+    return this.httpService.request(RequestMethod.POST, `${this.orderServiceUrl}/api/descuento/generarDescuentoExclusivo`, body);
+  }
+  obtenerTotalAcumulado(params: any): Observable<any> {
+    return this.httpService.request(RequestMethod.GET, `${this.orderServiceUrl}/api/orders/obtenerMontoTotalAcumulado`, {}, params);
+
   }
 }

@@ -99,6 +99,80 @@
           <button type="button" class="btn btn-primary"  (click)="guardar()">Guardar</button>
         </div>
       </form>
+
+      <div class="d-flex justify-content-between align-items-center">
+        <h4>Promociones asignadas</h4>
+      </div>
+
+      <div class="table-responsive mt-2">
+        <table class="table table-bordered table-striped" *ngIf="!loadingPromociones">
+          <thead class="table-light">
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Descuento (%)</th>
+              <th>Inicio</th>
+              <th>Fin</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let promo of promocionesUsuario">
+              <td>{{ promo.name }}</td>
+              <td>{{ promo.description }}</td>
+              <td>{{ promo.discount_percentage }}%</td>
+              <td>{{ promo.start_date | date: 'short' }}</td>
+              <td>{{ promo.end_date | date: 'short' }}</td>
+              <td>
+                <button class="btn btn-success btn-sm" *ngIf="!promo.applied" (click)="canjearCupon(promo)">
+                  <i class="bi bi-bag-check"></i> Canjear
+                </button>
+                <span class="badge text-bg-warning" *ngIf="promo.applied">Canjeado</span>
+              </td>
+            </tr>
+            <tr *ngIf="promocionesUsuario.length === 0">
+              <td colspan="6" class="text-center text-muted">Este usuario no tiene promociones asignadas.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    
+      <div class="mt-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <h4>Descuento Exclusivo</h4>
+        </div>
+        
+        <div class="table-responsive mt-2">
+          <table class="table table-bordered table-striped" *ngIf="!loadingDescuento">
+            <thead class="table-light">
+              <tr>
+                <th>Nivel</th>
+                <th>Descuento (%)</th>
+                <th>Inicio</th>
+                <th>Fin</th>
+                <th>Usado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="descuentoExclusivo">
+                <td>{{ descuentoExclusivo?.nivel }}</td>
+                <td>{{ descuentoExclusivo?.porcentaje }}%</td>
+                <td>{{ descuentoExclusivo?.activado_en | date: 'short' }}</td>
+                <td>{{ descuentoExclusivo?.vence_en | date: 'short' }}</td>
+                <td>{{ descuentoExclusivo?.usado ? 'Sí' : 'No' }}</td>
+                <td>
+                  <button *ngIf="!descuentoExclusivo.usado" class="btn btn-sm btn-success" (click)="aplicarDescuento()">Aplicar</button>
+                </td>
+              </tr>
+              <tr *ngIf="!descuentoExclusivo">
+                <td colspan="6" class="text-center text-muted">Este usuario no tiene descuento exclusivo.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
     </div>
     <div class="col-lg-2"></div>
   </div>

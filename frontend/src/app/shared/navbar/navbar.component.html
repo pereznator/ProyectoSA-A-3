@@ -24,15 +24,21 @@
 
         <ng-container *ngIf="user">
 
-          <!-- <li class="nav-item">
+          <li class="nav-item">
+            <a class="nav-link" aria-current="page" role="button" routerLinkActive="active" [routerLink]="['cliente', 'favoritos']" *ngIf="user.role === 'user'">Favoritos</a>
+          </li>
+          <li class="nav-item">
             <a class="nav-link" aria-current="page" role="button" routerLinkActive="active" [routerLink]="['cliente', 'carrito']" *ngIf="user.role === 'user'">Mi Carrito</a>
-          </li> -->
+          </li>
           <li class="nav-item">
             <a id="navProductos" class="nav-link" aria-current="page" role="button" routerLinkActive="active" [routerLink]="['admin', 'productos']" *ngIf="user.role === 'admin'">Productos</a>
           </li>
-          <!-- <li class="nav-item">
-            <a id="pedidos" class="nav-link" aria-current="page" role="button" routerLinkActive="active" [routerLink]="['admin', 'pedidos']" *ngIf="user.role === 'admin'">Pedidos</a>
-          </li> -->
+          <li class="nav-item">
+            <a id="pedidos" class="nav-link" aria-current="page" role="button" routerLinkActive="active" [routerLink]="['cliente', 'ordenes']" *ngIf="user.role === 'user'">Mis Ordenes</a>
+          </li>
+          <li class="nav-item">
+            <a id="pedidos" class="nav-link" aria-current="page" role="button" routerLinkActive="active" [routerLink]="['admin', 'pedidos']" *ngIf="user.role === 'admin'">Ordenes</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" aria-current="page" role="button" routerLinkActive="active" [routerLink]="['admin', 'usuarios']" *ngIf="user.role === 'admin'">Usuarios</a>
           </li>

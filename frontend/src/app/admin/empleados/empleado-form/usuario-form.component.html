@@ -193,6 +193,44 @@
             </table>
           </div>
         </div>
+
+        <div class="mt-4" *ngIf="!isNew">
+          <div class="d-flex justify-content-between align-items-center">
+            <h4>Descuento Exclusivo</h4>
+            <button class="btn btn-success btn-sm" (click)="generarDescuentoExclusivo()">
+              <i class="bi bi-plus-lg"></i> Generar Descuento Exclusivo
+            </button>
+          </div>
+          
+          <div class="table-responsive mt-2">
+            <table class="table table-bordered table-striped" *ngIf="!loadingDescuento">
+              <thead class="table-light">
+                <tr>
+                  <th>Nivel</th>
+                  <th>Descuento (%)</th>
+                  <th>Inicio</th>
+                  <th>Fin</th>
+                  <th>Usado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="descuentoExclusivo">
+                  <td>{{ descuentoExclusivo?.nivel }}</td>
+                  <td>{{ descuentoExclusivo?.porcentaje }}%</td>
+                  <td>{{ descuentoExclusivo?.activado_en | date: 'short' }}</td>
+                  <td>{{ descuentoExclusivo?.vence_en | date: 'short' }}</td>
+                  <td>{{ descuentoExclusivo?.usado ? 'Sí' : 'No' }}</td>
+                  <td>
+                  </td>
+                </tr>
+                <tr *ngIf="!descuentoExclusivo">
+                  <td colspan="6" class="text-center text-muted">Este usuario no tiene descuento exclusivo.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
         
       </div>
       <div class="col-lg-2"></div>

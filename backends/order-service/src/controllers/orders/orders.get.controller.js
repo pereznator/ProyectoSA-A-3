@@ -103,6 +103,37 @@ const obtenerMontoTotalAcumulado = async (req, res) => {
     }
 };
 
+const obtenerTodasLasOrdenes = async (req, res) => {
+    let { estado } = req.query;
+
+    if (!estado) {
+        estado = '';
+    }
+
+    try {
+        const [rows] = await pool.query(
+            'CALL ObtenerTodasOrdenes(?)',
+            [estado]
+        );
+
+        const resultado = rows[0][0]?.resultado;
+        const parsedResult = typeof resultado === 'string' ? JSON.parse(resultado) : resultado;
+
+        if (parsedResult.status === 'success') {
+            return res.status(200).json(parsedResult);
+        } else {
+            return res.status(404).json(parsedResult);
+        }
+
+    } catch (error) {
+        console.error(error.message || error);
+        return res.status(500).json({
+            status: 'error',
+            message: 'Error al obtener el monto total acumulado.'
+        });
+    }
+};
+
 const obtenerSeguimientoPedido = async (req, res) => {
     const { order_id } = req.params;
 
@@ -142,5 +173,6 @@ module.exports = {
     obtenerHistorialOrdenes,
     obtenerDetalleOrden,
     obtenerMontoTotalAcumulado,
-    obtenerSeguimientoPedido
+    obtenerSeguimientoPedido,
+    obtenerTodasLasOrdenes
 };
