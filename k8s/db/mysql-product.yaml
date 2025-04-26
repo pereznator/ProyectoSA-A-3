@@ -61,10 +61,9 @@ metadata:
   name: db-product
   namespace: sa-app
 spec:
-  type: NodePort               #  expone puerto para scripts o conexiones externas
+  type: ClusterIP               #  expone puerto para scripts o conexiones externas
   selector:
     app: mysql-product
   ports:
     - port: 3306
-      targetPort: 3306
-      nodePort: 30308          # Puedes cambiar este si está ocupado (rango: 30000–32767)
+      targetPort: 3306         # Puedes cambiar este si está ocupado (rango: 30000–32767)

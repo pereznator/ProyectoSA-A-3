@@ -59,10 +59,9 @@ metadata:
   name: db-userauth
   namespace: sa-app
 spec:
-  type: NodePort           # ✅ expone puerto para scripts o acceso externo
+  type: ClusterIP
   selector:
     app: mysql-auth
   ports:
     - port: 3306
       targetPort: 3306
-      nodePort: 30307       # Puedes usar uno entre 30000-32767
