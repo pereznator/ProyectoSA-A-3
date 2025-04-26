@@ -22,7 +22,7 @@ spec:
             - name: PORT
               value: "3001"
             - name: CORS_ORIGIN
-              value: "http://localhost"
+              value: "https://frontend-sa-2025-56654271729.us-central1.run.app"
             - name: PRODUCT_SERVICE_URL
               value: "http://product-service:3002"
             - name: DB_HOST

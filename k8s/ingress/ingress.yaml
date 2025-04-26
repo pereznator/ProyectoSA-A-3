@@ -11,22 +11,22 @@ spec:
     - http:
         paths:
           ## AUTH SERVICE
-          - path: /api/user(/|$)(.*)
-            pathType: ImplementationSpecific
+          - path: /api/user/
+            pathType: Prefix
             backend:
               service:
                 name: auth-service
                 port:
                   number: 3001
-          - path: /api/auth(/|$)(.*)
-            pathType: ImplementationSpecific
+          - path: /api/auth/
+            pathType: Prefix
             backend:
               service:
                 name: auth-service
                 port:
                   number: 3001
-          - path: /api/promotion(/|$)(.*)
-            pathType: ImplementationSpecific
+          - path: /api/promotion/
+            pathType: Prefix
             backend:
               service:
                 name: auth-service
@@ -34,8 +34,8 @@ spec:
                   number: 3001
 
           ## PRODUCT SERVICE
-          - path: /api/product(/|$)(.*)
-            pathType: ImplementationSpecific
+          - path: /api/product/
+            pathType: Prefix
             backend:
               service:
                 name: product-service
@@ -43,36 +43,36 @@ spec:
                   number: 3002
 
           ## ORDER SERVICE
-          - path: /api/cart(/|$)(.*)
-            pathType: ImplementationSpecific
+          - path: /api/cart/
+            pathType: Prefix
             backend:
               service:
                 name: order-service
                 port:
                   number: 3003
-          - path: /api/descuento(/|$)(.*)
-            pathType: ImplementationSpecific
+          - path: /api/descuento/
+            pathType: Prefix
             backend:
               service:
                 name: order-service
                 port:
                   number: 3003
-          - path: /api/orders(/|$)(.*)
-            pathType: ImplementationSpecific
+          - path: /api/orders/
+            pathType: Prefix
             backend:
               service:
                 name: order-service
                 port:
                   number: 3003
-          - path: /api/favorite(/|$)(.*)
-            pathType: ImplementationSpecific
+          - path: /api/favorite/
+            pathType: Prefix
             backend:
               service:
                 name: order-service
                 port:
                   number: 3003
-          - path: /api/pagos(/|$)(.*)
-            pathType: ImplementationSpecific
+          - path: /api/pagos/
+            pathType: Prefix
             backend:
               service:
                 name: order-service
