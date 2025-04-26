@@ -79,12 +79,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Pull Imágenes latest
-        run: |
-          docker pull jpanaza/auth-service:latest
-          docker pull jpanaza/product-service:latest
-          docker pull jpanaza/order-service:latest
-
       - name: Versionar y Push auth-service
         run: |
           docker tag jpanaza/auth-service:latest jpanaza/auth-service:${{ github.run_number }}
@@ -99,3 +93,30 @@ jobs:
         run: |
           docker tag jpanaza/order-service:latest jpanaza/order-service:${{ github.run_number }}
           docker push jpanaza/order-service:${{ github.run_number }}
+
+  deploy:
+    name: Deploy - Actualizar Kubernetes
+    runs-on: ubuntu-latest
+    needs: delivery
+
+    steps:
+      - name: Configurar autenticación con GKE
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.SA_KEY }}
+
+      - name: Configurar kubectl
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: ${{ secrets.CLUSTER_NAME }}
+          location: ${{ secrets.CLUSTER_LOCATION }}
+          project_id: ${{ secrets.PROJECT_ID }}
+
+      - name: Actualizar imágenes en Kubernetes
+        run: |
+          kubectl set image deployment/auth-service auth-service=jpanaza/auth-service:${{ github.run_number }} -n sa-app
+          kubectl set image deployment/product-service product-service=jpanaza/product-service:${{ github.run_number }} -n sa-app
+          kubectl set image deployment/order-service order-service=jpanaza/order-service:${{ github.run_number }} -n sa-app
+          kubectl rollout status deployment/auth-service -n sa-app
+          kubectl rollout status deployment/product-service -n sa-app
+          kubectl rollout status deployment/order-service -n sa-app
