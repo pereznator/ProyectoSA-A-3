@@ -299,7 +299,7 @@ Sprint 6 (Semana 6):
 
 ### Diagrama Arquitectura
 
-![arquitectura](./img/Arquitectura_P3.drawio.png)
+![arquitectura](./img/DiagramaDeArquitecturaFase2.png)
 
 ### Diagrama ER de los microservicios
 
@@ -313,3 +313,82 @@ Sprint 6 (Semana 6):
 
 3. Order Service
 ![OrderProducto](./databases/db-order/model/orderdb.png)
+
+
+#### Metodologia de Versionamiento
+Se utilizó github como herramienta de control de versionamiento para el proyecto. Haciendo ramas y pull requests a la rama de desarrollo cada vez que se crea una nueva funcionalidad. Por ejemplo `develop` <- `feature/carrito`.
+![alt text](./img/git.png)
+![alt text](./img/git2.png)
+
+### CI/CD
+Para esta fase del proyecto, se implementó un sistema de Integración Continua (CI) y Entrega Continua (CD) que automatiza la construcción, pruebas, versionamiento y despliegue de la aplicación, cumpliendo con los lineamientos establecidos.
+
+La infraestructura contempla:
+
+Frontend desplegado en una instancia de cloud run en la nube.
+
+Backend desplegado mediante contenedores Docker y orquestado con Kubernetes.
+
+Base de datos gestionada mediante un servicio de nube.
+
+1. Creación de funcionalidades nuevas
+
+Cada nueva funcionalidad inicia desde una rama feature/.
+
+El desarrollador crea una rama a partir de develop, por ejemplo:
+➔ feature/agregar-carrito
+
+2. Commit y Push
+Al realizar cambios, se ejecutan commits con mensajes claros.
+
+Al hacer push a la rama feature, automáticamente se ejecutan:
+
+Build (construcción del proyecto).
+
+Test (ejecución de pruebas unitarias y de integración).
+
+
+3. Solicitud de Fusión (Merge Request)
+Una vez finalizada la funcionalidad, se realiza una Merge Request de feature/ hacia develop.
+
+Antes de aceptar la fusión:
+
+Se ejecuta nuevamente el Build y las Pruebas.
+
+Se levanta el proyecto de desarrollo utilizando Docker Compose y Dockerfiles correspondientes.
+
+El entorno de desarrollo muestra los cambios implementados, pero aún NO afecta producción.
+
+4. Entrega (Delivery) en ramas de versión (release/)
+Al completar varias funcionalidades, se crea una rama release/.
+
+En esta rama se configuran dos Jobs principales:
+
+Generar el Objeto de Versión:
+
+Se genera un Tag para marcar el número de versión (ejemplo: v1.2.0).
+
+Publicar Imágenes Docker:
+
+Las imágenes de los microservicios se construyen y se suben al Container Registry (Google Cloud, AWS, DockerHub, etc.).
+
+5. Fusión final a main/master y Despliegue en Producción
+Se realiza un Merge Request de release/ a main/master.
+
+Al hacer merge:
+
+Se activan automáticamente scripts de despliegue en Kubernetes.
+
+Kubernetes implementa la nueva versión de los contenedores utilizando las imágenes Docker previamente subidas.
+
+
+6. Verificación en Producción
+Se mantiene activa la monitorización de:
+
+Estado de pods.
+
+Uso de CPU y RAM.
+
+Logs de ejecución.
+
+Si un pod alcanza el 80% de uso de recursos, Kubernetes recrea automáticamente un nuevo pod para escalar el servicio.
