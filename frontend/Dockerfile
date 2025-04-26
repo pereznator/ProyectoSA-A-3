@@ -2,12 +2,13 @@
 FROM nginx:alpine
 
 # Copia los archivos de producción al contenedor
-COPY ./dist/frontend /usr/share/nginx/html
+COPY ./dist/frontend/browser /usr/share/nginx/html
 
-# Copia tu propio archivo de configuración de nginx (opcional)
-# COPY nginx.conf /etc/nginx/nginx.conf
+# Cambia la configuración para escuchar en 8080
+RUN sed -i 's/listen\s\+80;/listen 8080;/' /etc/nginx/conf.d/default.conf
 
-# Expone el puerto
-EXPOSE 80
+# Expone el puerto correcto para Cloud Run
+EXPOSE 8080
 
+# Arranca nginx
 CMD ["nginx", "-g", "daemon off;"]
