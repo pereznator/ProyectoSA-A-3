@@ -35,6 +35,13 @@ spec:
               value: "1234"
             - name: DB_DATABASE
               value: "product_db"
+          resources:                # ✅ Control de CPU/Memoria agregado
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
 
 ---
 apiVersion: v1

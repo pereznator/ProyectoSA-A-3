@@ -1,18 +1,4 @@
 apiVersion: v1
-kind: PersistentVolume
-metadata:
-  name: mysql-order-pv
-  namespace: sa-app
-spec:
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:  # ✅ Compatible con Minikube/local
-    path: /mnt/data/mysql-order
-
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mysql-order-pvc
@@ -23,6 +9,7 @@ spec:
   resources:
     requests:
       storage: 1Gi
+  storageClassName: standard-rwo  # ✅ importante para GKE Autopilot
 
 ---
 apiVersion: apps/v1
@@ -55,6 +42,13 @@ spec:
           volumeMounts:
             - name: mysql-order-data
               mountPath: /var/lib/mysql
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
       volumes:
         - name: mysql-order-data
           persistentVolumeClaim:
