@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <title>Chatbot</title>
     <script>
+
+      const USER_ID = 2; // <-- Aquí defines el user_id quemado
+
       async function sendMessage() {
         const input = document.getElementById("chatInput");
         const chat = document.getElementById("chatDisplay");
@@ -21,13 +24,25 @@
         input.value = "";
 
         try {
+          // Mostrar animación de "escribiendo..."
+          const typingDiv = document.createElement("div");
+          typingDiv.className =
+            "chat-message self-start bg-zinc-500 text-white max-w-xs rounded-lg px-3 py-1.5 text-sm typing";
+          typingDiv.textContent = "Escribiendo...";
+          chat.appendChild(typingDiv);
+          chat.scrollTop = chat.scrollHeight;
+
           const res = await fetch("/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ mensaje: message }),
+            body: JSON.stringify({ mensaje: message, user_id: USER_ID }),
           });
 
           const data = await res.json();
+
+          // Remover el "escribiendo..."
+          typingDiv.remove();
+
 
           const botDiv = document.createElement("div");
           botDiv.className =
