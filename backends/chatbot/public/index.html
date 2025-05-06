@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chatbot</title>
+    <script>
+      const USER_ID = 2; // <-- Aquí defines el user_id quemado
+
+      async function sendMessage() {
+        const input = document.getElementById("chatInput");
+        const chat = document.getElementById("chatDisplay");
+
+        const message = input.value.trim();
+        if (!message) return;
+
+        // Agrega mensaje del usuario
+        const userDiv = document.createElement("div");
+        userDiv.className =
+          "chat-message self-end bg-blue-500 text-white max-w-xs rounded-lg px-3 py-1.5 text-sm";
+        userDiv.textContent = message;
+        chat.appendChild(userDiv);
+
+        input.value = "";
+
+        try {
+          // Mostrar animación de "escribiendo..."
+          const typingDiv = document.createElement("div");
+          typingDiv.className =
+            "chat-message self-start bg-zinc-500 text-white max-w-xs rounded-lg px-3 py-1.5 text-sm typing";
+          typingDiv.textContent = "Escribiendo...";
+          chat.appendChild(typingDiv);
+          chat.scrollTop = chat.scrollHeight;
+
+          const res = await fetch("/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mensaje: message, user_id: USER_ID }),
+          });
+
+          const data = await res.json();
+
+          // Remover el "escribiendo..."
+          typingDiv.remove();
+
+          const botDiv = document.createElement("div");
+          botDiv.className =
+            "chat-message self-start bg-zinc-500 text-white max-w-xs rounded-lg px-3 py-1.5 text-sm whitespace-pre-wrap";
+          botDiv.textContent = data.respuesta;
+          chat.appendChild(botDiv);
+
+          chat.scrollTop = chat.scrollHeight;
+        } catch (err) {
+          alert("Error al enviar mensaje.");
+        }
+      }
+
+      window.onload = () => {
+        document
+          .getElementById("sendButton")
+          .addEventListener("click", sendMessage);
+        document
+          .getElementById("chatInput")
+          .addEventListener("keypress", (e) => {
+            if (e.key === "Enter") sendMessage();
+          });
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-zinc-900 flex justify-center items-center h-screen">
+    <div
+      class="max-w-md w-full bg-white dark:bg-zinc-800 shadow-md rounded-lg overflow-hidden"
+    >
+      <div class="flex flex-col h-[500px]">
+        <div class="px-4 py-3 border-b dark:border-zinc-700">
+          <div class="flex justify-between items-center">
+            <h2 class="text-lg font-semibold text-zinc-800 dark:text-white">
+              Chatbot Assistant
+            </h2>
+            <div class="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
+              Online
+            </div>
+          </div>
+        </div>
+        <div
+          class="flex-1 p-3 overflow-y-auto flex flex-col space-y-2"
+          id="chatDisplay"
+        >
+          <div
+            class="chat-message self-start bg-zinc-500 text-white max-w-xs rounded-lg px-3 py-1.5 text-sm"
+          >
+            Hola 👋 ¿En qué puedo ayudarte hoy?
+          </div>
+        </div>
+        <div class="px-3 py-2 border-t dark:border-zinc-700">
+          <div class="flex gap-2">
+            <input
+              placeholder="Escribe tu mensaje..."
+              class="flex-1 p-2 border rounded-lg dark:bg-zinc-700 dark:text-white dark:border-zinc-600 text-sm"
+              id="chatInput"
+              type="text"
+            />
+            <button
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1.5 px-3 rounded-lg transition duration-300 ease-in-out text-sm"
+              id="sendButton"
+            >
+              Enviar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

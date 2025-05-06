@@ -1,0 +1,20 @@
+# Usa una imagen base oficial de Node.js
+FROM node:20-alpine
+
+# Establece el directorio de trabajo dentro del contenedor
+WORKDIR /app
+
+# Copia los archivos de proyecto
+COPY package*.json ./
+COPY . .
+
+# Instala dependencias
+RUN npm install
+
+# Expone el puerto del servidor
+EXPOSE 3000
+
+# Ejecuta la aplicación
+CMD ["node", "chatbot-server2.js"]
+
+#docker build -t chatbot-server .
