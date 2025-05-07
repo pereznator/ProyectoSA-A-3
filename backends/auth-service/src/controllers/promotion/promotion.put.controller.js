@@ -1,6 +1,7 @@
 const pool = require('../../config/db');
 
 const actualizarPromocion = async (req, res) => {
+    console.log('Actualizando promoción...');
     const {
         id,
         name,
@@ -43,6 +44,7 @@ const actualizarPromocion = async (req, res) => {
         }
 
     } catch (error) {
+        console.error(`Error al actualizar la promoción: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',

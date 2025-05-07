@@ -1,8 +1,10 @@
 // src/controllers/user/get.js
 
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const obtenerReportesUsuarios = async (req, res) => {
+    logger.info('Obteniendo reportes de usuarios...');
     try {
         const [rows] = await pool.query('CALL ObtenerReportesUsuarios()');
 
@@ -17,6 +19,7 @@ const obtenerReportesUsuarios = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error(`Error al obtener los reportes de usuarios: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',
@@ -26,6 +29,7 @@ const obtenerReportesUsuarios = async (req, res) => {
 };
 
 const obtenerUsuarioPorId = async (req, res) => {
+    logger.info('Obteniendo usuario por ID...');
     const { user_id } = req.params;
 
     if (!user_id) {
@@ -49,6 +53,7 @@ const obtenerUsuarioPorId = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error(`Error al obtener el usuario por ID: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',
@@ -58,6 +63,7 @@ const obtenerUsuarioPorId = async (req, res) => {
 };
 
 const obtenerUsuariosNoAdmin = async (req, res) => {
+    logger.info('Obteniendo usuarios no administradores...');
     try {
         const [rows] = await pool.query('CALL ObtenerUsuariosNoAdmin()');
 
@@ -72,6 +78,7 @@ const obtenerUsuariosNoAdmin = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error(`Error al obtener los usuarios no administradores: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',

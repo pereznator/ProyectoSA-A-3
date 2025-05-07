@@ -1,6 +1,8 @@
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const crearPromocion = async (req, res) => {
+    logger.info('Creando promoción...');
     const {
         name,
         description,
@@ -33,6 +35,7 @@ const crearPromocion = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error(`Error al crear la promoción: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',
@@ -42,6 +45,7 @@ const crearPromocion = async (req, res) => {
 };
 
 const asignarPromocion = async (req, res) => {
+    logger.info('Asignando promoción a usuario...');
     const { user_id, promotion_id } = req.body;
 
     // Validación de campos obligatorios
@@ -68,6 +72,7 @@ const asignarPromocion = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error(`Error al asignar la promoción al usuario: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',
@@ -77,6 +82,7 @@ const asignarPromocion = async (req, res) => {
 };
 
 const aplicarPromocion = async (req, res) => {
+    logger.info('Aplicando promoción a usuario...');
     const { user_id, promotion_id } = req.body;
 
     // Validación de campos obligatorios
@@ -103,6 +109,7 @@ const aplicarPromocion = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error(`Error al aplicar la promoción: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',

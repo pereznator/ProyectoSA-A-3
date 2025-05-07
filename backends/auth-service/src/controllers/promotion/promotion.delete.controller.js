@@ -1,6 +1,8 @@
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const eliminarPromocion = async (req, res) => {
+    logger.info('Eliminando promoción...');
     const { promotion_id } = req.params;
 
     if (!promotion_id) {
@@ -26,6 +28,7 @@ const eliminarPromocion = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error(`Error al eliminar la promoción: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',

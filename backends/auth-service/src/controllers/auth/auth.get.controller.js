@@ -1,9 +1,11 @@
 const jwt = require('jsonwebtoken');
 const pool = require('../../config/db');
 const { parseJwtExpiration } = require('../../utils/jwtUtils'); 
+const logger = require('../../utils/logger');
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const validarTokenController = async (req, res) => {
+    logger.info('Validando token...');
     const token = req.cookies.token;
 
     if (!token) {
@@ -36,6 +38,7 @@ const validarTokenController = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error(`Error al validar el token: ${error.message}`);
         console.error(error);
         return res.status(403).json({
             status: 'error',

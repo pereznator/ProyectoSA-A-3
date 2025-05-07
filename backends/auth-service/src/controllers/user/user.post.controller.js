@@ -1,6 +1,8 @@
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const crearUsuario = async (req, res) => {
+    logger.info('Creando usuario...');
     const {
         first_name,
         last_name,
@@ -57,6 +59,7 @@ const crearUsuario = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error(`Error al crear el usuario: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',
@@ -66,6 +69,7 @@ const crearUsuario = async (req, res) => {
 };
 
 const reportarUsuario = async (req, res) => {
+    logger.info('Reportando usuario...');
     const { reported_user_id, reporter_user_id, reason } = req.body;
 
     if (!reported_user_id || !reason) {
@@ -91,6 +95,7 @@ const reportarUsuario = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error(`Error al reportar el usuario: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',
