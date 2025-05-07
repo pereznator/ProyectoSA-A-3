@@ -1,6 +1,8 @@
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const obtenerPromocionesUsuario = async (req, res) => {
+    logger.info('Obteniendo promociones del usuario...');
     const { user_id } = req.params;
 
     if (!user_id) {
@@ -26,6 +28,7 @@ const obtenerPromocionesUsuario = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error(`Error al obtener las promociones del usuario: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',
@@ -35,6 +38,7 @@ const obtenerPromocionesUsuario = async (req, res) => {
 };
 
 const obtenerTodasPromociones = async (req, res) => {
+    logger.info('Obteniendo todas las promociones...');
     try {
         const [rows] = await pool.query('CALL ObtenerTodasPromociones()');
 
@@ -47,6 +51,7 @@ const obtenerTodasPromociones = async (req, res) => {
             return res.status(400).json(parsedResult);
         }
     } catch (error) {
+        logger.error(`Error al obtener todas las promociones: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',

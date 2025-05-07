@@ -1,6 +1,8 @@
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const activarUsuario = async (req, res) => {
+    logger.info('Activando usuario...');
     const { user_id } = req.body;
 
     // Validar que venga el ID
@@ -26,6 +28,7 @@ const activarUsuario = async (req, res) => {
             return res.status(400).json(parsedResult);
         }
     } catch (error) {
+        logger.error(`Error al activar el usuario: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',
@@ -35,6 +38,7 @@ const activarUsuario = async (req, res) => {
 };
 
 const actualizarEstadoReporte = async (req, res) => {
+    logger.info('Actualizando estado del reporte...');
     const { report_id, estado } = req.body;
 
     // Validación de campos obligatorios
@@ -60,6 +64,7 @@ const actualizarEstadoReporte = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error(`Error al actualizar el estado del reporte: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',
@@ -69,6 +74,7 @@ const actualizarEstadoReporte = async (req, res) => {
 };
 
 const actualizarPerfilUsuario = async (req, res) => {
+    logger.info('Actualizando perfil de usuario...');
     const { user_id, email, phone, addresses } = req.body;
 
     // Validación de campos obligatorios
@@ -97,6 +103,7 @@ const actualizarPerfilUsuario = async (req, res) => {
             return res.status(400).json(parsedResult);
         }
     } catch (error) {
+        logger.error(`Error al actualizar el perfil del usuario: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',
@@ -106,6 +113,7 @@ const actualizarPerfilUsuario = async (req, res) => {
 };
 
 const desactivarUsuario = async (req, res) => {
+    logger.info('Desactivando usuario...');
     const { user_id } = req.body;
 
     // Validación de campo requerido
@@ -130,6 +138,7 @@ const desactivarUsuario = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error(`Error al desactivar el usuario: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',

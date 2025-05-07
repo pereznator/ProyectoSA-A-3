@@ -1,6 +1,8 @@
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const obtenerEstadoPago = async (req, res) => {
+    logger.info('Obteniendo estado de pago...');
     const { order_id } = req.params;
 
     if (!order_id) {
@@ -26,6 +28,7 @@ const obtenerEstadoPago = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al obtener estado de pago:', error);
         console.error(error.message || error);
         return res.status(500).json({
             status: 'error',

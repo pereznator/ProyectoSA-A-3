@@ -1,7 +1,9 @@
 const pool = require('../../config/db');
 const { callService } = require('../../utils/axiosHelper');
+const logger = require('../../utils/logger');
 
 const generarDescuentoExclusivo = async (req, res) => {
+    logger.info('Generando descuento exclusivo...');
     const { user_id, total_acumulado } = req.body;
 
     if (!user_id || !total_acumulado) {
@@ -41,6 +43,7 @@ const generarDescuentoExclusivo = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al generar descuento exclusivo:', error);
         console.error(error.message || error);
         return res.status(500).json({
             status: 'error',

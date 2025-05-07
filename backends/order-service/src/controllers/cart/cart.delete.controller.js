@@ -1,6 +1,8 @@
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const eliminarProductoCarrito = async (req, res) => {
+    logger.info('Eliminando producto del carrito...');
     const { user_id, product_id } = req.body;
 
     if (!user_id || !product_id) {
@@ -26,6 +28,7 @@ const eliminarProductoCarrito = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al eliminar producto del carrito:', error);
         console.error(error);
         return res.status(500).json({
             status: 'error',
@@ -35,6 +38,7 @@ const eliminarProductoCarrito = async (req, res) => {
 };
 
 const limpiarCarritoUsuario = async (req, res) => {
+    logger.info('Limpiando carrito del usuario...');
     const { user_id } = req.body;
 
     if (!user_id) {
@@ -60,6 +64,7 @@ const limpiarCarritoUsuario = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al limpiar el carrito del usuario:', error);
         console.error(error);
         return res.status(500).json({
             status: 'error',

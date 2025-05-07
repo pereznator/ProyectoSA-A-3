@@ -1,6 +1,8 @@
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const cerrarSesion = async (req, res) => {
+    logger.info('Cerrando sesión...');
     const { user_id } = req.body;
 
     if (!user_id) {
@@ -24,6 +26,7 @@ const cerrarSesion = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error(`Error al cerrar la sesión: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',
@@ -33,6 +36,7 @@ const cerrarSesion = async (req, res) => {
 };
 
 const expirarSesiones = async (req, res) => {
+    logger.info('Expirando sesiones...');
     try {
         const [rows] = await pool.query('CALL ExpirarSesiones()');
 
@@ -47,6 +51,7 @@ const expirarSesiones = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error(`Error al expirar las sesiones: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',

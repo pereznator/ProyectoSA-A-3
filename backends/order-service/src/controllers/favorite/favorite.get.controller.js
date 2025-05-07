@@ -1,6 +1,8 @@
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const obtenerFavoritosUsuario = async (req, res) => {
+    logger.info('Obteniendo favoritos del usuario...');
     const { user_id } = req.params;
 
     if (!user_id) {
@@ -26,6 +28,7 @@ const obtenerFavoritosUsuario = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al obtener favoritos del usuario:', error);
         console.error(error.message || error);
         return res.status(500).json({
             status: 'error',

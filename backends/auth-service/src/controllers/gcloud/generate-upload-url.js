@@ -1,4 +1,5 @@
 const { Storage } = require('@google-cloud/storage');
+const logger = require('../../utils/logger');
 
 const storage = new Storage({
   keyFilename: './service-account.json', // archivo de credenciales de cuenta de servicio
@@ -8,6 +9,7 @@ const storage = new Storage({
 BUCKET_NAME = 'software-avanzado-bucket';
 
 const generateUploadUrl = async (req, res) => {
+  logger.info('Generando URL de carga firmada...');
   const filename = req.query.filename;
   const contentType = req.query.contentType || 'application/octet-stream';
 
@@ -28,6 +30,7 @@ const generateUploadUrl = async (req, res) => {
 
     res.json({ url });
   } catch (error) {
+    logger.error('Error al generar URL firmada:', error);
     console.error('Error al generar URL firmada:', error);
     res.status(500).json({ error: 'Error interno al generar la URL firmada' });
   }

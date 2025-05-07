@@ -1,6 +1,8 @@
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const actualizarSeguimientoPedido = async (req, res) => {
+    logger.info('Actualizando seguimiento del pedido...');
     const { order_id, status, location } = req.body;
 
     if (!order_id || !status || !location) {
@@ -26,6 +28,7 @@ const actualizarSeguimientoPedido = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al actualizar seguimiento del pedido:', error);
         console.error(error.message || error);
         return res.status(500).json({
             status: 'error',

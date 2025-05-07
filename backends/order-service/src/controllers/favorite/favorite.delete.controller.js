@@ -1,6 +1,8 @@
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const eliminarFavorito = async (req, res) => {
+    logger.info('Eliminando producto de favoritos...');
     const { user_id, product_id } = req.body;
 
     if (!user_id || !product_id) {
@@ -26,6 +28,7 @@ const eliminarFavorito = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al eliminar producto de favoritos:', error);
         console.error(error.message || error);
         return res.status(500).json({
             status: 'error',

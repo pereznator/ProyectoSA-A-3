@@ -3,12 +3,14 @@ const pool = require('../../config/db');
 const nodemailer = require('nodemailer');
 const { parseJwtExpiration } = require('../../utils/jwtUtils'); 
 const { getMailContent } = require("../../utils/mailContent");
+const logger = require('../../utils/logger');
 
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRATION = process.env.JWT_EXPIRATION;
 
 const iniciarSesionController = async (req, res) => {
+    logger.info('Iniciando sesión...');
     const { login, password } = req.body;
 
     if (!login || !password) {
@@ -69,6 +71,7 @@ const iniciarSesionController = async (req, res) => {
         });
 
     } catch (error) {
+        logger.error(`Error al iniciar sesión: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',
@@ -78,6 +81,7 @@ const iniciarSesionController = async (req, res) => {
 };
 
 const registrarVerificacionEmail = async (req, res) => {
+    logger.info('Registrando verificación de correo...');
     const { user_id, token } = req.body;
 
     if (!user_id || !token) {
@@ -138,6 +142,7 @@ const registrarVerificacionEmail = async (req, res) => {
             return res.status(201).json(parsedResult);
         });
     } catch (error) {
+        logger.error(`Error al registrar la verificación de correo: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',
@@ -148,6 +153,7 @@ const registrarVerificacionEmail = async (req, res) => {
 
 
 const verificarCorreo = async (req, res) => {
+    logger.info('Verificando correo...');
     const { token } = req.body;
 
     if (!token) {
@@ -170,6 +176,7 @@ const verificarCorreo = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error(`Error al verificar el correo: ${error.message}`);
         console.error(error);
         return res.status(500).json({
             status: 'error',

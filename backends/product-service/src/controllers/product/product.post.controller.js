@@ -1,7 +1,9 @@
 const pool = require('../../config/db');
 const axios = require('axios');
+const logger = require('../../utils/logger');
 
 const crearProducto = async (req, res) => {
+    logger.info('Creando producto...');
     const {
         name,
         description,
@@ -59,6 +61,7 @@ const crearProducto = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al crear producto:', error);
         console.error(error);
         return res.status(500).json({
             status: 'error',
@@ -68,6 +71,7 @@ const crearProducto = async (req, res) => {
 };
 
 const agregarReviewProducto = async (req, res) => {
+    logger.info('Agregando reseña de producto...');
     const { product_id, user_id, rating, review } = req.body;
 
     if (!product_id || !user_id || !rating) {
@@ -110,6 +114,7 @@ const agregarReviewProducto = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al agregar reseña de producto:', error);
         console.error(error);
 
         if (error.response?.status === 404) {

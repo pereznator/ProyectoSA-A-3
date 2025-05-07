@@ -1,7 +1,9 @@
 const pool = require('../../config/db');
 const { callService } = require('../../utils/axiosHelper');
+const logger = require('../../utils/logger');
 
 const agregarFavorito = async (req, res) => {
+    logger.info('Agregando producto a favoritos...');
     const { user_id, product_id } = req.body;
 
     if (!user_id || !product_id) {
@@ -58,6 +60,7 @@ const agregarFavorito = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al agregar producto a favoritos:', error);
         console.error(error.message || error);
         return res.status(500).json({
             status: 'error',
