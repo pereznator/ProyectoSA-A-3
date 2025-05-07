@@ -1,6 +1,8 @@
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const crearOrdenDesdeCarrito = async (req, res) => {
+    logger.info('Creando orden desde carrito...');
     const { user_id } = req.body;
 
     if (!user_id) {
@@ -26,6 +28,7 @@ const crearOrdenDesdeCarrito = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al crear orden desde carrito:', error);
         console.error(error.message || error);
         return res.status(500).json({
             status: 'error',

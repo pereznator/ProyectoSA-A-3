@@ -1,6 +1,8 @@
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const eliminarDescuentoExclusivo = async (req, res) => {
+    logger.info('Eliminando descuento exclusivo...');
     const { user_id } = req.body;
 
     if (!user_id) {
@@ -26,6 +28,7 @@ const eliminarDescuentoExclusivo = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al eliminar descuento exclusivo:', error);
         console.error(error.message || error);
         return res.status(500).json({
             status: 'error',

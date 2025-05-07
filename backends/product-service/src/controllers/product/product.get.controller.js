@@ -1,6 +1,8 @@
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const obtenerProductos = async (req, res) => {
+    logger.info('Obteniendo productos...');
     try {
         const [rows] = await pool.query('CALL ObtenerProductos()');
 
@@ -14,6 +16,7 @@ const obtenerProductos = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al obtener productos:', error);
         console.error(error);
         return res.status(500).json({
             status: 'error',
@@ -22,6 +25,7 @@ const obtenerProductos = async (req, res) => {
     }
 };
 const obtenerProducto = async (req, res) => {
+    logger.info('Obteniendo producto por id...');
     try {
         const { product_id } = req.params;
 
@@ -43,6 +47,7 @@ const obtenerProducto = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al obtener producto por id:', error);
         console.error(error);
         return res.status(500).json({
             status: 'error',

@@ -1,6 +1,8 @@
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const registrarPago = async (req, res) => {
+    logger.info('Registrando pago...');
     const { order_id, method, amount } = req.body;
 
     if (!order_id || !method || !amount) {
@@ -26,6 +28,7 @@ const registrarPago = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al registrar el pago:', error);
         console.error(error.message || error);
         return res.status(500).json({
             status: 'error',

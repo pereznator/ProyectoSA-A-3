@@ -1,6 +1,8 @@
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const obtenerHistorialOrdenes = async (req, res) => {
+    logger.info('Obteniendo historial de órdenes...');
     const { user_id, rango } = req.query;
 
     if (!user_id || !rango) {
@@ -26,6 +28,7 @@ const obtenerHistorialOrdenes = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al obtener historial de órdenes:', error);
         console.error(error.message || error);
         return res.status(500).json({
             status: 'error',
@@ -36,6 +39,7 @@ const obtenerHistorialOrdenes = async (req, res) => {
 
 
 const obtenerDetalleOrden = async (req, res) => {
+    logger.info('Obteniendo detalle de la orden...');
     const { order_id } = req.params;
 
     if (!order_id) {
@@ -61,6 +65,7 @@ const obtenerDetalleOrden = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al obtener detalle de la orden:', error);
         console.error(error.message || error);
         return res.status(500).json({
             status: 'error',
@@ -70,6 +75,7 @@ const obtenerDetalleOrden = async (req, res) => {
 };
 
 const obtenerMontoTotalAcumulado = async (req, res) => {
+    logger.info('Obteniendo monto total acumulado...');
     const { user_id, rango } = req.query;
 
     if (!user_id || !rango) {
@@ -95,6 +101,7 @@ const obtenerMontoTotalAcumulado = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al obtener monto total acumulado:', error);
         console.error(error.message || error);
         return res.status(500).json({
             status: 'error',
@@ -104,6 +111,7 @@ const obtenerMontoTotalAcumulado = async (req, res) => {
 };
 
 const obtenerTodasLasOrdenes = async (req, res) => {
+    logger.info('Obteniendo todas las órdenes...');
     let { estado } = req.query;
 
     if (!estado) {
@@ -126,6 +134,7 @@ const obtenerTodasLasOrdenes = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al obtener todas las órdenes:', error);
         console.error(error.message || error);
         return res.status(500).json({
             status: 'error',
@@ -135,6 +144,7 @@ const obtenerTodasLasOrdenes = async (req, res) => {
 };
 
 const obtenerSeguimientoPedido = async (req, res) => {
+    logger.info('Obteniendo seguimiento del pedido...');
     const { order_id } = req.params;
 
     if (!order_id) {
@@ -160,6 +170,7 @@ const obtenerSeguimientoPedido = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al obtener seguimiento del pedido:', error);
         console.error(error.message || error);
         return res.status(500).json({
             status: 'error',

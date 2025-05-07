@@ -1,7 +1,9 @@
 const pool = require('../../config/db');
 const { callService } = require('../../utils/axiosHelper');
+const logger = require('../../utils/logger');
 
 const agregarProductoCarrito = async (req, res) => {
+    logger.info('Agregando producto al carrito...');
     const { user_id, product_id, quantity } = req.body;
 
     if (!user_id || !product_id || !quantity) {
@@ -72,6 +74,7 @@ const agregarProductoCarrito = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al agregar producto al carrito:', error);
         console.error(error.message || error);
         return res.status(500).json({
             status: 'error',

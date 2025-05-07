@@ -1,6 +1,8 @@
 const pool = require('../../config/db');
+const logger = require('../../utils/logger');
 
 const obtenerCarritoUsuario = async (req, res) => {
+    logger.info('Obteniendo carrito del usuario...');
     const { user_id } = req.params;
 
     if (!user_id) {
@@ -26,6 +28,7 @@ const obtenerCarritoUsuario = async (req, res) => {
         }
 
     } catch (error) {
+        logger.error('Error al obtener carrito del usuario:', error);
         console.error(error);
         return res.status(500).json({
             status: 'error',
