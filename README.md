@@ -1,4 +1,4 @@
-<h1 align="center"> PROYECTO FASE 1 </h1>
+<h1 align="center"> PROYECTO FASE 2 Documentacion </h1>
 
 <p align="center">
   <img src="https://img.shields.io/badge/STATUS-EN%20DESAROLLO-green">

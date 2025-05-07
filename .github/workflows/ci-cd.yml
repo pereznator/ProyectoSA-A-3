@@ -5,6 +5,10 @@ on:
     branches:
       - develop
       - feature/**
+  pull_request:
+    branches:
+      - main
+      - release/**
 
 jobs:
   build:
@@ -35,3 +39,90 @@ jobs:
         run: |
           docker build -t jpanaza/order-service:latest ./backends/order-service
           docker push jpanaza/order-service:latest
+
+  test:
+    name: Test Docker Containers
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Pull Images de DockerHub
+        run: |
+          docker pull jpanaza/auth-service:latest
+          docker pull jpanaza/product-service:latest
+          docker pull jpanaza/order-service:latest
+
+      - name: Probar auth-service
+        run: |
+          docker run --rm --detach --name auth-service-test jpanaza/auth-service:latest && sleep 10 && docker stop auth-service-test
+
+      - name: Probar product-service
+        run: |
+          docker run --rm --detach --name product-service-test jpanaza/product-service:latest && sleep 10 && docker stop product-service-test
+
+      - name: Probar order-service
+        run: |
+          docker run --rm --detach --name order-service-test jpanaza/order-service:latest && sleep 10 && docker stop order-service-test
+
+  delivery:
+    name: Delivery - Publicar Imágenes Versionadas
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout Código
+        uses: actions/checkout@v3
+
+      - name: Loguearse en DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      
+      - name: Pull Images de DockerHub
+        run: |
+          docker pull jpanaza/auth-service:latest
+          docker pull jpanaza/product-service:latest
+          docker pull jpanaza/order-service:latest
+
+      - name: Versionar y Push auth-service
+        run: |
+          docker tag jpanaza/auth-service:latest jpanaza/auth-service:${{ github.run_number }}
+          docker push jpanaza/auth-service:${{ github.run_number }}
+
+      - name: Versionar y Push product-service
+        run: |
+          docker tag jpanaza/product-service:latest jpanaza/product-service:${{ github.run_number }}
+          docker push jpanaza/product-service:${{ github.run_number }}
+
+      - name: Versionar y Push order-service
+        run: |
+          docker tag jpanaza/order-service:latest jpanaza/order-service:${{ github.run_number }}
+          docker push jpanaza/order-service:${{ github.run_number }}
+
+  deploy:
+    name: Deploy - Actualizar Kubernetes
+    runs-on: ubuntu-latest
+    needs: delivery
+
+    steps:
+      - name: Configurar autenticación con GKE
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.SA_KEY }}
+
+      - name: Configurar kubectl
+        uses: google-github-actions/get-gke-credentials@v2
+        with:
+          cluster_name: ${{ secrets.CLUSTER_NAME }}
+          location: ${{ secrets.CLUSTER_LOCATION }}
+          project_id: ${{ secrets.PROJECT_ID }}
+
+      - name: Actualizar imágenes en Kubernetes
+        run: |
+          kubectl set image deployment/auth-service auth-service=jpanaza/auth-service:${{ github.run_number }} -n sa-app
+          kubectl set image deployment/product-service product-service=jpanaza/product-service:${{ github.run_number }} -n sa-app
+          kubectl set image deployment/order-service order-service=jpanaza/order-service:${{ github.run_number }} -n sa-app
+          kubectl rollout status deployment/auth-service -n sa-app
+          kubectl rollout status deployment/product-service -n sa-app
+          kubectl rollout status deployment/order-service -n sa-app
