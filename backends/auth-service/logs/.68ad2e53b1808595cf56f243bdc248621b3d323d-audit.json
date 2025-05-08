@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/home/jpanaza1906/USAC/9no_Semestre/Software_Avanzado/Repositorio_Proyecto/ProyectoSA-A-3/backends/auth-service/logs/.68ad2e53b1808595cf56f243bdc248621b3d323d-audit.json",
+    "files": [
+        {
+            "date": 1746669541588,
+            "name": "/home/jpanaza1906/USAC/9no_Semestre/Software_Avanzado/Repositorio_Proyecto/ProyectoSA-A-3/backends/auth-service/logs/app-2025-05-07.log",
+            "hash": "ac0cb1689554041b9710caa2b86428bd5c5c3f942a08952b49d45b598f496524"
+        }
+    ],
+    "hashType": "sha256"
+}

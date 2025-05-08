@@ -1,6 +1,6 @@
 const winston = require('winston');
 const DailyRotateFile = require('winston-daily-rotate-file');
-const Elasticsearch = require('winston-elasticsearch');
+const { ElasticsearchTransport } = require('winston-elasticsearch');
 const path = require('path');
 
 // Configuración del transporte para los logs rotativos
@@ -29,8 +29,8 @@ const esTransportOpts = {
     flushInterval: 2000,    // Intervalo para enviar los logs (2 segundos)
 };
 
-// Instancia de Elasticsearch como transporte
-const esTransport = new Elasticsearch(esTransportOpts);
+// ✅ Instancia de Elasticsearch como transporte
+const esTransport = new ElasticsearchTransport(esTransportOpts);
 
 // ✅ Configuración del logger con Winston
 const logger = winston.createLogger({
