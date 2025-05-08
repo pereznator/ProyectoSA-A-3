@@ -9,6 +9,8 @@
 *Laboratorio de Software Avanzado Sección A, 1er. Semestre 2025.*  
 ___
 
+
+
 ### **Requisitos** 
 #### 💪 Funcionales
 Descuento Exclusivo
@@ -156,7 +158,10 @@ Todas las transacciones (compras, acumulación de montos, activación de descuen
 
 ### **Diagrama de Alto Nivel**
 ### **Casos De Uso**
+
+
 ID | Nombre | Actor Principal | Descripción
+---|---|---|--|
 CU-12 | Agregar producto al carrito | Usuario registrado | Permite al usuario agregar productos disponibles a su carrito de compras.
 CU-13 | Gestionar carrito | Usuario registrado | Permite al usuario eliminar productos o modificar la cantidad de productos en su carrito.
 CU-14 | Aplicar promociones automáticas | Sistema | El sistema detecta y aplica automáticamente promociones y descuentos disponibles al carrito.

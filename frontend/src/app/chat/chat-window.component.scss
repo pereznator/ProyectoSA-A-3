@@ -2,8 +2,8 @@
   position: fixed;
   bottom: 90px;
   right: 20px;
-  width: 300px;
-  height: 400px;
+  width: 500px;
+  height: 500px;
   background: white;
   border: 1px solid #ccc;
   box-shadow: 0 0 10px rgba(0,0,0,0.2);
@@ -56,7 +56,10 @@
   border-radius: 10px;
   background-color: #e0e0e0;
   color: black;
+  white-space: pre-wrap; /* 👈 Esto es clave */
+  font-family: 'Courier New', monospace; /* Opcional para estilo tipo código */
 }
+
 
 .bot .bubble {
   background-color: #f1f0f0;

@@ -1,7 +1,7 @@
 // chatbot-server.js
 import dotenv from 'dotenv';
 dotenv.config();
-
+import cors from 'cors';
 import express from 'express';
 import path from 'path';
 import axios from 'axios';
@@ -20,6 +20,7 @@ const API_BASE = 'http://34.27.72.138/api';
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 app.use(express.json());
+app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 
 const formatList = (arr) =>
