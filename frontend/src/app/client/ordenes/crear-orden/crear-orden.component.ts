@@ -23,7 +23,7 @@ import { v4 } from 'uuid';
 export class CrearOrdenComponent implements OnInit {
   
   loading: boolean = false;
-  carrito: Carrito;
+  carrito: any = [];
   metodosPago: any[] = [];
   user: User;
   metodoPagoSeleccionadoId: number = null;
@@ -59,12 +59,12 @@ export class CrearOrdenComponent implements OnInit {
 
   getCarrito(): void {
     this.loading = true;
-    this.authService.user$.subscribe(user => {
+    this.authService.currentUser$.subscribe(user => {
       this.user = user;
-      this.clietSerivce.getCarrito(this.user.idCliente).pipe(take(1)).subscribe(resp => {
+      this.clietSerivce.getCarrito(this.user.id).pipe(take(1)).subscribe(resp => {
         console.log(resp);
-        this.carrito = resp.response_dinamodb;
-        this.getMetodosPago();
+        // this.carrito = resp.;
+        // this.getMetodosPago();
       }, err => {
         console.log(err);
       });
@@ -72,7 +72,7 @@ export class CrearOrdenComponent implements OnInit {
   }
 
   getMetodosPago(): void {
-    this.clietSerivce.getMetodosPago(this.user.idCliente).pipe(take(1)).subscribe(resp => {
+    this.clietSerivce.getMetodosPago(this.user.id).pipe(take(1)).subscribe(resp => {
       this.metodosPago = resp.response_database.result.map(met => {
         if (met.tipo_metodo_pago === "TARJETA") {
           met["detalles"] = `[TARJETA] Termina en: ${met.numero_tarjeta.slice(11, 15)}, exp ${met.fecha_exp}`;
@@ -110,8 +110,8 @@ export class CrearOrdenComponent implements OnInit {
       let pdfUrl: string;
       if (this.file) {
         const pdfId = v4();
-        pdfUrl = `https://proyecto-2-ayd-2-g1.s3.amazonaws.com/${pdfId}`;
-        this.s3Service.uploadFileToBucket(this.file, "proyecto-2-ayd-2-g1", pdfId).pipe(take(1)).subscribe(resp => {
+        pdfUrl = `https://software-avanzado-bucket.s3.amazonaws.com/${pdfId}`;
+        this.s3Service.generateUploadUrl(this.file,  pdfId).pipe(take(1)).subscribe(resp => {
           console.log("BUCKET SUCCESS", resp);
         }, err => {
           console.log("BUCKET ERROR", err);
@@ -121,7 +121,7 @@ export class CrearOrdenComponent implements OnInit {
       const pedido = {
         estado_pedido_id: 1,
         oferta_id: null,
-        cliente_id: this.user.idCliente,
+        cliente_id: this.user.id,
         detalle_pedido: this.carrito.carrito.productos.map(pro => ({ cantidad: pro.cantidad, producto_id: pro.producto_id }))
       };
 
@@ -136,7 +136,7 @@ export class CrearOrdenComponent implements OnInit {
           this.clietSerivce.crearPago(pagoBody).pipe(take(1)).subscribe((respPago) => {
             console.log("RESP CARRITO", respPago);
             this.carrito.carrito.productos = []
-            this.clietSerivce.actualizarCarrito(this.user.idCarrito, this.carrito).pipe(take(1)).subscribe(respCarrito => {
+            this.clietSerivce.limpiarCarrito(this.user.id).pipe(take(1)).subscribe(respCarrito => {
               console.log("RESP CARRITO", respCarrito);
               this.loading = false;
               this.router.navigate(["cliente", "ordenes"]);

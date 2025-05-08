@@ -3,8 +3,12 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { take } from 'rxjs';
 import { LoadingComponent } from '../loading/loading.component';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ClientService } from '../../client/client.service';
+import { MainService } from '../../main/main.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { RegistrarPagoComponent } from '../../modals/registrar-pago/registrar-pago.component';
+import { AdminService } from '../../admin/admin.service';
 
 @Component({
   selector: 'app-pedido',
@@ -16,19 +20,39 @@ import { ClientService } from '../../client/client.service';
 })
 export class PedidoComponent implements OnInit {
   
-  loading: boolean = false;
+  loading: boolean = true;
   productos: any[] = [];
   pedido: any;
   total = 0;
 
+  pago = {
+    "monto": null,
+    "estado": null,
+    "metodo": null,
+    "fecha_pago": null
+  };
+
+  tracking = {
+    estado: null,
+    ubicacion: null,
+    ultima_actualizacion: null
+  };
+  loadingTracking: boolean = true;
+
+  todosLosProductos: any[] = [];
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private clientService: ClientService,
-    private location: Location
+    private location: Location,
+    private mainService: MainService,
+    private modalService: NgbModal,
+    private snackBar: MatSnackBar,
+    private adminService: AdminService
   ) {}
   
   ngOnInit(): void {
-    this.getOrden();
+    this.getProductos();
   }
   
   getOrden(): void {
@@ -36,17 +60,97 @@ export class PedidoComponent implements OnInit {
     this.activatedRoute.params.pipe(take(1)).subscribe(params => {
       this.clientService.obtenerPedidoPorId(params["id"]).pipe(take(1)).subscribe(resp => {
         console.log(resp);
-        this.pedido = resp.pedido;
         let total = 0;
-        this.pedido.detalles.map(prod => {
-          total += (prod.cantidad * prod.precio);
+        this.productos = resp.productos.map(item => {
+          const producto = this.todosLosProductos.find(prod => prod.id === item.producto_id);
+          total += (item.cantidad * item.precio_unitario)
+          return {
+            ...item,
+            producto: producto
+          };
         });
+        this.pedido = {
+          order_id: Number(params["id"]),
+        };
         this.total = total;
-        this.loading = false;
+        this.rastrearPedido();
+        this.obtenerEstadoPago();
       }, err => {
         console.log(err);
       });
     });  
+  }
+
+  getProductos(): void {
+    this.mainService.obtenerProductos().pipe(take(1)).subscribe(resp => {
+      console.log(resp);
+      this.todosLosProductos = resp.productos;
+      this.getOrden();
+    }, err => {
+      console.log(err);
+    });
+  }
+
+  rastrearPedido(): void {
+    this.adminService.obtenerSeguimientoPedido(this.pedido.order_id).pipe(take(1)).subscribe(resp => {
+      console.log(resp);
+      this.tracking = {
+        estado: resp.tracking.estado,
+        ubicacion: resp.tracking.ubicacion,
+        ultima_actualizacion: resp.tracking.ultima_actualizacion
+      };
+      this.loadingTracking = false;
+    }, err => {
+      console.log(err);
+      this.loadingTracking = false;
+      this.snackBar.open("Error al rastrear el pedido", "Cerrar", {
+        duration: 10000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom'
+      });
+    });
+  }
+
+  registrarPago(): void {
+    const modal = this.modalService.open(RegistrarPagoComponent);
+    modal.result.then(result => {
+      const body = {
+        "order_id": this.pedido.order_id,
+        "method": result.metodoPago,
+        "amount": result.cantidad
+      };
+      this.adminService.registrarPago(body).pipe(take(1)).subscribe(resp => {
+        console.log(resp);
+        this.snackBar.open("Pago registrado correctamente", "Cerrar", {
+          duration: 10000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom'
+        });
+        this.obtenerEstadoPago();
+      }, err => {
+        console.log(err);
+        this.snackBar.open("Error al registrar el pago", "Cerrar", {
+          duration: 10000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom'
+        });
+      });
+    }, dismiss => {});
+  }
+
+  obtenerEstadoPago(): void {
+    this.adminService.obtenerPagos(this.pedido.order_id).pipe(take(1)).subscribe(resp => {
+      console.log(resp);
+      this.pago = resp.pago;
+      this.loading = false;
+    }, err => {
+      console.log(err);
+      this.snackBar.open("Error al obtener el estado del pago", "Cerrar", {
+        duration: 10000,
+        horizontalPosition: 'center',
+        verticalPosition: 'bottom'
+      });
+    });
   }
 
   atras(): void {

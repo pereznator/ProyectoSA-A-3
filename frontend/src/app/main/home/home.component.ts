@@ -30,20 +30,21 @@ export class HomeComponent implements OnInit {
   ) {}
   
   ngOnInit(): void {
-    this.getOfertas();
-    this.getTop10Vendidos();
-    this.getTop10Valorados();
+    // this.getOfertas();
+    // this.getTop10Vendidos();
+    // this.getTop10Valorados();
   }
 
   getOfertas(): void {
     this.loadingOfertas = true;
-    this.mainService.obtenerOfertas({ estado_oferta_id: 1 }).pipe(take(1), map(resp => resp.response_database.result)).subscribe(resp => {
-      console.log(resp);
-      this.ofertas = resp;
-      this.loadingOfertas = false;
-    }, err => {
-      console.log("ERROR OFERTAS",err);
-    });
+    this.ofertas = [];
+    // this.mainService.obtenerOfertas({ estado_oferta_id: 1 }).pipe(take(1), map(resp => resp.response_database.result)).subscribe(resp => {
+    //   console.log(resp);
+    //   this.ofertas = resp;
+    //   this.loadingOfertas = false;
+    // }, err => {
+    //   console.log("ERROR OFERTAS",err);
+    // });
   }
 
   getTop10Vendidos(): void {

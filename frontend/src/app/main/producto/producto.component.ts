@@ -11,6 +11,8 @@ import { AuthService } from '../../auth/auth.service';
 import { User } from '../../auth/auth.types';
 import { ConfirmActionComponent } from '../../modals/confirm-action/confirm-action.component';
 import { AgregarCarritoComponent } from '../../modals/agregar-carrito/agregar-carrito.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ClientService } from '../../client/client.service';
 
 @Component({
   selector: 'app-producto',
@@ -35,12 +37,39 @@ export class ProductoComponent implements OnInit {
     private modalService: NgbModal,
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private snackService: MatSnackBar,
+    private clientService: ClientService
   ) {}
   
   ngOnInit(): void {
-    this.authService.user$.subscribe(user => {
-      this.user = user;
+    this.authService.currentUser$.pipe(take(1)).subscribe(user => {
+      console.log(user);
+      const id = user.id ?? user.user_id;
+      this.authService.getUser(`${id}`).pipe(take(1)).subscribe(userResponse => {
+        this.user = {
+          id: userResponse.user_id,
+          first_name: userResponse.first_name,
+          last_name: userResponse.last_name,
+          email: userResponse.email,
+          username: userResponse.username,
+          password: '',
+          phone: userResponse.phone,
+          dob: userResponse.dob,
+          gender: userResponse.gender,
+          role: userResponse.role,
+          profile_picture: userResponse.profile_picture,
+          addresses: userResponse.addresses.map(addr => ({
+            address: addr.address,
+            city: addr.city,
+            department: addr.department,
+            is_primary: addr.is_primary
+          })),
+          status: userResponse.status
+        };
+      }, err => {
+        console.log(err);
+      });
     });
     this.getProducto();
   }
@@ -48,64 +77,70 @@ export class ProductoComponent implements OnInit {
   getProducto(): void {
     this.loading = true;
     this.activatedRoute.params.pipe(take(1)).subscribe(params => {
-      this.mainService.obtenerProductoPorId(params["idProducto"]).pipe(take(1), map(resp => resp['response_database'].result[0])).subscribe(resp => {
+      this.mainService.obtenerProducto(params["idProducto"]).pipe(take(1), map(resp => resp.producto)).subscribe(resp => {
         console.log(resp);
         this.producto = {
-          id: resp.id,
-          portada: resp.portada,
-          nombre: resp.nombre,
-          categoriaId: resp.categoria_producto_id,
-          precio: resp.precio,
-          costo: resp.costo,
-          fecha: resp.fecha_registro,
-          descripcion: resp.descripcion,
-          proveedorId: resp.proveedor_id,
-          categoria: resp.categoria_producto,
-          proveedor: resp.proveedor,
-          enExistencia: resp.en_existencia
+          id: resp.product_id,
+          name: resp.name,
+          description: resp.description,
+          price: resp.price,
+          stock_quantity: resp.stock_quantity,
+          code: resp.code,
+          main_image_url: resp.main_image_url,
+          value: resp.value,
+          category_name: resp.category,
+          marcas: resp.brands,
+          regiones: resp.restricted_regions,
+          imagenes: resp.images,
+          brands: resp.brands,
+          status: resp.status,
         };
-        this.getComentarios();
+        this.loading = false;
+        // this.getComentarios();
       }, err => {
         console.log(err);
       });
     });
   }
 
-  getComentarios(): void {
-    this.mainService.obtenerComentariosDeProducto(`${this.producto.id}`).pipe(take(1), map(resp => resp["response_database"].result)).subscribe(resp => {
-      this.comentarios = resp;
-      console.log(this.comentarios);
-      this.loading = false;
-    }, err => {
-      console.log(err);
-    });
-  }
+  
 
   agregarAlCarrito(): void {
+    console.log(this.user);
     if (!this.user) {
       this.router.navigate(["auth", "login"]);
       return;
     }
-    if (this.user.tipoUsuario !== "CLIENTE") {
+    if (this.user.role !== "user") {
       return;
     }
     const modal = this.modalService.open(AgregarCarritoComponent);
     modal.result.then(unidades => {
       const carritoBody = {
-        carrito: {
-          cliente_id: this.user.idCliente,
-          productos: [
-            {
-              producto_id: this.producto.id,
-              cantidad: unidades,
-              precio_unidad: this.producto.precio,
-              nombre_producto: this.producto.nombre
-            }
-          ]
-        }
+        "user_id": this.user.id,
+        "product_id": this.producto.id,
+        "quantity" : unidades
       };
-      this.mainService.agregarAlCarrito(this.user.idCliente, carritoBody).pipe(take(1)).subscribe(resp => {
-        console.log(resp);
+      if (unidades <= 0) {
+        this.snackService.open("No se puede agregar 0 unidades al carrito", "Cerrar", {
+          duration: 10000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom'
+        });
+        return;
+      }
+
+      if (unidades > this.producto.stock_quantity) {
+        this.snackService.open("No hay suficiente stock", "Cerrar", {
+          duration: 10000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom'
+        });
+        return;
+      }
+
+      this.mainService.agregarAlCarrito(carritoBody).pipe(take(1)).subscribe(resp => {
+        console.log("AGREGADO AL CARRITO", resp);
         this.router.navigate(["cliente", "carrito"]);
       }, err => {
         console.log(err);
@@ -117,7 +152,7 @@ export class ProductoComponent implements OnInit {
     const comentarioBody = {
       valoracion: this.nuevaPuntuacion,
       comentario: this.nuevoComentario,
-      cliente_id: this.user.idCliente,
+      cliente_id: this.user.id,
       producto_id: this.producto.id
     };
 
@@ -127,7 +162,7 @@ export class ProductoComponent implements OnInit {
       this.nuevaPuntuacion = null;
       this.nuevoComentario = "";
       this.showComentarioInput = false;
-      this.getComentarios();
+      // this.getComentarios();
     })
   }
 
@@ -139,10 +174,34 @@ export class ProductoComponent implements OnInit {
       this.mainService.eliminarComentario(idComentario).pipe(take(1)).subscribe(resp => {
         console.log(resp);
         this.loading = true;
-        this.getComentarios();
+        // this.getComentarios();
       }, err => {
         console.log(err);
       });
     }, dismiss => {});
+  }
+  
+
+  agregarAFavoritos(): void {
+    const modal = this.modalService.open(ConfirmActionComponent);
+    modal.componentInstance.title = "Agregar a Favoritos";
+    modal.componentInstance.description = "¿Estas seguro que quieres agregar el producto a favoritos?";
+    modal.result.then(result => {
+      const favoritosBody = {
+        "user_id": this.user.id,
+        "product_id": this.producto.id
+      };
+      this.clientService.agregarFavorito(favoritosBody).pipe(take(1)).subscribe(resp => {
+        console.log(resp);
+        this.snackService.open("Producto agregado a favoritos", "Cerrar", {
+          duration: 7000,
+          horizontalPosition: 'center',
+          verticalPosition: 'bottom'
+        });
+      }, err => {
+        console.log(err);
+      });
+    }
+    , dismiss => {});
   }
 }

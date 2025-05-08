@@ -2,14 +2,14 @@
 <div class="container" *ngIf="!loading">
   <div class="row mt-5">
     <div class="col-lg-10">
-      <h1>
-        {{pedido.correlativo}}
-        <small>
+      <h1 *ngIf="!loading">
+        {{4300 + pedido.order_id}}
+        <!-- <small>
           <span class="badge text-bg-warning" *ngIf="pedido.estado_pedido_id === 1">PENDIENTE</span>
           <span class="badge text-bg-primary" *ngIf="pedido.estado_pedido_id === 2">EN RUTA</span>
           <span class="badge text-bg-danger" *ngIf="pedido.estado_pedido_id === 3">RECHAZADO</span>
           <span class="badge text-bg-success" *ngIf="pedido.estado_pedido_id === 4">ENTREGADO</span>
-        </small>
+        </small> -->
     </h1>
     
     </div>
@@ -35,12 +35,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let prod of pedido.detalles; let i = index;">
+          <tr *ngFor="let prod of productos; let i = index;">
             <th>{{i + 1}}</th>
-            <td>{{prod.nombre}}</td>
+            <td>{{prod.producto.name}}</td>
             <td>{{prod.cantidad}}</td>
-            <td>{{prod.precio | currency: 'Q'}}</td>
-            <td>{{(prod.precio * prod.cantidad) | currency: 'Q'}}</td>
+            <td>{{prod.precio_unitario | currency: 'Q'}}</td>
+            <td>{{(prod.precio_unitario * prod.cantidad) | currency: 'Q'}}</td>
           </tr>
           <tr>
             <th>Total</th>
@@ -51,6 +51,55 @@
           </tr>
         </tbody>
       </table>
+      <div class="row" *ngIf="!pago.estado">
+        <div class="col-lg-10"></div>
+        <div class="col-lg-2">
+          <div class="d-grid gap-2">
+            <button class="btn btn-sm btn-primary" (click)="registrarPago()">Registrar Pago</button>
+          </div>
+        </div>
+      </div>
+
+      <h4>Datos de Pago</h4>
+      <table class="table table-sm table-warning table-striped mt-3">
+        <thead>
+          <tr>
+            <th>Monto</th>
+            <th>Estado</th>
+            <th>Metodo</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{pago.monto ? (pago.monto | currency: 'Q') : 'pendiente'}}</td>
+            <td>{{pago.estado?? 'pendiente'}}</td>
+            <td>{{pago.metodo?? 'pendiente'}}</td>
+            <td>{{pago.fecha_pago ? (pago.fecha_pago | date) : 'pendinete'}}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <ng-container *ngIf="tracking.estado && !loadingTracking">
+        <h4 class="mt-3">Rastreo de Pedido</h4>
+        <table class="table table-sm table-info table-striped mt-3">
+          <thead>
+            <tr>
+              <th>Estado</th>
+              <th>Ubicacion</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>{{tracking.estado ?? 'pendiente'}}</td>
+              <td>{{tracking.ubicacion ?? 'NA'}}</td>
+              <td>{{tracking.ultima_actualizacion ? (tracking.ultima_actualizacion | date : 'pendiente') : 'pendiente'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </ng-container>
+
     </div>
     <div class="col-lg-2"></div>
   </div>

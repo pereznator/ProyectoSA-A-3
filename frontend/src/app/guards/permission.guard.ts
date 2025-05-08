@@ -10,7 +10,7 @@ export const hasPermission: CanActivateFn | CanActivateChildFn = (route, state) 
   return inject(AuthService).user$.pipe(
     switchMap((user: User) => {
       const rolesAdmitidos = route.data["roles"] as string[];
-      const hasPermissions = rolesAdmitidos.includes(user.tipoUsuario);
+      const hasPermissions = rolesAdmitidos.includes(user.role);
       return of(hasPermissions);
     })
   )  

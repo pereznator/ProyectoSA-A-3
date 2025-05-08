@@ -1,11 +1,33 @@
+// export interface User {
+//   id: number;
+//   tipoUsuario: string;
+//   email: string;
+//   emailVerified: boolean;
+//   estado: string;
+//   username: string;
+// }
+
+
+
+export interface Address {
+  address: string;
+  city: string;
+  department: string;
+  is_primary: number; // también podrías usar boolean si lo prefieres
+}
+
 export interface User {
-  tipoUsuario: string;
+  id: number;
+  first_name: string;
+  last_name: string;
   email: string;
-  emailVerified: boolean;
-  estado: string;
-  idCliente: number;
-  idColaborador: number;
-  idUsr: number;
   username: string;
-  idCarrito?: string;
+  password: string;
+  phone: string;
+  dob: string;
+  gender: 'male' | 'female';
+  role: 'admin' | 'user';
+  profile_picture: string | null;
+  addresses: Address[];
+  status?: 'active' | 'inactive';
 }

@@ -1,4 +1,7 @@
 export const environment = {
   production: "true",
-  serverUrl: "http://100.26.159.108:9000"
+  authServerUrl:"http://34.27.72.138",
+  productServerUrl:"http://34.27.72.138",
+  orderServiceUrl:"http://34.27.72.138",
+  chatServiceUrl: "http://34.27.72.138"
 };

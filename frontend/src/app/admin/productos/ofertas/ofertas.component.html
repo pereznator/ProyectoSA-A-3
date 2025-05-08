@@ -21,9 +21,10 @@
   <table class="table mt-3" *ngIf="!loading">
     <thead class="table-dark">
       <tr>
-        <th>Producto</th>
-        <th>Rebaja</th>
+        <th>Titulo</th>
         <th>Descripcion</th>
+        <th>Porcentaje</th>
+        <th>Fecha de Inicio</th>
         <th>Fecha de Expiración</th>
         <th>Estado</th>
         <th>Acciones</th>
@@ -31,16 +32,20 @@
     </thead>
     <tbody>
       <tr *ngFor="let oferta of ofertas">
-        <td>{{oferta.producto}}</td>
-        <td>{{oferta.monto | currency: 'Q'}}</td>
+        <td>{{oferta.nombre}}</td>
         <td>{{oferta.descripcion}}</td>
-        <td>{{oferta.fecha}}</td>
+        <td>{{oferta.descuento/100 | percent}}</td>
+        <td>{{oferta.inicio | date : 'shortDate'}}</td>
+        <td>{{oferta.fin | date : 'shortDate'}}</td>
         <td>
-          <span class="badge text-bg-success" *ngIf="oferta.estado_oferta === 'VIGENTE'">{{oferta.estado_oferta}}</span>
-          <span class="badge text-bg-danger" *ngIf="oferta.estado_oferta === 'EXPIRADA'">{{oferta.estado_oferta}}</span>
+          <span class="badge" [ngClass]="{'text-bg-success': oferta.activa === 1, 'text-bg-danger': oferta.activa === 0}">
+            {{oferta.activa === 1 ? 'ACTIVA' : 'INACTIVA'}}
+          </span>
         </td>
         <td>
-          <button class="btn btn-sm btn-danger" ngbTooltip="Cancelar Oferta" (click)="cancelarOferta(oferta)" *ngIf="oferta.estado_oferta === 'VIGENTE'">
+          
+          <button class="btn btn-sm btn-secondary mx-3" ngbTooltip="Editar" (click)="editarOferta(oferta)"><i class="bi bi-pencil-square"></i></button>
+          <button class="btn btn-sm btn-danger" ngbTooltip="Eliminar Oferta" (click)="eliminarOferta(oferta)" *ngIf="oferta.activa === 1">
             <i class="bi bi-trash"></i>
           </button>
         </td>

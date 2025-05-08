@@ -1,10 +1,8 @@
-<div class="container mt-3">
+<!-- <div class="container mt-3">
   <h3>Las ofertas del momento</h3>
   <div id="carouselExampleCaptions" class="carousel slide oferta-item">
     <div class="carousel-indicators">
       <button type="button" data-bs-target="#carouselExampleCaptions" [ngClass]="{'active': idx === 0}" [attr.data-bs-slide-to]="idx" aria-current="true" aria-label="Slide 1" *ngFor="let oferta of ofertas; let idx = index;"></button>
-      <!-- <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1" aria-label="Slide 2"></button>
-      <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2" aria-label="Slide 3"></button> -->
     </div>
     <div class="carousel-inner oferta-item">
       <div class="carousel-item oferta-item" [ngClass]="{'active': idx === 0}" *ngFor="let oferta of ofertas; let idx = index;">
@@ -85,4 +83,38 @@
       </table>
     </div>
   </div>
+</div> -->
+
+<div class="container">
+  <div class="p-5 mb-4 bg-light rounded-3">
+    <div class="container-fluid py-5">
+      <h1 class="display-5 fw-bold">Bienvenido a Swaptify</h1>
+      <p class="col-md-8 fs-4">
+        Tu nueva plataforma de compras en línea. Explora, compara y compra los mejores productos desde casa.
+      </p>
+      <a class="btn btn-primary btn-lg" href="#productos">Explorar productos</a>
+    </div>
+  </div>
+  
+  <div class="container">
+    <div class="row text-center">
+      <div class="col-md-4">
+        <h3>Catálogo Amplio</h3>
+        <p>Ropa, tecnología, libros y más, todo al alcance de un clic.</p>
+      </div>
+      <div class="col-md-4">
+        <h3>Ofertas Exclusivas</h3>
+        <p>Obtén descuentos según tu historial de compras.</p>
+      </div>
+      <div class="col-md-4">
+        <h3>Soporte Instantáneo</h3>
+        <p>¿Dudas? Nuestro chatbot está listo para ayudarte.</p>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="bg-dark text-white text-center mt-5 p-3">
+    © 2025 Swaptify | Universidad de San Carlos de Guatemala
+  </footer>
+
 </div>

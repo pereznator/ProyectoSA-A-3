@@ -1,2 +1,4 @@
 <app-navbar></app-navbar>
+<app-chat-widget></app-chat-widget>
+<app-chat-window *ngIf="isChatVisible$ | async"></app-chat-window>
 <router-outlet></router-outlet>

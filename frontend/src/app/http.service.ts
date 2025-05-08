@@ -13,28 +13,26 @@ export enum RequestMethod {
 
 @Injectable({ providedIn: "root" })
 export class HttpService {
-  private serverUrl: string = environment.serverUrl;
 
   constructor(private httpClient: HttpClient) {}
 
   public request(method: RequestMethod, url: string, body?: any, params?: any): Observable<any> {
-    const requestUrl = `${this.serverUrl}${url}`;
     let requestObservable: Observable<any>;
     switch (method) {
       case RequestMethod.GET:
-      requestObservable = this.httpClient.get(requestUrl, { params });
+      requestObservable = this.httpClient.get(url, { params });
       break;
       case RequestMethod.POST:
-      requestObservable = this.httpClient.post(requestUrl, body, { params });  
+      requestObservable = this.httpClient.post(url, body, { params });  
       break;
       case RequestMethod.PUT:
-      requestObservable = this.httpClient.put(requestUrl, body, { params });  
+      requestObservable = this.httpClient.put(url, body, { params });  
       break;
       case RequestMethod.PATCH:
-      requestObservable = this.httpClient.patch(requestUrl, body, { params });  
+      requestObservable = this.httpClient.patch(url, body, { params });  
       break;
       case RequestMethod.DELETE:
-      requestObservable = this.httpClient.delete(requestUrl, { params });  
+      requestObservable = this.httpClient.delete(url, { params, body });  
       break;
     }
     return requestObservable;

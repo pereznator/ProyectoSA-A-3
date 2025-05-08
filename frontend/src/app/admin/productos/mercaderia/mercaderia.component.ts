@@ -37,19 +37,19 @@ export class MercaderiaComponent implements OnInit {
     this.loading = true;
     this.activatedRoute.params.pipe(take(1)).subscribe(params => {
       this.adminService.obtenerProductoPorId(params["idProducto"]).pipe(take(1), map(resp => resp.response_database.result[0])).subscribe(resp => {
-        this.producto = {
-          id: resp.id,
-          portada: resp.portada,
-          nombre: resp.nombre,
-          categoriaId: resp.categoria_producto_id,
-          precio: resp.precio,
-          costo: resp.costo,
-          fecha: resp.fecha_registro,
-          descripcion: resp.descripcion,
-          proveedorId: resp.proveedor_id,
-          categoria: resp.categoria_producto,
-          proveedor: resp.proveedor,
-        };
+        // this.producto = {
+        //   id: resp.id,
+        //   portada: resp.portada,
+        //   nombre: resp.nombre,
+        //   categoriaId: resp.categoria_producto_id,
+        //   precio: resp.precio,
+        //   costo: resp.costo,
+        //   fecha: resp.fecha_registro,
+        //   descripcion: resp.descripcion,
+        //   proveedorId: resp.proveedor_id,
+        //   categoria: resp.categoria_producto,
+        //   proveedor: resp.proveedor,
+        // };
         this.getMercaderias();    
       }, err => {
         console.log(err);
@@ -75,7 +75,7 @@ export class MercaderiaComponent implements OnInit {
       const existenciaBody = {
         cantidad: unidades,
         producto_id: this.producto.id,
-        monto: this.producto.costo * unidades
+        monto: this.producto.price * unidades
       };
 
       this.adminService.crearBulkExistencias(existenciaBody).pipe(take(1)).subscribe(resp => {

@@ -81,7 +81,7 @@ export class NuevoMetodoPagoComponent implements OnInit {
         const detalleId = respDetalle.response_database.result.insertId;
         const metodoPagoBody = {
           tipo_metodo_pago_id: 1,
-          cliente_id: this.user.idCliente,
+          cliente_id: this.user.id,
           detalle_tarjeta_id: detalleId
         };
         this.clienteService.crearMetodoPago(metodoPagoBody).pipe(take(1)).subscribe(respMetodoPago => {
@@ -96,7 +96,7 @@ export class NuevoMetodoPagoComponent implements OnInit {
     } else {
       const metodoPagoBody = {
         tipo_metodo_pago_id: this.metodoPagoSeleccionado === "efectivo" ? 2 : 3,
-        cliente_id: this.user.idCliente,
+        cliente_id: this.user.id,
         detalle_tarjeta_id: null
       };
       this.clienteService.crearMetodoPago(metodoPagoBody).pipe(take(1)).subscribe(resp => {

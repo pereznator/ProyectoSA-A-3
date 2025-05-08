@@ -1,0 +1,87 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: sa-ingress
+  namespace: sa-app
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          ## AUTH SERVICE
+          - path: /api/user/
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 3001
+          - path: /generate-upload-url
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 3001
+          - path: /api/auth/
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 3001
+          - path: /api/promotion/
+            pathType: Prefix
+            backend:
+              service:
+                name: auth-service
+                port:
+                  number: 3001
+
+          ## PRODUCT SERVICE
+          - path: /api/product/
+            pathType: Prefix
+            backend:
+              service:
+                name: product-service
+                port:
+                  number: 3002
+
+          ## ORDER SERVICE
+          - path: /api/cart/
+            pathType: Prefix
+            backend:
+              service:
+                name: order-service
+                port:
+                  number: 3003
+          - path: /api/descuento/
+            pathType: Prefix
+            backend:
+              service:
+                name: order-service
+                port:
+                  number: 3003
+          - path: /api/orders/
+            pathType: Prefix
+            backend:
+              service:
+                name: order-service
+                port:
+                  number: 3003
+          - path: /api/favorite/
+            pathType: Prefix
+            backend:
+              service:
+                name: order-service
+                port:
+                  number: 3003
+          - path: /api/pagos/
+            pathType: Prefix
+            backend:
+              service:
+                name: order-service
+                port:
+                  number: 3003

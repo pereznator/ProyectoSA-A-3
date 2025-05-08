@@ -1,0 +1,1507 @@
+{
+	"info": {
+		"_postman_id": "001ae377-6722-4a43-82fa-fceac3d2b4a1",
+		"name": "ProyectoSA",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20178200"
+	},
+	"item": [
+		{
+			"name": "auth-service",
+			"item": [
+				{
+					"name": "user",
+					"item": [
+						{
+							"name": "Crear Usuario",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"first_name\": \"Jose\",\n  \"last_name\": \"Panaza\",\n  \"email\": \"josepanaza@gmail.com\",\n  \"username\": \"jpanaza\",\n  \"password\": \"1234\",\n  \"phone\": \"55113538\",\n  \"dob\": \"2003-06-19\",\n  \"gender\": \"male\",\n  \"role\": \"admin\",\n  \"profile_picture\": null,\n  \"addresses\": [\n    {\n      \"address\": \"Zona 6, Catalina\",\n      \"city\": \"Villa Nueva\",\n      \"department\": \"Guatemala\",\n      \"is_primary\": 1\n    },\n    {\n      \"address\": \"19 Calle 11-66\",\n      \"city\": \"Guatemala Zona 11\",\n      \"department\": \"Guatemala\",\n      \"is_primary\": 0\n    }\n  ]\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/crear-usuario",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"crear-usuario"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "Crear Usuario",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"first_name\": \"Jose\",\n  \"last_name\": \"Panaza\",\n  \"email\": \"josepanaza@gmail.com\",\n  \"username\": \"jpanaza\",\n  \"password\": \"1234\",\n  \"phone\": \"55113538\",\n  \"dob\": \"2003-06-19\",\n  \"gender\": \"male\",\n  \"role\": \"admin\",\n  \"profile_picture\": null,\n  \"addresses\": [\n    {\n      \"address\": \"Zona 6, Catalina\",\n      \"city\": \"Villa Nueva\",\n      \"department\": \"Guatemala\",\n      \"is_primary\": 1\n    },\n    {\n      \"address\": \"19 Calle 11-66\",\n      \"city\": \"Guatemala Zona 11\",\n      \"department\": \"Guatemala\",\n      \"is_primary\": 0\n    }\n  ]\n}\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/crear-usuario",
+											"protocol": "http",
+											"host": [
+												"{{auth-service-host}}"
+											],
+											"port": "{{auth-service-port}}",
+											"path": [
+												"api",
+												"user",
+												"crear-usuario"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "X-Powered-By",
+											"value": "Express"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "http://localhost:5173"
+										},
+										{
+											"key": "Vary",
+											"value": "Origin"
+										},
+										{
+											"key": "Access-Control-Allow-Credentials",
+											"value": "true"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "73"
+										},
+										{
+											"key": "ETag",
+											"value": "W/\"49-oYw8Rt8gf499YHkK+pSllt7NQMY\""
+										},
+										{
+											"key": "Date",
+											"value": "Wed, 26 Mar 2025 00:18:21 GMT"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Keep-Alive",
+											"value": "timeout=5"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"status\": \"success\",\n    \"message\": \"Usuario creado exitosamente.\",\n    \"user_id\": 4\n}"
+								}
+							]
+						},
+						{
+							"name": "Reportar Usuario",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"reported_user_id\": 2,\n  \"reporter_user_id\": 4,\n  \"reason\": \"Comportamiento ofensivo en el chat\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/reportar-usuario",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"reportar-usuario"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Activar Usuario",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 4\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/activar-usuario",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"activar-usuario"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Estado Reporte",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"report_id\": 1,\n  \"estado\": \"reviewed\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/actualizar-estado-reporte",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"actualizar-estado-reporte"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Perfil Usuario",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 2,\n  \"email\": \"lucia.nueva@email.com\",\n  \"phone\": \"12345678\",\n  \"addresses\": [\n    {\n      \"address\": \"Colonia El Manantial\",\n      \"city\": \"Mixco\",\n      \"department\": \"Guatemala\",\n      \"is_primary\": 1\n    }\n  ]\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/actualizar-perfil-usuario",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"actualizar-perfil-usuario"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Desactivar Usuario",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 2\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/desactivar-usuario",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"desactivar-usuario"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Reportes Usuario",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/obtener-reportes-usuarios",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"obtener-reportes-usuarios"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Usuario No Admin",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/obtener-usuarios-no-admin",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"obtener-usuarios-no-admin"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener usuario por ID",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/user/obtener-usuario-por-id/:user_id",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"user",
+										"obtener-usuario-por-id",
+										":user_id"
+									],
+									"variable": [
+										{
+											"key": "user_id",
+											"value": "99"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "auth",
+					"item": [
+						{
+							"name": "Iniciar Sesion",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"login\": \"josepanaza@gmail.com\",\n  \"password\": \"1234\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/auth/iniciar-sesion",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"auth",
+										"iniciar-sesion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Registrar Verificacion Email",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 4,\n  \"token\": \"5a7b6c9e-8dff-4e2f-bcd9-0c8de2f9a9f0\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/auth/registrar-verificacion-email",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"auth",
+										"registrar-verificacion-email"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Validar Token",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/auth/validar-token",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"auth",
+										"validar-token"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Verificar Correo",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"token\":\"5a7b6c9e-8dff-4e2f-bcd9-0c8de2f9a9f0\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/auth/verificar-correo",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"auth",
+										"verificar-correo"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Cerrar Sesion",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 4\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/auth/cerrar-sesion",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"auth",
+										"cerrar-sesion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Expirar Sesiones",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/auth/expirar-sesiones",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"auth",
+										"expirar-sesiones"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "promotion",
+					"item": [
+						{
+							"name": "Crear Promocion",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Promo Verano 2025\",\n  \"description\": \"20% de descuento en productos seleccionados\",\n  \"discount_percentage\": 20,\n  \"start_date\": \"2025-05-01 00:00:00\",\n  \"end_date\": \"2025-05-31 23:59:59\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/promotion/crear-promocion",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"promotion",
+										"crear-promocion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Asignar promocion",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 5,\n  \"promotion_id\": 4\n}\n\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/promotion/asignar-promocion",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"promotion",
+										"asignar-promocion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Aplicar Promocion",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 5,\n  \"promotion_id\": 3\n}\n\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/promotion/aplicar-promocion",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"promotion",
+										"aplicar-promocion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Promocion",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"id\": 4,\n  \"name\": \"Promo Verano 2025 - Actualizada\",\n  \"description\": \"Descuento actualizado al 25%\",\n  \"discount_percentage\": 25,\n  \"start_date\": \"2025-05-01 00:00:00\",\n  \"end_date\": \"2025-06-15 23:59:59\",\n  \"is_active\": 1\n}\n\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/promotion/actualizar-promocion",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"promotion",
+										"actualizar-promocion"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Eliminar Promocion",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/promotion/eliminar-promocion/3",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"promotion",
+										"eliminar-promocion",
+										"3"
+									],
+									"query": [
+										{
+											"key": "prom",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Promociones",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/promotion/obtener-promociones/5",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"promotion",
+										"obtener-promociones",
+										"5"
+									],
+									"query": [
+										{
+											"key": "prom",
+											"value": null,
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener todas Promociones",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{auth-service-host}}:{{auth-service-port}}/api/promotion/obtener-todas-promociones",
+									"protocol": "http",
+									"host": [
+										"{{auth-service-host}}"
+									],
+									"port": "{{auth-service-port}}",
+									"path": [
+										"api",
+										"promotion",
+										"obtener-todas-promociones"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "api_works",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{auth-service-host}}:{{auth-service-port}}",
+							"protocol": "http",
+							"host": [
+								"{{auth-service-host}}"
+							],
+							"port": "{{auth-service-port}}"
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "product-service",
+			"item": [
+				{
+					"name": "product",
+					"item": [
+						{
+							"name": "Crear Producto",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"name\": \"Laptop Gamer\",\n  \"description\": \"Alta gama para juegos\",\n  \"price\": 9500.00,\n  \"stock_quantity\": 10,\n  \"code\": \"LP-GAMER-001\",\n  \"main_image_url\": \"https://ejemplo.com/laptop.jpg\",\n  \"value\": 9500.00,\n  \"category_name\": \"Tecnología\",\n  \"marcas\": [\"Asus\", \"NVIDIA\"],\n  \"regiones\": [\"Petén\", \"Izabal\"],\n  \"imagenes\": [\n    \"https://ejemplo.com/laptop-lado.jpg\",\n    \"https://ejemplo.com/laptop-caja.jpg\"\n  ]\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{product-service-host}}:{{product-service-port}}/api/product/crear-producto",
+									"protocol": "http",
+									"host": [
+										"{{product-service-host}}"
+									],
+									"port": "{{product-service-port}}",
+									"path": [
+										"api",
+										"product",
+										"crear-producto"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Agregar Review",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"product_id\": 8,\n  \"user_id\": 2,\n  \"rating\": 4,\n  \"review\": \"Excelente producto, llegó rápido y funciona perfecto.\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{product-service-host}}:{{product-service-port}}/api/product/agregar-review-producto",
+									"protocol": "http",
+									"host": [
+										"{{product-service-host}}"
+									],
+									"port": "{{product-service-port}}",
+									"path": [
+										"api",
+										"product",
+										"agregar-review-producto"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener producto",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{product-service-host}}:{{product-service-port}}/api/product/obtener-productos",
+									"protocol": "http",
+									"host": [
+										"{{product-service-host}}"
+									],
+									"port": "{{product-service-port}}",
+									"path": [
+										"api",
+										"product",
+										"obtener-productos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Producto por id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{product-service-host}}:{{product-service-port}}/api/product/obtener-producto-por-id/8",
+									"protocol": "http",
+									"host": [
+										"{{product-service-host}}"
+									],
+									"port": "{{product-service-port}}",
+									"path": [
+										"api",
+										"product",
+										"obtener-producto-por-id",
+										"8"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "order-service",
+			"item": [
+				{
+					"name": "Cart",
+					"item": [
+						{
+							"name": "Agregar Producto Carrito",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"user_id\": 2,\n    \"product_id\": 10,\n    \"quantity\" : 9\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/cart/agregarProductoCarrito",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"cart",
+										"agregarProductoCarrito"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Eliminar Producto Carrito",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 2,\n  \"product_id\": 8\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/cart/eliminarProductoCarrito",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"cart",
+										"eliminarProductoCarrito"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Limpiar Carrito Usuario",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 2\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/cart/limpiarCarritoUsuario",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"cart",
+										"limpiarCarritoUsuario"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Carrito Usuario",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/cart/obtenerCarritoUsuario/2",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"cart",
+										"obtenerCarritoUsuario",
+										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Descuento",
+					"item": [
+						{
+							"name": "Generar Descuento Exclusivo",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 2,\n  \"total_acumulado\": 14500.00\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/descuento/generarDescuentoExclusivo",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"descuento",
+										"generarDescuentoExclusivo"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Descuento Por usuario",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/descuento/obtenerDescuentoExclusivo/2",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"descuento",
+										"obtenerDescuentoExclusivo",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Aplicar Descuento Exclusivo",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 2\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/descuento/aplicarDescuentoExclusivo",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"descuento",
+										"aplicarDescuentoExclusivo"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Eliminar Descuento Exclusivo",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 2\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/descuento/eliminarDescuentoExclusivo",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"descuento",
+										"eliminarDescuentoExclusivo"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Orders",
+					"item": [
+						{
+							"name": "Crear Orden Desde carrito",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 2\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/orders/crearOrdenDesdeCarrito",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"orders",
+										"crearOrdenDesdeCarrito"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener historial ordenes",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/orders/obtenerHistorialOrdenes?user_id=2&rango=30d",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"orders",
+										"obtenerHistorialOrdenes"
+									],
+									"query": [
+										{
+											"key": "user_id",
+											"value": "2"
+										},
+										{
+											"key": "rango",
+											"value": "30d"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Monto Total",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/orders/obtenerMontoTotalAcumulado?user_id=2&rango=30d",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"orders",
+										"obtenerMontoTotalAcumulado"
+									],
+									"query": [
+										{
+											"key": "user_id",
+											"value": "2"
+										},
+										{
+											"key": "rango",
+											"value": "30d"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Detalle orden",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/orders/obtenerDetalleOrden/2",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"orders",
+										"obtenerDetalleOrden",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Seguimiento Pedido",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/orders/obtenerSeguimientoPedido/1",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"orders",
+										"obtenerSeguimientoPedido",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Actualizar Seguimiento Pedido",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"order_id\": 1,\n  \"status\": \"entregado\",\n  \"location\": \"Zona 7\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/orders/actualizarSeguimientoPedido",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"orders",
+										"actualizarSeguimientoPedido"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "New Request",
+							"request": {
+								"method": "GET",
+								"header": []
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Favorite",
+					"item": [
+						{
+							"name": "Agregar Producto a favorito",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 2,\n  \"product_id\": 8\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/favorite/agregarFavorito",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"favorite",
+										"agregarFavorito"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Eliminar producto de favorito",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"user_id\": 2,\n  \"product_id\": 8\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/favorite/eliminarFavorito",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"favorite",
+										"eliminarFavorito"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener favoritos",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/favorite/obtenerFavoritosUsuario/2",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"favorite",
+										"obtenerFavoritosUsuario",
+										"2"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Pagos",
+					"item": [
+						{
+							"name": "Registrar Pago",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"order_id\": 2,\n  \"method\": \"tarjeta_credito\",\n  \"amount\": 85500\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/pagos/registrarPago",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"pagos",
+										"registrarPago"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Obtener Estado Pago",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://{{order-service-host}}:{{order-service-port}}/api/pagos/obtenerEstadoPago/3",
+									"protocol": "http",
+									"host": [
+										"{{order-service-host}}"
+									],
+									"port": "{{order-service-port}}",
+									"path": [
+										"api",
+										"pagos",
+										"obtenerEstadoPago",
+										"3"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "API WORKS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://{{order-service-host}}:{{order-service-port}}",
+							"protocol": "http",
+							"host": [
+								"{{order-service-host}}"
+							],
+							"port": "{{order-service-port}}"
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "auth-service-host",
+			"value": "127.0.0.1",
+			"type": "default"
+		},
+		{
+			"key": "auth-service-port",
+			"value": "3001",
+			"type": "default"
+		},
+		{
+			"key": "product-service-port",
+			"value": "127.0.0.1",
+			"type": "default"
+		},
+		{
+			"key": "product-service-host",
+			"value": "127.0.0.1",
+			"type": "default"
+		},
+		{
+			"key": "order-service-host",
+			"value": "localhost",
+			"type": "default"
+		},
+		{
+			"key": "order-service-port",
+			"value": "3003",
+			"type": "default"
+		},
+		{
+			"key": "IngressURL",
+			"value": "34.27.72.138",
+			"type": "default"
+		}
+	]
+}

@@ -1,9 +1,13 @@
 import { Injectable } from "@angular/core";
 import { HttpService, RequestMethod } from "../http.service";
 import { Observable } from "rxjs";
+import { environment } from "../../environments/environment";
 
 @Injectable({ providedIn: "root" })
 export class MainService {
+  productServerUrl = environment.productServerUrl;
+  orderServiceUrl = environment.orderServiceUrl;
+
   constructor(private httpService: HttpService) {}
 
   obtenerCategorias(): Observable<any> {
@@ -49,8 +53,8 @@ export class MainService {
     return this.httpService.request(RequestMethod.GET, `/producto/buscar/${nombre}/${fechaSort}/${precioSort}`);
   }
 
-  agregarAlCarrito(idCliente: number, carrito: any): Observable<any> {
-    return this.httpService.request(RequestMethod.POST, `/carrito/use/${idCliente}`, carrito);
+  agregarAlCarrito(carrito: any): Observable<any> {
+    return this.httpService.request(RequestMethod.POST, `${this.orderServiceUrl}/api/cart/agregarProductoCarrito`, carrito);
   }
 
   obtenerProductosPorCategoria(idCateria: string, precioSort: string, fechaSort: string, nombreSort: string): Observable<any> {
@@ -66,5 +70,11 @@ export class MainService {
   }
   obtenerTop10Valorados(): Observable<any> {
     return this.httpService.request(RequestMethod.GET, "/reports/top-ten-productos/valoracion");
+  }
+  obtenerProductos(): Observable<any> {
+    return this.httpService.request(RequestMethod.GET, `${this.productServerUrl}/api/product/obtener-productos`);
+  }
+  obtenerProducto(idProducto: number): Observable<any> {
+    return this.httpService.request(RequestMethod.GET, `${this.productServerUrl}/api/product/obtener-producto-por-id/${idProducto}`);
   }
 }

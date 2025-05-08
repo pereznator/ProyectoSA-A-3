@@ -4,7 +4,7 @@
       <h1>Categorías</h1>
     </div>
     <div class="col-lg" *ngIf="user">
-      <div class="d-grid gap-2" *ngIf="user.tipoUsuario === 'ADMINISTRADOR'">
+      <div class="d-grid gap-2" *ngIf="user.role === 'admin'">
         <button class="btn btn-sm btn-primary" (click)="crearCategoria()">
           Nueva Categoría
         </button>
@@ -31,7 +31,7 @@
                 <i class="bi bi-eye"></i>
               </button>
               <ng-container *ngIf="user">
-                <button class="btn btn-sm btn-danger" ngbTooltip="Eliminar" *ngIf="user.tipoUsuario === 'ADMINISTRADOR'">
+                <button class="btn btn-sm btn-danger" ngbTooltip="Eliminar" *ngIf="user.role === 'admin'">
                   <i class="bi bi-trash"></i>
                 </button>
               </ng-container>

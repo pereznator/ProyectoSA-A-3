@@ -1,26 +1,44 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { AdminService } from '../../admin.service';
 import { Location, NgClass, NgFor, NgIf } from '@angular/common';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatChipInputEvent, MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MainService } from '../../../main/main.service';
-import { take } from 'rxjs';
+import { map, take } from 'rxjs';
 import { LoadingComponent } from '../../../shared/loading/loading.component';
 import { Producto } from '../producto.types';
 import { v4 } from 'uuid';
 import { S3Service } from '../../../s3.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmActionComponent } from '../../../modals/confirm-action/confirm-action.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-producto-form',
   standalone: true,
-  imports: [NgIf, NgClass, NgFor, ReactiveFormsModule, LoadingComponent],
+  imports: [
+    NgIf,
+    NgClass,
+    NgFor,
+    ReactiveFormsModule,
+    LoadingComponent,
+    MatChipsModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+  ],
   templateUrl: './producto-form.component.html',
   styleUrl: './producto-form.component.scss'
 })
 export class ProductoFormComponent implements OnInit {
-  
+  brands: string[] = [];
+  regiones: string[] = [];
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   @Input() isNew: boolean;
   productoForm: FormGroup;
   producto: Producto;
@@ -29,8 +47,6 @@ export class ProductoFormComponent implements OnInit {
   archivo: File = null;
   showAlert: boolean = false;
   alertMessage: string = "";
-  categorias: any[] = [];
-  proveedores: any[] = [];
 
   constructor(
     private fb: FormBuilder,
@@ -40,75 +56,77 @@ export class ProductoFormComponent implements OnInit {
     private mainService: MainService,
     private s3Service: S3Service,
     private router: Router,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
-    this.getCategorias();
-  }
-
-  get notValidNombre(): boolean {
-    return this.productoForm.get("nombre").touched && this.productoForm.get("nombre").invalid;
-  }
-  get notValidDescripcion(): boolean {
-    return this.productoForm.get("descripcion").touched && this.productoForm.get("descripcion").invalid;
-  }
-  get notValidCategoria(): boolean {
-    return this.productoForm.get("categoriaId").touched && this.productoForm.get("categoriaId").invalid;
-  }
-  get notValidPortada(): boolean {
-    return this.productoForm.get("portada").touched && this.productoForm.get("portada").invalid;
-  }
-  get notValidProveedor(): boolean {
-    return this.productoForm.get("proveedorId").touched && this.productoForm.get("proveedorId").invalid;
-  }
-  get notValidPrecio(): boolean {
-    return this.productoForm.get("precio").touched && this.productoForm.get("precio").invalid;
-  }
-  get notValidCosto(): boolean {
-    return this.productoForm.get("costo").touched && this.productoForm.get("costo").invalid;
-  }
-
-  getCategorias(): void {
     this.loading = true;
-    this.mainService.obtenerCategorias().pipe(take(1)).subscribe(resp => {
-      this.categorias = resp.response_database.result;
-      console.log(this.categorias);
-      this.getProveedores();
-    }, err => {
-      console.log(err);
-    })
+    if (this.isNew) {
+      this.crearFormulario();
+    } else {
+      this.getProducto();
+    }
   }
 
-  getProveedores(): void {
-    this.adminService.obtenerProveedores().pipe(take(1)).subscribe(resp => {
-      this.proveedores = resp.response_database.result;
-      console.log(this.proveedores);
-      if (this.isNew) {
-        this.crearFormulario();
-      } else {
-        this.getProducto();
-      }
-    }, err => {
-      console.log(err);
-    });
+  get notValidCode(): boolean {
+    return this.productoForm.get("code").touched && this.productoForm.get("code").invalid;
   }
+  
+  get notValidName(): boolean {
+    return this.productoForm.get("name").touched && this.productoForm.get("name").invalid;
+  }
+  
+  get notValidPrice(): boolean {
+    return this.productoForm.get("price").touched && this.productoForm.get("price").invalid;
+  }
+  
+  get notValidValue(): boolean {
+    return this.productoForm.get("value").touched && this.productoForm.get("value").invalid;
+  }
+  
+  get notValidBrands(): boolean {
+    // return this.productoForm.get("brands").touched && this.productoForm.get("brands").invalid;
+    return this.productoForm.get('brands').hasError('emptyArray') && this.productoForm.get('brands').touched
+  }
+  
+  get notValidCategory(): boolean {
+    return this.productoForm.get("category").touched && this.productoForm.get("category").invalid;
+  }
+  
+  get notValidDescription(): boolean {
+    return this.productoForm.get("description").touched && this.productoForm.get("description").invalid;
+  }
+  
+  get notValidStockQuantity(): boolean {
+    return this.productoForm.get("stock_quantity").touched && this.productoForm.get("stock_quantity").invalid;
+  }
+  
+  get notValidRestrictedRegions(): boolean {
+    return this.productoForm.get("restricted_regions").touched && this.productoForm.get("restricted_regions").invalid;
+  }
+  
 
   getProducto(): void {
     this.activatedRoute.params.pipe(take(1)).subscribe(params => {
       const idProducto = params["idProducto"];
-      this.adminService.obtenerProductoPorId(idProducto).pipe(take(1)).subscribe(resp => {
+      this.mainService.obtenerProducto(idProducto).pipe(take(1), map(resp => resp.producto)).subscribe(resp => {
         console.log(resp);
         this.producto = {
-          id: resp.response_database.result[0].id,
-          portada: resp.response_database.result[0].portada,
-          nombre: resp.response_database.result[0].nombre,
-          categoriaId: resp.response_database.result[0].categoria_producto_id,
-          precio: resp.response_database.result[0].precio,
-          costo: resp.response_database.result[0].costo,
-          fecha: resp.response_database.result[0].fechaRegistro,
-          descripcion: resp.response_database.result[0].descripcion,
-          proveedorId: resp.response_database.result[0].proveedor_id,
+          id: resp.product_id,
+          name: resp.name,
+          description: resp.description,
+          price: resp.price,
+          stock_quantity: resp.stock_quantity,
+          code: resp.code,
+          main_image_url: resp.main_image_url,
+          value: resp.value,
+          category_name: resp.category,
+          marcas: resp.brands,
+          regiones: resp.restricted_regions,
+          imagenes: resp.images,
+          brands: resp.brands,
+          status: resp.status,
         };
         this.crearFormulario();
       }, err => {
@@ -117,16 +135,48 @@ export class ProductoFormComponent implements OnInit {
     });
   }
 
+  arrayNoVacioValidator() {
+    return (control: AbstractControl) => {
+      const value = control.value;
+      return Array.isArray(value) && value.length > 0
+        ? null
+        : { emptyArray: true };
+    };
+  }
+
   crearFormulario(): void {
     this.productoForm = this.fb.group({
-      nombre: [this.isNew ? null : this.producto.nombre, [Validators.required]],
-      descripcion: [this.isNew ? null : this.producto.descripcion, [Validators.required]],
-      categoriaId: [this.isNew ? null : this.producto.categoriaId, [Validators.required]],
-      portada: [null, this.isNew ? [Validators.required] : []],
-      proveedorId: [this.isNew ? null : this.producto.proveedorId, [Validators.required]],
-      precio: [this.isNew ? null : this.producto.precio, [Validators.required]],
-      costo: [this.isNew ? null : this.producto.costo, [Validators.required]],
+      code: [this.isNew ? null : this.producto.code, [Validators.required]],
+      name: [this.isNew ? null : this.producto.name, [Validators.required]],
+      price: [this.isNew ? null : this.producto.price, [Validators.required]],
+      value: [this.isNew ? null : this.producto.value, [Validators.required]],
+      brands: [this.isNew ? [] : this.producto.brands, [Validators.required, this.arrayNoVacioValidator()]],
+      images: [],
+      category: [this.isNew ? null : this.producto.category_name, [Validators.required]],
+      description: [this.isNew ? null : this.producto.description, [Validators.required]],
+      stock_quantity: [this.isNew ? null : this.producto.stock_quantity, [Validators.required]],
+      restricted_regions: [this.isNew ? [] : this.producto.regiones, []]
+      // code: [this.isNew ? "12343" : this.producto.code, [Validators.required]],
+      // name: [this.isNew ? "Teclado Razer Bionico Gamer Negro" : this.producto.name, [Validators.required]],
+      // price: [this.isNew ? 300 : this.producto.price, [Validators.required]],
+      // value: [this.isNew ? 200 : this.producto.value, [Validators.required]],
+      // brands: [this.isNew ? ["Razer", "Logitec"] : this.producto.brands, [Validators.required, this.arrayNoVacioValidator()]],
+      // images: [],
+      // category: [this.isNew ? "Gaming" : this.producto.category_name, [Validators.required]],
+      // description: [this.isNew ? "Teclado mecanico gaming tamaño 80%" : this.producto.description, [Validators.required]],
+      // stock_quantity: [this.isNew ? 25 : this.producto.stock_quantity, [Validators.required]],
+      // restricted_regions: [this.isNew ? ["Totonicapan"] : this.producto.regiones, []]
     });
+    if (!this.isNew) {
+      if (this.producto?.brands) {
+        this.brands = [...this.producto.brands];
+      }
+      if (this.producto?.regiones) {
+        this.regiones = [...this.producto.regiones]
+      }
+      this.imagenProducto = this.producto.main_image_url;
+      this.productoForm.disable();
+    }
     this.loading = false;
   }
 
@@ -151,14 +201,19 @@ export class ProductoFormComponent implements OnInit {
     this.productoForm.disable();
 
     const productoBody = {
-      nombre: this.productoForm.get("nombre").value,
-      descripcion: this.productoForm.get("descripcion").value,
-      portada: this.isNew ? "" : this.producto.portada,
-      precio: this.productoForm.get("precio").value,
-      categoria_producto_id: this.productoForm.get("categoriaId").value,
-      proveedor_id: this.productoForm.get("proveedorId").value,
-      costo: this.productoForm.get("costo").value,
-    };
+      name: this.productoForm.get("name").value,
+      description: this.productoForm.get("description").value,
+      price: this.productoForm.get("price").value,
+      value: this.productoForm.get("value").value,
+      stock_quantity: this.productoForm.get("stock_quantity").value,
+      code: this.productoForm.get("code").value,
+      main_image_url: "",
+      category_name: this.productoForm.get("category").value,
+      marcas: this.productoForm.get("brands").value,
+      regiones: this.productoForm.get("restricted_regions").value,
+      imagenes: []
+    }
+    console.log(productoBody);
 
     if (this.isNew) {
       if (!this.archivo) {
@@ -167,11 +222,16 @@ export class ProductoFormComponent implements OnInit {
         return;
       }
       const portadaId = v4();
-      this.s3Service.uploadFileToBucket(this.archivo, "proyecto-2-ayd-2-g1", portadaId).subscribe(s3Resp => {
-        productoBody.portada = s3Resp.Location;
+      this.s3Service.generateUploadUrl(this.archivo,  portadaId).subscribe(s3Resp => {
+        productoBody.main_image_url = s3Resp;
         this.adminService.crearProducto(productoBody).pipe(take(1)).subscribe(resp => {
           console.log(resp);
           this.router.navigate(["admin", "productos"]);
+          this.snackBar.open('Usuario Reportado', 'Cerrar', {
+            duration: 3000, // en milisegundos
+            horizontalPosition: 'center',
+            verticalPosition: 'bottom'
+          });
         }, err => {
           console.log(err);
         });
@@ -179,11 +239,10 @@ export class ProductoFormComponent implements OnInit {
         console.log(err);
       });
     } else {
-      const bucketUrl = "https://proyecto-2-ayd-2-g1.s3.amazonaws.com";
       if (this.archivo) {
         const id = v4();
-        productoBody.portada = `${bucketUrl}/${id}`;
-        this.s3Service.uploadFileToBucket(this.archivo, "proyecto-2-ayd-2-g1", id).pipe(take(1)).subscribe(resp => {
+        productoBody.main_image_url = `https://storage.googleapis.com/software-avanzado-bucket/${id}`;
+        this.s3Service.generateUploadUrl(this.archivo,  id).pipe(take(1)).subscribe(resp => {
           console.log("S3 RESPONSE", resp);
         }, err => {
           console.log(err);
@@ -214,5 +273,48 @@ export class ProductoFormComponent implements OnInit {
 
   atras(): void {
     this.location.back();
+  }
+
+  addBrand(event: MatChipInputEvent): void {
+    const value = event.value?.trim();
+  
+    if (value && !this.brands.includes(value)) {
+      this.brands.push(value);
+      this.productoForm.get('brands').setValue(this.brands);
+    }
+  
+    if (event.input) {
+      event.input.value = '';
+    }
+  }
+  
+  removeBrand(brand: string): void {
+    const index = this.brands.indexOf(brand);
+  
+    if (index >= 0) {
+      this.brands.splice(index, 1);
+      this.productoForm.get('brands').setValue(this.brands);
+    }
+  }
+  addRegion(event: MatChipInputEvent): void {
+    const value = event.value?.trim();
+  
+    if (value && !this.regiones.includes(value)) {
+      this.regiones.push(value);
+      this.productoForm.get('restricted_regions').setValue(this.regiones);
+    }
+  
+    if (event.input) {
+      event.input.value = '';
+    }
+  }
+  
+  removeRegion(region: string): void {
+    const index = this.regiones.indexOf(region);
+  
+    if (index >= 0) {
+      this.regiones.splice(index, 1);
+      this.productoForm.get('restricted_regions').setValue(this.regiones);
+    }
   }
 }

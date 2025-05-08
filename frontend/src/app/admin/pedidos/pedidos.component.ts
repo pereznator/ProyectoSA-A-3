@@ -11,6 +11,8 @@ import { ConfirmActionComponent } from '../../modals/confirm-action/confirm-acti
 import { User } from '../../auth/auth.types';
 import { AuthService } from '../../auth/auth.service';
 import { Router } from '@angular/router';
+import { ActualizarEstadoOrdenComponent } from '../../modals/actualizar-estado-order/actualizar-estado-orden.component';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-pedidos',
@@ -24,7 +26,7 @@ export class PedidosComponent implements OnInit {
   loading: boolean = false;
   pedidos: any[] = []; 
 
-  filtrarPor: number = 1;
+  filtrarPor: string = '';
   user: User;
 
   constructor(
@@ -32,98 +34,68 @@ export class PedidosComponent implements OnInit {
     private modalService: NgbModal,
     private dom: DomSanitizer,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar
   ){}
   
   ngOnInit(): void {
-    this.authService.user$.pipe(take(1)).subscribe(user => {
+    this.authService.currentUser$.pipe(take(1)).subscribe(user => {
       this.user = user;
-    })
-    this.getPedidos();
+      console.log(this.user);
+      this.getPedidos();
+    });
   }
 
   getPedidos(): void {
     this.loading = true;
-    this.adminService.obtenerPedidos({ estado_pedido_id: this.filtrarPor }).pipe(take(1)).subscribe(resp => {
+    this.adminService.obtenerPedidos({ estado: this.filtrarPor }).pipe(take(1)).subscribe(resp => {
       console.log(resp);
-      this.pedidos = resp.response_database.map(pedido => {
-        if (pedido.tipo_metodo_pago === "TARJETA") {
-          pedido["detalle_tarjeta"] = `Termina en: ${pedido.numero_tarjeta.slice(11, 15)}, exp ${pedido.fecha_exp}`;
-        } else if (pedido.tipo_metodo_pago === "TRANSFERENCIA") {
-          pedido["detalle_tarjeta"] = "Subir el comprobante de la transferencia.";
-        } else {
-          pedido["detalle_tarjeta"] = "Pagar en efectivo al momento de la entrega.";
-        }
-        pedido["monto"] = 0;
-        pedido.detalles.map(det => {
-          pedido["monto"] += (det.precio * det.cantidad);
-        });
-        return pedido;
-      });
+      this.pedidos = resp.ordenes ?? [];
+      // this.pedidos = resp.response_database.map(pedido => {
+      //   if (pedido.tipo_metodo_pago === "TARJETA") {
+      //     pedido["detalle_tarjeta"] = `Termina en: ${pedido.numero_tarjeta.slice(11, 15)}, exp ${pedido.fecha_exp}`;
+      //   } else if (pedido.tipo_metodo_pago === "TRANSFERENCIA") {
+      //     pedido["detalle_tarjeta"] = "Subir el comprobante de la transferencia.";
+      //   } else {
+      //     pedido["detalle_tarjeta"] = "Pagar en efectivo al momento de la entrega.";
+      //   }
+      //   pedido["monto"] = 0;
+      //   pedido.detalles.map(det => {
+      //     pedido["monto"] += (det.precio * det.cantidad);
+      //   });
+      //   return pedido;
+      // });
       this.loading = false;
     }, err => {
       console.log(err);
     });
   }
 
-  verCV(pdfUrl: string): void {
-    const safeUrl = this.dom.bypassSecurityTrustResourceUrl(pdfUrl);
-    const modal = this.modalService.open(ViewCvComponent, { size: "xl" });
-    modal.componentInstance.pdfLink = safeUrl;
-    modal.result.then(result => {}, dismiss => {});
+  verOrden(orden: any): void {
+    // this.router.navigate(["cliente", "ordenes", orden.order_id]);
+    this.router.navigateByUrl("cliente/ordenes/" + orden.order_id);
   }
 
-  autorizar(pedido: any): void {
-    const modal = this.modalService.open(ConfirmActionComponent);
-    modal.componentInstance.description = "¿Estas seguro que quieres autorizar este pedido?";
-    modal.componentInstance.title = "Autorizar Pedido";
-    modal.result.then(() => {
-      this.adminService.actualizarPedido(pedido.id, { estado_pedido_id: 2, cliente_id: null, oferta_id: null }).pipe(take(1)).subscribe(respPedido => {
-        console.log("RESP PEDIDO", respPedido);
-        const validacionPagoBody = {
-          colaborador_id: this.user.idColaborador === 0 ? 7 : this.user.idColaborador,
-          pago_id: pedido.pago_id
-        };
-        this.adminService.crearValidacionPago(validacionPagoBody).pipe(take(1)).subscribe(respValidacionPago => {
-          console.log("RESP VALIDACION PAGO", respValidacionPago);
-          this.getPedidos();
-        }, err => {
-          console.log("ERR VALIDACION PAGO", err);
+  actualizarEstado(orden: any): void {
+    const modal = this.modalService.open(ActualizarEstadoOrdenComponent);
+    modal.result.then(result => {
+      const body = {
+        "order_id": orden.order_id,
+        "status": result.estadoNuevo,
+        "location": result.location
+      };
+      this.adminService.actualizarPedido(body).pipe(take(1)).subscribe(resp => {
+        console.log(resp);
+        this.snackBar.open("Estado actualizado correctamente", "Cerrar", {
+          duration: 10000,
+          panelClass: "snackbar-success",
+          verticalPosition: "bottom",
+          horizontalPosition: "center"
         });
-      }, err => {
-        console.log("ERR PEDIDO", err);
-      });
-    }, () => {})
-  }
-  rechazar(pedido: any): void {
-    const modal = this.modalService.open(ConfirmActionComponent);
-    modal.componentInstance.description = "¿Estas seguro que quieres rechazar este pedido?";
-    modal.componentInstance.title = "Rechazar Pedido";
-    modal.result.then(() => {
-      this.adminService.actualizarPedido(pedido.id, { estado_pedido_id: 3, cliente_id: null, oferta_id: null }).pipe(take(1)).subscribe(respPedido => {
-        console.log("RESP PEDIDO", respPedido);
         this.getPedidos();
       }, err => {
-        console.log("ERR PEDIDO", err);
+        console.log(err);
       });
-    }, () => {})
-  }
-
-  entregar(pedido: any): void {
-    const modal = this.modalService.open(ConfirmActionComponent);
-    modal.componentInstance.description = "¿Estas seguro que quieres entregar este pedido?";
-    modal.componentInstance.title = "Entregar Pedido";
-    modal.result.then(() => {
-      this.adminService.actualizarPedido(pedido.id, { estado_pedido_id: 4, cliente_id: null, oferta_id: null }).pipe(take(1)).subscribe(respPedido => {
-        console.log("RESP PEDIDO", respPedido);
-        this.getPedidos();
-      }, err => {
-        console.log("ERR PEDIDO", err);
-      });
-    }, () => {})
-  }
-
-  verPedido(pedido: any): void {
-    this.router.navigate(["admin", "pedidos", pedido.id])
+    }, dismiss => {});
   }
 }

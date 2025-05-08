@@ -1,0 +1,73 @@
+.chat-container {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 500px;
+  height: 500px;
+  background: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  z-index: 999;
+}
+
+.chat-header {
+  padding: 10px;
+  background: #007bff;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.chat-body {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.chat-input {
+  padding: 10px;
+  border-top: 1px solid #ccc;
+}
+
+.chat-input input {
+  width: 100%;
+  padding: 8px;
+}
+
+.bot {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.user {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.bubble {
+  max-width: 70%;
+  padding: 10px;
+  border-radius: 10px;
+  background-color: #e0e0e0;
+  color: black;
+  white-space: pre-wrap; /* 👈 Esto es clave */
+  font-family: 'Courier New', monospace; /* Opcional para estilo tipo código */
+}
+
+
+.bot .bubble {
+  background-color: #f1f0f0;
+  border-top-left-radius: 0;
+}
+
+.user .bubble {
+  background-color: #007bff;
+  color: white;
+  border-top-right-radius: 0;
+}

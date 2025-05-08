@@ -1,4 +1,7 @@
 export const environment = {
   production: false,
-  serverUrl: "http://localhost:9000"
+  authServerUrl:"http://localhost:3001",
+  productServerUrl:"http://localhost:3002",
+  orderServiceUrl:"http://localhost:3003",
+  chatServiceUrl:"http://localhost:3000",
 };

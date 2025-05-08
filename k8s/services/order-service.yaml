@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: order-service
+  namespace: sa-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-service
+  template:
+    metadata:
+      labels:
+        app: order-service
+    spec:
+      containers:
+        - name: order-service
+          image: jpanaza/order-service:6
+          ports:
+            - containerPort: 3003
+          env:
+            - name: PORT
+              value: "3003"
+            - name: CORS_ORIGIN
+              value: "https://frontend-sa-2025-56654271729.us-central1.run.app"
+            - name: AUTH_SERVICE_URL
+              value: "http://auth-service:3001"
+            - name: PRODUCT_SERVICE_URL
+              value: "http://product-service:3002"
+            - name: DB_HOST
+              value: "db-order"
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_USER
+              value: "root"
+            - name: DB_PASSWORD
+              value: "1234"
+            - name: DB_DATABASE
+              value: "order_db"
+          resources:                # ✅ Control de CPU/Memoria agregado
+            requests:
+              memory: "128Mi"
+              cpu: "100m"
+            limits:
+              memory: "256Mi"
+              cpu: "250m"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-service
+  namespace: sa-app
+spec:
+  selector:
+    app: order-service
+  type: ClusterIP
+  ports:
+    - port: 3003
+      targetPort: 3003
