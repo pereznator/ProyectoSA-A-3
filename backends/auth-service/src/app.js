@@ -5,9 +5,21 @@ const routes = require('./routes');
 const cookieParser = require('cookie-parser');
 const { generateUploadUrl } = require("./controllers/gcloud/generate-upload-url")
 const logger = require('./utils/logger');
-
+const promBundle = require('express-prom-bundle'); // 🚀 Middleware para Prometheus
 
 const app = express();
+
+// ✅ Middleware para Prometheus
+const metricsMiddleware = promBundle({
+    includeMethod: true,         // Incluye el método (GET, POST, etc.)
+    includePath: true,           // Incluye el path (/api, /generate-upload-url, etc.)
+    metricsPath: '/metrics',     // Path para Prometheus
+    promClient: {
+        collectDefaultMetrics: {}  // Recolecta métricas por defecto del proceso
+    }
+});
+
+app.use(metricsMiddleware); // 🚀 Incluir el Middleware en Express
 
 // Middleware
 app.use(express.json());

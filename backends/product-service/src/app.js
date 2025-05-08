@@ -2,8 +2,22 @@ const express = require('express');
 const cors = require('cors');
 const routes = require('./routes');
 const morgan = require('morgan');
-const app = express();
 const logger = require('./utils/logger');
+const promBundle = require('express-prom-bundle'); // 🚀 Middleware para Prometheus
+
+const app = express();
+
+// ✅ Middleware para Prometheus
+const metricsMiddleware = promBundle({
+    includeMethod: true,         // Incluye el método (GET, POST, etc.)
+    includePath: true,           // Incluye el path (/api, /generate-upload-url, etc.)
+    metricsPath: '/metrics',     // Path para Prometheus
+    promClient: {
+        collectDefaultMetrics: {}  // Recolecta métricas por defecto del proceso
+    }
+});
+
+app.use(metricsMiddleware);
 
 // Middleware
 app.use(express.json());

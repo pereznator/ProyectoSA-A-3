@@ -6,6 +6,7 @@ import express from 'express';
 import axios from 'axios';
 import OpenAI from 'openai';
 import classifier from './chatbot-intents.js';
+import cors from 'cors';
 
 const app = express();
 const PORT = 3000;
@@ -13,6 +14,13 @@ const API_BASE = 'http://34.27.72.138/api';
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+const corsOptions = {
+  origin: process.env.CORS_ORIGIN || '*', // Toma el origen del .env o permite todos
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions)); // ✅ Habilitar CORS con opciones dinámicas
 app.use(express.json());
 
 const formatList = (arr) =>
